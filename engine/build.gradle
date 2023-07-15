@@ -9,4 +9,10 @@ processResources {
         expand props
     }
 }
+shadowJar {
+    archiveFileName = "${project.name}-${project.version}.jar"
+    getArchiveClassifier().set("")
+
+    minimize()
+}
 assemble.dependsOn(shadowJar)
