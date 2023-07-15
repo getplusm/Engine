@@ -45,7 +45,7 @@ public class EngineConfig {
             cfg.addMissing("JGroup.default.rgb.end", "&8");
         }
 
-        cfg.setComments("JGroup", "Кастомные группы для сервера. Они синхронизированы с luckperms");
+        cfg.setComments("JGroup", "User groups with automatic synchronization with LuckPerms");
         //
         LuckPerms perms = LuckpermsHook.getPlugin();
         GroupManager groupManager = perms.getGroupManager();

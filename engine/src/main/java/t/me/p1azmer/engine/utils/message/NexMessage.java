@@ -106,8 +106,8 @@ public class NexMessage {
         senders.forEach(this::send);
     }
 
-    // Фикс форматирования компонентов на основе https://github.com/SpigotMC/BungeeCord/pull/3344/
-    // Так как этот фикс не встроен в API спигота, и все равно работает не так, как нужно, будем использовать свой.
+    // Р¤РёРєСЃ С„РѕСЂРјР°С‚РёСЂРѕРІР°РЅРёСЏ РєРѕРјРїРѕРЅРµРЅС‚РѕРІ РЅР° РѕСЃРЅРѕРІРµ https://github.com/SpigotMC/BungeeCord/pull/3344/
+    // РўР°Рє РєР°Рє СЌС‚РѕС‚ С„РёРєСЃ РЅРµ РІСЃС‚СЂРѕРµРЅ РІ API СЃРїРёРіРѕС‚Р°, Рё РІСЃРµ СЂР°РІРЅРѕ СЂР°Р±РѕС‚Р°РµС‚ РЅРµ С‚Р°Рє, РєР°Рє РЅСѓР¶РЅРѕ, Р±СѓРґРµРј РёСЃРїРѕР»СЊР·РѕРІР°С‚СЊ СЃРІРѕР№.
 
     private static final Set<BaseComponent> TO_RETAIN = new HashSet<>();
     private static final Method GET_DUMMY = Reflex.getMethod(ComponentBuilder.class, "getDummy");
