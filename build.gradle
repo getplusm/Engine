@@ -101,7 +101,7 @@ shadowJar{
 
 }
 
-def targetJavaVersion = 16
+def targetJavaVersion = 17
 java {
     def javaVersion = JavaVersion.toVersion(targetJavaVersion)
     sourceCompatibility = javaVersion
@@ -137,4 +137,3 @@ publishing {
 }
 
 assemble.dependsOn(shadowJar)
-assemble.dependsOn(publishToMavenLocal)

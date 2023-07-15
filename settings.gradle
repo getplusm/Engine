@@ -1,5 +1,2 @@
-rootProject.name = 'plazmer-engine'
-
-include 'engine'
-include 'playerBlockTracker'
-
+getRootProject().setName("plazmer-engine")
+include("engine", "playerBlockTracker")
