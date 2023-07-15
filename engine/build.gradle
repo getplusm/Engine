@@ -9,3 +9,4 @@ processResources {
         expand props
     }
 }
+assemble.dependsOn(shadowJar)

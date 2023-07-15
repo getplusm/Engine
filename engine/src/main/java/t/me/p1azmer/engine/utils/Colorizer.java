@@ -205,7 +205,7 @@ public class Colorizer {
         String[] characters = source.split("");
         int outIndex = 0;
         for (int i = 0; i < characters.length; i++) {
-            if (characters[i].equals("&") || characters[i].equals("ง")) {
+            if (characters[i].equals("&") || characters[i].equals("ยง")) {
                 if (i + 1 < characters.length) {
                     if (characters[i + 1].equals("r")) {
                         specialColors.setLength(0);
