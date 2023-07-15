@@ -1,6 +1,0 @@
-name: PLAZMER-ENGINE
-version: ${version}
-main: t.me.p1azmer.engine.NexEngine
-api-version: 1.17
-author: "plazmer"
-website: "t.me/getplusm"
