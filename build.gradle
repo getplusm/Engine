@@ -4,8 +4,6 @@ plugins {
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
 
-def targetJavaVersion = 17
-
 allprojects {
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
@@ -21,21 +19,6 @@ allprojects {
         filesMatching('plugin.yml') {
             expand props
         }
-    }
-}
-
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-    if (JavaVersion.current() < javaVersion) {
-        toolchain.languageVersion = JavaLanguageVersion.of(targetJavaVersion)
-    }
-}
-
-tasks.withType(JavaCompile).configureEach {
-    if (targetJavaVersion >= 10 || JavaVersion.current().isJava10Compatible()) {
-        options.release = targetJavaVersion
     }
 }
 
