@@ -1,5 +1,4 @@
-jdk:
-  - openjdk9
+
 before_install:
   - sdk list java
   - sdk install java 16.0.1.1-open
