@@ -33,7 +33,7 @@ dependencies {
     compileOnly 'su.plo.voice:spigot:1.0.11'
 
     // WorldGuard
-    compileOnly group: 'com.sk89q.worldguard', name: 'worldguard-bukkit', version: '7.0.2-SNAPSHOT'
+    compileOnly group: 'com.sk89q.worldguard', name: 'worldguard-bukkit', version: '7.0.7'
 
     // PAPI
     compileOnly 'me.clip:placeholderapi:2.10.10'
@@ -42,6 +42,3 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
 }
-
-sourceCompatibility = 16
-targetCompatibility = 16

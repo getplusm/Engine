@@ -1,5 +1,6 @@
 jdk:
   - openjdk16
-gradle:
-  version: 7.3
-  wrapper: true
+before_install:
+  - echo "Before Install"
+  - sdk install java 16.0.2-open
+  - sdk use java 16.0.2-open
