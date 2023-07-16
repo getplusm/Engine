@@ -12,6 +12,12 @@ allprojects {
     setGroup("plazmer")
     setVersion("1.0")
 
+    sourceCompatibility = 17
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
+    targetCompatibility = 17
+
     processResources {
         def props = [version: version]
         inputs.properties props
