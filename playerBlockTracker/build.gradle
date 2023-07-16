@@ -1,16 +1,14 @@
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT'
+    compileOnly 'org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
+    compileOnly 'org.jetbrains:annotations:24.0.1'
     implementation project(':engine')
+    compileOnly 'it.unimi.dsi:fastutil:8.5.11'
 }
 
 shadowJar {
     archiveFileName = "${rootProject.name}-${rootProject.version}.jar"
     getArchiveClassifier().set("")
     destinationDirectory.set(rootProject.buildDir)
-
-    relocate 'net.kyori', 't.me.p1azmer.lib.kyori'
-    relocate 'org.slf4j', 't.me.p1azmer.lib.slf4j'
-    relocate 'com.zaxxer', 't.me.p1azmer.lib.zaxxer'
 }
 
 artifacts {

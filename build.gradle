@@ -10,7 +10,7 @@ allprojects {
     apply plugin: 'maven-publish'
 
     setGroup("plazmer")
-    setVersion("1.0")
+    setVersion("2.3")
 
     processResources {
         def props = [version: version]
@@ -20,36 +20,39 @@ allprojects {
             expand props
         }
     }
-    repositories {
-        mavenCentral()
-        mavenLocal()
 
+    repositories {
+        mavenLocal()
+        mavenCentral()
+        // Spigot API * start
         maven {
-            url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
+            url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
+
+            // As of Gradle 5.1, you can limit this to only those
+            // dependencies you expect from it
+            content {
+                includeGroup 'org.bukkit'
+                includeGroup 'org.spigotmc'
+            }
         }
-        maven {
-            url "https://repo.codemc.io/repository/maven-snapshots/"
-        }
-        maven {
-            url "https://libraries.minecraft.net"
-        }
-        maven {
-            url "https://repo.papermc.io/repository/maven-public/"
-        }
+        maven { url = 'https://repo.dmulloy2.net/repository/public/' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
+        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+        // Spigot API * end
+
+        // more & more
         maven { url = 'https://jitpack.io' }
 
         // floadgate api
         maven { url = 'https://repo.opencollab.dev/maven-snapshots/' }
 
         // PlasmoVoice
-        maven { url 'https://repo.plo.su/' }
+        maven { url = 'https://repo.plo.su/' }
 
         // WorldGuard
-        maven { url 'https://maven.enginehub.org/repo/' }
+        maven { url = 'https://maven.enginehub.org/repo/' }
         // PAPI
-        maven {
-            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-        }
+        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     }
     java {
         sourceCompatibility = JavaVersion.VERSION_16

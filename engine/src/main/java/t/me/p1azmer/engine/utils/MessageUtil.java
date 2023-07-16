@@ -374,7 +374,7 @@ public class MessageUtil {
 
         @EventHandler
         public void onDeath(PlayerDeathEvent event) {
-            restoreMessageItem(event.getPlayer(), true);
+            restoreMessageItem(event.getEntity(), true);
         }
 
 //        @EventHandler

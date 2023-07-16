@@ -30,8 +30,8 @@ import java.util.function.Function;
 
 public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends AbstractManager<P> {
 
-    protected DataConfig config;
-    protected AbstractDataConnector connector;
+    protected final DataConfig config;
+    protected final AbstractDataConnector connector;
     protected Gson gson;
 
     private DataSynchronizationTask<P> synchronizationTask;
@@ -47,18 +47,8 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         this.config = config;
         if (this.getDataType() == StorageType.MYSQL) {
             this.connector = new ConnectorMySQL(plugin, config);
-        } else {
-            this.connector = new ConnectorSQLite(plugin, config);
         }
-    }
-
-    protected AbstractDataHandler(@NotNull P plugin, @NotNull DataConfig config, @NotNull String poolName) {
-        super(plugin);
-
-        this.config = config;
-        if (this.getDataType() == StorageType.MYSQL) {
-            this.connector = new ConnectorMySQL(plugin, config, poolName);
-        } else {
+        else {
             this.connector = new ConnectorSQLite(plugin, config);
         }
     }
@@ -78,7 +68,8 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
                     this.synchronizationTask = new DataSynchronizationTask<>(this);
                     this.synchronizationTask.start();
                     this.plugin.info("Enabled data synchronization with " + config.syncInterval + " seconds interval.");
-                } else {
+                }
+                else {
                     this.plugin.warn("Data synchronization is useless for local databases (SQLite). It will be disabled.");
                 }
             }
@@ -102,14 +93,6 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
         this.onSynchronize();
         this.onSave();
         this.getConnector().close();
-    }
-
-    public void setDataConfig(DataConfig config) {
-        this.config = config;
-    }
-
-    public void setDataConnector(AbstractDataConnector connector) {
-        this.connector = connector;
     }
 
     public abstract void onSynchronize();
@@ -153,10 +136,6 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
 
     public void createTable(@NotNull String table, @NotNull List<SQLColumn> columns) {
         CreateTableExecutor.builder(table, this.getDataType()).columns(columns).execute(this.getConnector());
-    }
-
-    public void createTable(@NotNull String table, @NotNull List<SQLColumn> columns, AbstractDataConnector connector) {
-        CreateTableExecutor.builder(table, this.getDataType()).columns(columns).execute(connector);
     }
 
     public void renameTable(@NotNull String from, @NotNull String to) {
