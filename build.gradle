@@ -11,8 +11,6 @@ allprojects {
 
     group = 'plazmer'
     version = '2.3'
-    sourceCompatibility = 16
-    targetCompatibility = 16
 
     processResources {
         def props = [version: version]
@@ -57,3 +55,5 @@ allprojects {
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     }
 }
+sourceCompatibility = 16
+targetCompatibility = 16
