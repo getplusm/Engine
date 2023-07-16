@@ -54,8 +54,14 @@ allprojects {
         // PAPI
         maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     }
+    def targetJavaVersion = 16
     java {
-        sourceCompatibility = JavaVersion.VERSION_16
-        targetCompatibility = JavaVersion.VERSION_16
+        def javaVersion = JavaVersion.toVersion(targetJavaVersion)
+        sourceCompatibility = javaVersion
+        targetCompatibility = javaVersion
+    }
+
+    tasks.withType(JavaCompile).configureEach {
+        options.release = targetJavaVersion
     }
 }
