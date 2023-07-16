@@ -20,23 +20,31 @@ allprojects {
             expand props
         }
     }
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            from components.java
-
-            groupId = 'com.github.getplusm'
-            artifactId = 'PLAZMER-ENGINE'
-            version = project.version
-        }
-    }
-
     repositories {
+        mavenCentral()
+        mavenLocal()
+
         maven {
-            name = 'jitpack'
-            url = 'https://jitpack.io'
+            name = "papermc-repo"
+            url = "https://repo.papermc.io/repository/maven-public/"
+        }
+        maven {
+            name = "sonatype"
+            url = "https://oss.sonatype.org/content/groups/public/"
+        }
+        maven { url = 'https://jitpack.io' }
+
+        // floadgate api
+        maven { url = 'https://repo.opencollab.dev/maven-snapshots/' }
+
+        // PlasmoVoice
+        maven { url 'https://repo.plo.su/' }
+
+        // WorldGuard
+        maven { url 'https://maven.enginehub.org/repo/' }
+        // PAPI
+        maven {
+            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
         }
     }
 }

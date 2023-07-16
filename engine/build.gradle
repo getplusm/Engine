@@ -1,29 +1,3 @@
-repositories {
-    mavenCentral()
-
-    maven {
-        name = "papermc-repo"
-        url = "https://repo.papermc.io/repository/maven-public/"
-    }
-    maven {
-        name = "sonatype"
-        url = "https://oss.sonatype.org/content/groups/public/"
-    }
-    maven { url = 'https://jitpack.io' }
-
-    // floadgate api
-    maven { url = 'https://repo.opencollab.dev/maven-snapshots/' }
-
-    // PlasmoVoice
-    maven { url 'https://repo.plo.su/' }
-
-    // WorldGuard
-    maven { url 'https://maven.enginehub.org/repo/' }
-    // PAPI
-    maven {
-        url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-    }
-}
 
 dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
