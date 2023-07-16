@@ -2,4 +2,26 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
     implementation project(':engine')
 }
-compileJava.mustRunAfter project(':engine').shadowJar
+
+processResources {
+    def props = [version: version]
+    inputs.properties props
+    filteringCharset 'UTF-8'
+    filesMatching('plugin.yml') {
+        expand props
+    }
+}
+
+shadowJar {
+    archiveFileName = "${rootProject.name}-${rootProject.version}.jar"
+    getArchiveClassifier().set("")
+    destinationDirectory.set(rootProject.buildDir)
+
+    relocate 'net.kyori', 't.me.p1azmer.lib.kyori'
+    relocate 'org.slf4j', 't.me.p1azmer.lib.slf4j'
+    relocate 'com.zaxxer', 't.me.p1azmer.lib.zaxxer'
+}
+
+artifacts {
+    archives shadowJar
+}
