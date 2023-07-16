@@ -1,5 +1,5 @@
 jdk:
-  - openjdk16
+  - adptjdk16
 before_install:
   - echo "Before Install"
   - ./ensure-java-16 install
