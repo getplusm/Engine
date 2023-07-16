@@ -11,6 +11,8 @@ allprojects {
 
     group = 'plazmer'
     version = '2.3'
+    sourceCompatibility = 17
+    targetCompatibility = 17
 
     processResources {
         def props = [version: version]

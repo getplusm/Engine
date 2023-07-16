@@ -7,7 +7,7 @@ dependencies {
 
 shadowJar {
     archiveFileName = "${rootProject.name}-${rootProject.version}.jar"
-    getArchiveClassifier().set("")
+    getArchiveClassifier().set("playerBlockTracker")
     destinationDirectory.set(rootProject.buildDir)
 }
 
@@ -17,11 +17,11 @@ artifacts {
 publishing {
     publications {
         maven(MavenPublication) {
-            from components.java
 
             groupId = 'com.github.getplusm'
-            artifactId = 'PLAZMER-ENGINE'
+            artifactId = 'Engine'
             version = project.version
+            from components.java
         }
     }
 
@@ -32,5 +32,3 @@ publishing {
         }
     }
 }
-sourceCompatibility = 16
-targetCompatibility = 16
