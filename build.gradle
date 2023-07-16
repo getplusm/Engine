@@ -60,8 +60,4 @@ allprojects {
         sourceCompatibility = javaVersion
         targetCompatibility = javaVersion
     }
-
-    tasks.withType(JavaCompile).configureEach {
-        options.release = targetJavaVersion
-    }
 }
