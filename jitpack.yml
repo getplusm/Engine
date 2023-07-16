@@ -1,2 +1,5 @@
-java:
-  version: 16
+jdk:
+  - openjdk16
+before_install:
+  - sdk install java 16.0.3-tem
+  - sdk use java 16.0.3-tem
