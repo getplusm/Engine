@@ -1,4 +1,5 @@
-jdk:
-  - openjdk17
 before_install:
-  - wget -nv https://download.java.net/java/GA/jdk17.0.1/2a2082e5a09d4267845be086888add4f/12/GPL/openjdk-17.0.1_linux-x64_bin.tar.gz -O /home/jitpack/tools/jdk17/jdk17.tar.gz
+  - source "$HOME/.sdkman/bin/sdkman-init.sh"
+  - sdk update
+  - sdk install java 17.0.7-tem
+  - sdk use java 17.0.7-tem
