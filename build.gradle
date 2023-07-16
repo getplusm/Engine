@@ -9,8 +9,10 @@ allprojects {
     apply plugin: 'com.github.johnrengelman.shadow'
     apply plugin: 'maven-publish'
 
-    setGroup("plazmer")
-    setVersion("2.3")
+    group = 'plazmer'
+    version = '2.3'
+    sourceCompatibility = 1.8
+    targetCompatibility = 1.8
 
     processResources {
         def props = [version: version]

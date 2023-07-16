@@ -32,10 +32,3 @@ publishing {
         }
     }
 }
-
-def targetJavaVersion = 16
-java {
-    def javaVersion = JavaVersion.toVersion(targetJavaVersion)
-    sourceCompatibility = javaVersion
-    targetCompatibility = javaVersion
-}
