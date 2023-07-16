@@ -51,4 +51,7 @@ allprojects {
             url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
         }
     }
+    java {
+        toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+    }
 }
