@@ -3,15 +3,6 @@ dependencies {
     implementation project(':engine')
 }
 
-processResources {
-    def props = [version: version]
-    inputs.properties props
-    filteringCharset 'UTF-8'
-    filesMatching('plugin.yml') {
-        expand props
-    }
-}
-
 shadowJar {
     archiveFileName = "${rootProject.name}-${rootProject.version}.jar"
     getArchiveClassifier().set("")
