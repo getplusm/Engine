@@ -72,6 +72,11 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
 }
 
+sourceCompatibility = 17
+java {
+    toolchain.languageVersion.set(JavaLanguageVersion.of(17))
+}
+targetCompatibility = 17
 def targetJavaVersion = 17
 
 java {
