@@ -32,3 +32,5 @@ publishing {
         }
     }
 }
+sourceCompatibility = 16
+targetCompatibility = 16
