@@ -1,6 +1,7 @@
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
     compileOnly 'org.jetbrains:annotations:24.0.1'
-    implementation project(':engine')
     compileOnly 'it.unimi.dsi:fastutil:8.5.11'
+    compileOnly project(':engine')
 }
+compileJava.dependsOn(':engine:shadowJar')
