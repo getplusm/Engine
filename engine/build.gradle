@@ -1,22 +1,22 @@
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
     // Included in spigot jar, no need to move to implementation
-    compileOnly 'org.jetbrains:annotations:24.0.1'
+    implementation 'org.jetbrains:annotations:24.0.1'
     compileOnly 'com.google.guava:guava:31.1-jre'
 
-    implementation 'org.slf4j:slf4j-api:1.7.32'
-    implementation 'org.slf4j:slf4j-simple:1.7.32'
+    compileOnly 'org.slf4j:slf4j-api:1.7.32'
+    compileOnly 'org.slf4j:slf4j-simple:1.7.32'
 
     // Adventure
-    implementation 'net.kyori:adventure-api:4.13.0'
-    implementation('net.kyori:adventure-text-serializer-gson:4.13.0') {
+    compileOnly 'net.kyori:adventure-api:4.13.0'
+    compileOnly('net.kyori:adventure-text-serializer-gson:4.13.0') {
         exclude(group: 'com.google.code.gson', module: 'gson') // Prevent shading into the jar
     }
 
-    implementation 'net.kyori:adventure-text-serializer-legacy:4.13.0'
+    compileOnly 'net.kyori:adventure-text-serializer-legacy:4.13.0'
 
     // Database
-    implementation 'com.zaxxer:HikariCP:5.0.1'
+    compileOnly 'com.zaxxer:HikariCP:5.0.1'
 
     // NPC API
     compileOnly 'io.github.znetworkw.znpcservers:znpcservers:3.6'
@@ -41,8 +41,6 @@ dependencies {
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
-
-    implementation(project(":playerBlockTracker"))
 }
 shadowJar {
     getArchiveClassifier().set("")
