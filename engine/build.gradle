@@ -43,7 +43,7 @@ dependencies {
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
 }
 shadowJar {
-    getArchiveClassifier().set("")
+    getArchiveClassifier().set("engine")
     destinationDirectory.set(rootProject.buildDir)
 }
 artifacts {
