@@ -53,8 +53,8 @@ artifacts {
 publishing {
     publications {
         maven(MavenPublication) {
-            groupId = 'com.github.getplusm' as Publication
-            artifactId = 'Engine' as Publication
+            groupId = 'com.github.getplusm'
+            artifactId = 'Engine'
             version = project.version
 
             from components.java
