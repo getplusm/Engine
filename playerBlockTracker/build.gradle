@@ -1,34 +1,6 @@
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.19.3-R0.1-SNAPSHOT' // The Spigot API with no shadowing. Requires the OSS repo.
     compileOnly 'org.jetbrains:annotations:24.0.1'
-    implementation project(':engine')
+    compileOnly 't.me.p1azmer:engine:2.1'
     compileOnly 'it.unimi.dsi:fastutil:8.5.11'
-}
-
-shadowJar {
-    archiveFileName = "${rootProject.name}-${rootProject.version}.jar"
-    getArchiveClassifier().set("playerBlockTracker")
-    destinationDirectory.set(rootProject.buildDir)
-}
-
-artifacts {
-    archives shadowJar
-}
-publishing {
-    publications {
-        maven(MavenPublication) {
-
-            groupId = 'com.github.getplusm'
-            artifactId = 'Engine'
-            version = project.version
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            name = 'jitpack'
-            url = 'https://jitpack.io'
-        }
-    }
 }

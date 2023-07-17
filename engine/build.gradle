@@ -41,4 +41,31 @@ dependencies {
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
+
+    implementation(project(":playerBlockTracker"))
+}
+shadowJar {
+    getArchiveClassifier().set("")
+    destinationDirectory.set(rootProject.buildDir)
+}
+artifacts {
+    archives shadowJar
+}
+publishing {
+    publications {
+        maven(MavenPublication) {
+
+            groupId = 'com.github.getplusm'
+            artifactId = 'Engine'
+            version = project.version
+            from components.java
+        }
+    }
+
+    repositories {
+        maven {
+            name = 'jitpack'
+            url = 'https://jitpack.io'
+        }
+    }
 }
