@@ -51,13 +51,14 @@ shadowJar {
 artifacts {
     archives shadowJar
 }
+
 publishing {
     publications {
         maven(MavenPublication) {
-
-            groupId = 'com.github.getplusm'
-            artifactId = 'Engine'
+            groupId = 'com.github.getplusm' as Publication
+            artifactId = 'Engine' as Publication
             version = project.version
+
             from components.java
         }
     }
