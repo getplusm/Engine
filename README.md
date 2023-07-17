@@ -22,7 +22,7 @@ Gradle
 ```gradle
 maven { url = 'https://jitpack.io' }
 
-compileOnly group: 'com.github.getplusm', name: 'Engine', version: '2.3'
+compileOnly group: 'com.github.getplusm', name: 'Engine', version: '2.3.1'
 ```
 
 <br><br><br><br><br><br><br><br>
