@@ -5,13 +5,14 @@ import com.google.common.io.ByteStreams;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 import org.jetbrains.annotations.NotNull;
+import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.utils.EngineUtils;
 
-public class BungeeServerInfoRetriever implements PluginMessageListener {
+public class BungeeServerInfoRetriever<P extends NexPlugin<P>> implements PluginMessageListener {
 
-    private final BungeeManager bungeeManager;
+    private final BungeeManager<P> bungeeManager;
 
-    public BungeeServerInfoRetriever(@NotNull BungeeManager manager) {
+    public BungeeServerInfoRetriever(@NotNull BungeeManager<P> manager) {
         this.bungeeManager = manager;
     }
 

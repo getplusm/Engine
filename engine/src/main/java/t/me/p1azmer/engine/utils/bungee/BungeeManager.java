@@ -9,18 +9,19 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.Messenger;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexEngine;
+import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.api.manager.AbstractManager;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
-public class BungeeManager extends AbstractManager<NexEngine> {
+public class BungeeManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     private Map<String, Integer> serverOnlineCache;
     private Cache<String, Byte> lastServerCheck;
 
-    public BungeeManager(@NotNull NexEngine plugin) {
+    public BungeeManager(@NotNull P plugin) {
         super(plugin);
     }
 
@@ -34,7 +35,7 @@ public class BungeeManager extends AbstractManager<NexEngine> {
 
         Messenger messenger = Bukkit.getServer().getMessenger();
         messenger.registerOutgoingPluginChannel(plugin, "BungeeCord");
-        messenger.registerIncomingPluginChannel(plugin, "BungeeCord", new BungeeServerInfoRetriever(this)); // register player count checker
+        messenger.registerIncomingPluginChannel(plugin, "BungeeCord", new BungeeServerInfoRetriever<>(this)); // register player count checker
     }
 
     @Override
@@ -54,7 +55,7 @@ public class BungeeManager extends AbstractManager<NexEngine> {
     }
 
     public void connect(Player player, String server) {
-        plugin.getScheduler().runTaskAsynchronously(plugin, () -> {
+       plugin.runTaskAsync(task->{
             try {
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("Connect");
@@ -70,7 +71,7 @@ public class BungeeManager extends AbstractManager<NexEngine> {
             return; // do not check for players
         }
         lastServerCheck.put(server, (byte) 0);
-        plugin.getScheduler().runTaskAsynchronously(plugin, () -> {
+        plugin.runTaskAsync(task->{
             try {
                 ByteArrayDataOutput out = ByteStreams.newDataOutput();
                 out.writeUTF("PlayerCount");
