@@ -4,4 +4,10 @@ dependencies {
     compileOnly 'it.unimi.dsi:fastutil:8.5.11'
     compileOnly project(':engine')
 }
+shadowJar {
+    destinationDirectory.set(rootProject.buildDir)
+}
+artifacts {
+    archives shadowJar
+}
 compileJava.dependsOn(':engine:shadowJar')

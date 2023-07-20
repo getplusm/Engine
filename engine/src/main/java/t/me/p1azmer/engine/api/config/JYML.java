@@ -8,8 +8,7 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.InvalidConfigurationException;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
-import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.*;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.LeatherArmorMeta;
@@ -25,6 +24,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.util.*;
+import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
 public class JYML extends YamlConfiguration {
@@ -450,5 +450,90 @@ public class JYML extends YamlConfiguration {
 
     public void setItemsEncoded(@NotNull String path, @NotNull List<ItemStack> item) {
         this.set(path, ItemUtil.compress(item));
+    }
+
+    @Nullable
+    public Recipe getRecipe(@NotNull String path) {
+        return getRecipe(path, null, null);
+    }
+
+    @Nullable
+    public Recipe getRecipe(@NotNull String path, @Nullable UnaryOperator<ItemStack> itemFunction) {
+        final Object def = get(path);
+        return getRecipe(path, itemFunction, def instanceof Recipe ? (Recipe) def : null, null);
+    }
+
+    @Nullable
+    public Recipe getRecipe(@NotNull String path, @Nullable UnaryOperator<ItemStack> itemFunction, @Nullable Recipe def) {
+        return getRecipe(path, itemFunction, def, null);
+    }
+
+    @Nullable // todo rewrite for own recipes
+    public Recipe getRecipe(@NotNull String path, @Nullable UnaryOperator<ItemStack> itemFunction, @Nullable Recipe def, @Nullable String name) {
+        // section, shape, result, & ingredientMaterials
+        final ConfigurationSection section = getConfigurationSection(path);
+        if (section == null) return def;
+        final List<String> shape = section.getStringList("Shape").stream()
+                .map(String::toUpperCase)
+                .toList();
+        ItemStack result = this.getItem(path + "Result");
+        if (shape.isEmpty() || result.getType().isAir()) return def;
+
+        final Map<Character, Material> ingredientMaterials = new HashMap<>();
+        for (String key : this.getSection(path + "Ingredients")) {
+            final Material material = StringUtil.getEnum(this.getString(path + "Ingredients." + key, null), Material.class).orElse(Material.AIR);
+            if (material.isAir()) continue;
+
+            ingredientMaterials.put(key.toUpperCase().charAt(0), material);
+        }
+        if (ingredientMaterials.isEmpty()) return def;
+
+        // Apply itemFunction
+        if (itemFunction != null) result = itemFunction.apply(result);
+
+        // Set name if null
+        if (name == null) {
+            final String[] split = path.split("\\.");
+            name = split[split.length - 1];
+        }
+
+        // Shapeless
+        switch (this.getString(path + "Type", null)) {
+            case "Shapeless" -> {
+                ShapelessRecipe shapeless = new ShapelessRecipe(new NamespacedKey(EngineUtils.ENGINE, name), result);
+                for (Map.Entry<Character, Material> entry : ingredientMaterials.entrySet())
+                    shapeless.addIngredient(shape.stream()
+                            .mapToInt(s -> s.length() - s.replace(entry.getKey().toString(), "").length())
+                            .sum(), entry.getValue());
+                return shapeless;
+            }
+            // Furnace
+            case "Furnace" -> {
+                Material source = ingredientMaterials.values().stream().findFirst().orElse(Material.AIR);
+                if (source.isAir()) {
+                    return def;
+                }
+                int exp = this.getInt(path + "Exp", 0);
+                int cookingTime = this.getInt(path + "Cooking_Time", 1);
+                FurnaceRecipe furnaceRecipe = new FurnaceRecipe(new NamespacedKey(EngineUtils.ENGINE, name),
+                        result,
+                        source,
+                        exp,
+                        cookingTime);
+                return furnaceRecipe;
+            }
+            // Shaped
+            case "Shaped" -> {
+                ShapedRecipe shaped = new ShapedRecipe(new NamespacedKey(EngineUtils.ENGINE, name), result);
+                shaped.shape(shape.stream()
+                        .map(string -> string.replace("-", " "))
+                        .toArray(String[]::new));
+                ingredientMaterials.forEach(shaped::setIngredient);
+                return shaped;
+            }
+            default -> {
+                return def;
+            }
+        }
     }
 }
