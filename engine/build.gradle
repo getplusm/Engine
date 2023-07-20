@@ -44,7 +44,7 @@ dependencies {
 }
 
 shadowJar {
-    getArchiveClassifier().set("")
+
     destinationDirectory.set(rootProject.buildDir)
 }
 
