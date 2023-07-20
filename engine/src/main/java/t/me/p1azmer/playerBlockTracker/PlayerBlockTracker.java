@@ -1,4 +1,4 @@
-package t.me.p1azmer.playerblocktracker;
+package t.me.p1azmer.playerBlockTracker;
 
 import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import org.bukkit.Bukkit;

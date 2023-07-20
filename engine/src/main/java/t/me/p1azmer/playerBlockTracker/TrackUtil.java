@@ -1,4 +1,4 @@
-package t.me.p1azmer.playerblocktracker;
+package t.me.p1azmer.playerBlockTracker;
 
 import org.bukkit.Chunk;
 import org.bukkit.block.Block;
