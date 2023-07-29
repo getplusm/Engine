@@ -15,19 +15,6 @@ import java.util.regex.Pattern;
 
 public class TimeUtil {
 
-    private static final Map<String, Long> timeUnits = new HashMap<>();
-
-    static {
-        timeUnits.put("ms", 1L);
-        timeUnits.put("s", 1000L);
-        timeUnits.put("min", 60 * 1000L);
-        timeUnits.put("h", 60 * 60 * 1000L);
-        timeUnits.put("d", 24 * 60 * 60 * 1000L);
-        timeUnits.put("w", 7 * 24 * 60 * 60 * 1000L);
-        timeUnits.put("m", 30 * 24 * 60 * 60 * 1000L);
-        timeUnits.put("y", 365 * 24 * 60 * 60 * 1000L);
-    }
-
     @NotNull
     public static String formatTime(long time) {
         long days = TimeUnit.MILLISECONDS.toDays(time);
