@@ -15,14 +15,14 @@ Maven
 <dependency>
     <groupId>com.github.getplusm</groupId>
     <artifactId>Engine</artifactId>
-    <version>2.3.2</version>
+    <version>2.3.3</version>
 </dependency>
 ```
 Gradle
 ```gradle
 maven { url = 'https://jitpack.io' }
 
-compileOnly group: 'com.github.getplusm', name: 'Engine', version: '2.3.2'
+compileOnly group: 'com.github.getplusm', name: 'Engine', version: '2.3.3'
 ```
 
 <br><br><br><br><br><br><br><br>
