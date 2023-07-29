@@ -7,6 +7,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.RecipeChoice;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.api.config.JYML;
+import t.me.p1azmer.engine.utils.StringUtil;
 
 public abstract class AbstractCookingRecipe<P extends NexPlugin<P>, T extends CookingRecipe<T>> extends CookingRecipe<T> implements IRecipe {
 
@@ -28,6 +30,10 @@ public abstract class AbstractCookingRecipe<P extends NexPlugin<P>, T extends Co
 
     public AbstractCookingRecipe(@NotNull P plugin, @NotNull String name, @NotNull CookingRecipe<T> recipe) {
         this(plugin, name, recipe.getResult(), recipe.getInputChoice(), recipe.getExperience(), recipe.getCookingTime());
+    }
+
+    public AbstractCookingRecipe(@NotNull P plugin, @NotNull JYML config, @NotNull String id, @NotNull String path) {
+        this(plugin, config.getString(path + ".Name", id), config.getItem(path + ".Result"), StringUtil.getEnum(config.getString(path + ".Material", null), Material.class).orElse(Material.AIR), config.getInt(path + ".Experience"), config.getInt(path + ".Cooking_Time"));
     }
 
     @NotNull

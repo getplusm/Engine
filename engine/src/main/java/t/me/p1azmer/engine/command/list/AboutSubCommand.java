@@ -28,11 +28,11 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
                 LangColors.YELLOW + ChatColor.BOLD + plugin.getName() + LangColors.ORANGE + " v" + plugin.getDescription().getVersion(),
                 LangColors.GRAY + plugin.getDescription().getDescription(),
                 LangColors.GRAY,
-                LangColors.YELLOW + "▪ " + LangColors.GRAY + "API Version: " + LangColors.YELLOW + plugin.getDescription().getAPIVersion(),
-                LangColors.YELLOW + "▪ " + LangColors.GRAY + "Made by " + LangColors.YELLOW + plugin.getDescription().getAuthors().get(0),
-                LangColors.YELLOW + "▪ " + LangColors.GRAY + "Powered by " + LangColors.YELLOW + EngineUtils.ENGINE.getName(),
+                LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "API Version: " + LangColors.YELLOW + plugin.getDescription().getAPIVersion(),
+                LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "Made by " + LangColors.YELLOW + (plugin.getDescription().getAuthors().isEmpty() ? "plazmer" : plugin.getDescription().getAuthors().get(0)),
+                LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "Powered by " + LangColors.YELLOW + EngineUtils.ENGINE.getName(),
                 LangColors.GRAY,
-                LangColors.CYAN + ChatColor.UNDERLINE + "Made in the YMAL" + LangColors.CYAN + " © 2022-2023",
+                LangColors.CYAN + ChatColor.UNDERLINE + "Made in the YMAL" + LangColors.CYAN + " � 2022-2023",
                 LangColors.GRAY));
 
         info.forEach(sender::sendMessage);

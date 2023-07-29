@@ -44,6 +44,7 @@ public class EngineLang implements LangColors {
     public static final LangKey ERROR_PLAYER_INVALID = LangKey.of("Error.Player.Invalid", RED + "Player not found.");
     public static final LangKey ERROR_WORLD_INVALID = LangKey.of("Error.World.Invalid", RED + "World not found.");
     public static final LangKey ERROR_NUMBER_INVALID = LangKey.of("Error.Number.Invalid", RED + "%num% is not a valid number.");
+    public static final LangKey ERROR_TIME_FORMAT_INVALID = LangKey.of("Error.Time.Format.Invalid", RED + "%time% is not a valid time format.");
     public static final LangKey ERROR_PERMISSION_DENY = LangKey.of("Error.Permission.Deny", RED + "You don't have permissions to do that!");
     public static final LangKey ERROR_COMMAND_SELF = LangKey.of("Error.Command.Self", RED + "This command is not applicable to yourself.");
     public static final LangKey ERROR_COMMAND_SENDER = LangKey.of("Error.Command.Sender", RED + "This command is for players only.");

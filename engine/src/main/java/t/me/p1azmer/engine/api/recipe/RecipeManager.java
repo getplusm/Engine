@@ -20,6 +20,9 @@ public class RecipeManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     @Override
     protected void onLoad() {
         this.recipeList.forEach(recipe -> this.plugin.getServer().addRecipe(recipe));
+        if (this.recipeList.size() != 0) {
+            this.plugin.warn("Registered '" + this.recipeList.size() + "' recipes!");
+        }
     }
 
     @Override

@@ -6,10 +6,27 @@ import t.me.p1azmer.engine.lang.EngineLang;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TimeUtil {
+
+    private static final Map<String, Long> timeUnits = new HashMap<>();
+
+    static {
+        timeUnits.put("ms", 1L);
+        timeUnits.put("s", 1000L);
+        timeUnits.put("min", 60 * 1000L);
+        timeUnits.put("h", 60 * 60 * 1000L);
+        timeUnits.put("d", 24 * 60 * 60 * 1000L);
+        timeUnits.put("w", 7 * 24 * 60 * 60 * 1000L);
+        timeUnits.put("m", 30 * 24 * 60 * 60 * 1000L);
+        timeUnits.put("y", 365 * 24 * 60 * 60 * 1000L);
+    }
 
     @NotNull
     public static String formatTime(long time) {
@@ -75,5 +92,41 @@ public class TimeUtil {
     public static long toEpochMillis(@NotNull LocalDateTime dateTime) {
         Instant instant = dateTime.atZone(TimeZone.getDefault().toZoneId()).toInstant();
         return instant.toEpochMilli();
+    }
+
+    public static long getLongTimeOf(String value) {
+        if (!value.matches("(.*)(m|w|k|n|d|p|h|t)(.*)")) {
+            return 0;
+        }
+
+        String[] list = value.split("/(,?\\s+)|((?<=[a-z])(?=\\d))|((?<=\\d)(?=[a-z]))/i");
+
+        long until = Instant.now().getEpochSecond();
+
+        for (String str : list) {
+            String name = str.replaceAll("\\d", "");
+            int nr = Integer.parseInt(str.replaceAll("\\D", ""));
+
+            if (name.equalsIgnoreCase("months") || name.equalsIgnoreCase("month")
+                    || name.equalsIgnoreCase("mon")) {
+                until += (long) nr * 60 * 60 * 24 * 7 * 4;
+            } else if (name.equalsIgnoreCase("weeks") || name.equalsIgnoreCase("week")
+                    || name.equalsIgnoreCase("w")) {
+                until += (long) nr * 60 * 60 * 24 * 7;
+            } else if (name.equalsIgnoreCase("days") || name.equalsIgnoreCase("day")
+                    || name.equalsIgnoreCase("d")) {
+                until += (long) nr * 60 * 60 * 24;
+            } else if (name.equalsIgnoreCase("hours") || name.equalsIgnoreCase("hour")
+                    || name.equalsIgnoreCase("h")) {
+                until += (long) nr * 60 * 60;
+            } else if (name.equalsIgnoreCase("minutes") || name.equalsIgnoreCase("minute")
+                    || name.equalsIgnoreCase("min") || name.equalsIgnoreCase("m")) {
+                until += nr * 60L;
+            } else if (name.equalsIgnoreCase("seconds") || name.equalsIgnoreCase("second")
+                    || name.equalsIgnoreCase("sec") || name.equalsIgnoreCase("s")) {
+                until += nr;
+            }
+        }
+        return until;
     }
 }

@@ -2,6 +2,9 @@ package t.me.p1azmer.engine.utils;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.Location;
+import org.bukkit.World;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
@@ -30,6 +33,17 @@ public class CollectionsUtil {
     @NotNull
     public static List<String> worldNames() {
         return Bukkit.getServer().getWorlds().stream().map(WorldInfo::getName).toList();
+    }
+
+    @NotNull
+    public static <T extends Entity> Collection<T> nearbyEntities(@NotNull Location location, @NotNull Class<T> type, int radius) {
+        World world = location.getWorld();
+        if (world == null) {
+            world = Bukkit.getServer().getWorlds().get(0);
+        }
+        return world.getEntitiesByClass(type).stream()
+                .filter(e -> e.getLocation().distance(location) <= radius)
+                .collect(Collectors.toSet());
     }
 
     @NotNull

@@ -17,6 +17,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.Version;
+import t.me.p1azmer.engine.api.recipe.AbstractCookingRecipe;
+import t.me.p1azmer.engine.api.recipe.IRecipe;
 import t.me.p1azmer.engine.utils.*;
 
 import java.io.File;
@@ -468,7 +470,7 @@ public class JYML extends YamlConfiguration {
         return getRecipe(path, itemFunction, def, null);
     }
 
-    @Nullable // todo rewrite for own recipes
+    @Nullable
     public Recipe getRecipe(@NotNull String path, @Nullable UnaryOperator<ItemStack> itemFunction, @Nullable Recipe def, @Nullable String name) {
         // section, shape, result, & ingredientMaterials
         final ConfigurationSection section = getConfigurationSection(path);
