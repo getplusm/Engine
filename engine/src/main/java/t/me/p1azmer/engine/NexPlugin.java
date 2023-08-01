@@ -22,6 +22,7 @@ import t.me.p1azmer.engine.lang.LangManager;
 import t.me.p1azmer.engine.utils.CollectionsUtil;
 import t.me.p1azmer.engine.utils.EngineUtils;
 import t.me.p1azmer.engine.utils.Reflex;
+import t.me.p1azmer.folia.Folia;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -64,6 +65,14 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
             if (!this.getServer().getVersion().contains("Spigot")) {
                 isPaper = true;
                 this.info("Seems like we have Paper based fork here...");
+            }
+            if (Folia.isFolia()) {
+                this.error("==================================");
+                this.error("Attention! You have launched the Folia plugin.");
+                this.error("Many functions may not work, since at the moment it is only being built to support it.");
+                this.error("If you find a bug, please report it");
+                this.error("https://github.com/getplusm/Engine/issues");
+                this.error("==================================");
             }
         } else {
             EngineUtils.ENGINE.addChildren(this);
@@ -215,7 +224,11 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     }
 
     private void unloadManagers() {
-        this.getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
+        if (Folia.isFolia()) {
+            Folia.cancelTasks(this);
+        } else {
+            this.getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
+        }
 
         this.disable();
         if (this.commandManager != null) {
@@ -293,26 +306,56 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     }
 
     public void runTask(@NotNull Consumer<BukkitTask> consumer) {
+        Runnable runnable = () -> consumer.accept(null);
+        if (Folia.isFolia()) {
+            Folia.execute(this, runnable);
+            return;
+        }
         this.getScheduler().runTask(this, consumer);
     }
 
     public void runTaskAsync(@NotNull Consumer<BukkitTask> consumer) {
+        Runnable runnable = () -> consumer.accept(null);
+        if (Folia.isFolia()) {
+            Folia.executeAsync(this, runnable);
+            return;
+        }
         this.getScheduler().runTaskAsynchronously(this, consumer);
     }
 
     public void runTaskLater(@NotNull Consumer<BukkitTask> consumer, long delay) {
+        Runnable runnable = () -> consumer.accept(null);
+        if (Folia.isFolia()) {
+            Folia.executeLater(this, runnable, delay);
+            return;
+        }
         this.getScheduler().runTaskLater(this, consumer, delay);
     }
 
     public void runTaskLaterAsync(@NotNull Consumer<BukkitTask> consumer, long delay) {
+        Runnable runnable = () -> consumer.accept(null);
+        if (Folia.isFolia()) {
+            Folia.executeLaterAsync(this, runnable, delay);
+            return;
+        }
         this.getScheduler().runTaskLaterAsynchronously(this, consumer, delay);
     }
 
     public void runTaskTimer(@NotNull Consumer<BukkitTask> consumer, long delay, long interval) {
+        Runnable runnable = () -> consumer.accept(null);
+        if (Folia.isFolia()) {
+            Folia.executeTimer(this, runnable, delay);
+            return;
+        }
         this.getScheduler().runTaskTimer(this, consumer, delay, interval);
     }
 
     public void runTaskTimerAsync(@NotNull Consumer<BukkitTask> consumer, long delay, long interval) {
+        Runnable runnable = () -> consumer.accept(null);
+        if (Folia.isFolia()) {
+            Folia.executeTimerAsync(this, runnable, delay);
+            return;
+        }
         this.getScheduler().runTaskTimerAsynchronously(this, consumer, delay, interval);
     }
 }

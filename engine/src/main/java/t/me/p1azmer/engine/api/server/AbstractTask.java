@@ -1,5 +1,6 @@
 package t.me.p1azmer.engine.api.server;
 
+import org.bukkit.Bukkit;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
 
@@ -34,6 +35,7 @@ public abstract class AbstractTask<P extends NexPlugin<P>> {
         if (this.interval <= 0L) return false;
 
         if (this.async) {
+
             this.taskId = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::action, 1L, interval).getTaskId();
         }
         else {
