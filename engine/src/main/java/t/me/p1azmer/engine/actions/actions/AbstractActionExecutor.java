@@ -7,6 +7,7 @@ import t.me.p1azmer.engine.actions.ActionManipulator;
 import t.me.p1azmer.engine.actions.Parametized;
 import t.me.p1azmer.engine.actions.params.IParamResult;
 import t.me.p1azmer.engine.actions.params.IParamType;
+import t.me.p1azmer.folia.Folia;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -35,13 +36,15 @@ public abstract class AbstractActionExecutor extends Parametized {
         if (fullStr.contains(FLAG_NO_DELAY)) {
             fullStr = fullStr.replace(FLAG_NO_DELAY, "");
         } else if (result.hasParam(IParamType.DELAY)) {
-            int          delay    = result.getParamValue(IParamType.DELAY).getInt(0);
+            int delay = result.getParamValue(IParamType.DELAY).getInt(0);
             final String fullStr2 = fullStr;
 
             if (delay > 0) {
-                plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-                    this.process(exe, targetMap, fullStr2 + FLAG_NO_DELAY, manipulator);
-                }, delay);
+                if (NexPlugin.isFolia) {
+                    Folia.executeLater(() -> this.process(exe, targetMap, fullStr2 + FLAG_NO_DELAY, manipulator), delay);
+                    return;
+                }
+                plugin.getServer().getScheduler().runTaskLater(plugin, () -> this.process(exe, targetMap, fullStr2 + FLAG_NO_DELAY, manipulator), delay);
                 return;
             }
         }
@@ -52,7 +55,7 @@ public abstract class AbstractActionExecutor extends Parametized {
         }
 
         Set<Entity> targets = new HashSet<>();
-        String[]    tsSplit = result.getParamValue(IParamType.TARGET).getString("").split(",");
+        String[] tsSplit = result.getParamValue(IParamType.TARGET).getString("").split(",");
         for (String ts : tsSplit) {
             if (ts.isEmpty()) continue;
             ts = ts.toLowerCase();
