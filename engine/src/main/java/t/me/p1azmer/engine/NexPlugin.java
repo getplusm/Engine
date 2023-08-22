@@ -227,12 +227,6 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     }
 
     private void unloadManagers() {
-        if (isFolia) {
-            Folia.shutdown();
-        } else {
-            this.getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
-        }
-
         this.disable();
         if (this.commandManager != null) {
             this.commandManager.shutdown();
@@ -253,6 +247,12 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
         this.getConfigManager().shutdown();
         this.getLangManager().shutdown();
+
+        if (isFolia) {
+            Folia.shutdown();
+        } else {
+            this.getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
+        }
     }
 
     @NotNull

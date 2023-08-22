@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class LocationUtil {
 
@@ -150,5 +151,10 @@ public class LocationUtil {
         origin.setDirection(target.subtract(origin.toVector()));
 
         return origin.getDirection();
+    }
+
+    public static <T extends Entity> Collection<T> getNearbyEntities(@NotNull Location location, @NotNull Class<T> type, int radius) {
+        @NotNull World world = Objects.requireNonNull(location.getWorld(), "World of location is null, " + location);
+        return world.getEntitiesByClass(type).stream().filter(e -> e.getLocation().distance(location) <= radius).collect(Collectors.toSet());
     }
 }

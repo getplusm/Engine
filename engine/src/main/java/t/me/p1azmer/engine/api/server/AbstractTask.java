@@ -56,7 +56,8 @@ public abstract class AbstractTask<P extends NexPlugin<P>> {
         if (this.taskId < 0) return false;
 
         if (NexPlugin.isFolia) {
-            Folia.getMorePaperLib().scheduling().cancelTask(this.taskId);
+            if (Folia.getMorePaperLib() != null)
+                Folia.getMorePaperLib().scheduling().cancelTask(this.taskId);
         } else {
             this.plugin.getServer().getScheduler().cancelTask(this.taskId);
         }

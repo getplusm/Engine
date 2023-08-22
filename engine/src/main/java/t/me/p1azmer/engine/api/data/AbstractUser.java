@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.api.data.event.EngineUserSaveEvent;
 
 import java.util.UUID;
 
@@ -27,7 +28,6 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
     }
 
     public void onLoad() {
-
     }
 
     public void onUnload() {
@@ -40,7 +40,12 @@ public abstract class AbstractUser<P extends NexPlugin<P>> {
 
     @SuppressWarnings("unchecked")
     public <U extends AbstractUser<P>> void saveData(@NotNull UserDataHolder<P, U> dataHolder) {
-        this.plugin.runTaskAsync(task -> dataHolder.getData().saveUser((U) this));
+        EngineUserSaveEvent<P, U> event = new EngineUserSaveEvent<>((U) this);
+        plugin.getPluginManager().callEvent(event);
+        if (event.getWaitTime() > 0)
+            this.plugin.runTaskLaterAsync(task -> dataHolder.getData().saveUser((U) this), event.getWaitTime());
+        else
+            this.plugin.runTaskAsync(task -> dataHolder.getData().saveUser((U) this));
     }
 
     public boolean isRecentlyCreated() {

@@ -1,6 +1,7 @@
 package t.me.p1azmer.folia;
 
 import org.bukkit.plugin.Plugin;
+import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.folia.scheduling.GracefulScheduling;
 
 import java.util.Objects;
@@ -12,6 +13,7 @@ import java.util.Objects;
 public class MorePaperLib {
 
     private final Plugin plugin;
+    private GracefulScheduling scheduling;
 
     /**
      * Creates from a {@code Plugin} to use
@@ -55,8 +57,11 @@ public class MorePaperLib {
      *
      * @return the scheduling wrapper
      */
+    @NotNull
     public GracefulScheduling scheduling() {
-        return new GracefulScheduling(this);
+        if (this.scheduling == null)
+            this.scheduling = new GracefulScheduling(this);
+        return this.scheduling;
     }
 
 }

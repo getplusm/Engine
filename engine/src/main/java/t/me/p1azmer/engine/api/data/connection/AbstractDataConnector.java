@@ -8,7 +8,7 @@ import t.me.p1azmer.engine.NexPlugin;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.Properties;
+import java.util.UUID;
 
 public abstract class AbstractDataConnector {
 
@@ -37,6 +37,7 @@ public abstract class AbstractDataConnector {
         if (this instanceof ConnectorSQLite) {
             this.config.setMaximumPoolSize(1);
         }
+        this.config.setPoolName(plugin.getName() + "-" + UUID.randomUUID().toString().substring(3, 5));
         this.dataSource = new HikariDataSource(this.config);
     }
 

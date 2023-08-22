@@ -2,6 +2,7 @@ package t.me.p1azmer.folia;
 
 import org.bukkit.plugin.Plugin;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.folia.scheduling.ScheduledTask;
 
 public final class Folia {
@@ -12,27 +13,34 @@ public final class Folia {
         return CONFIG_EXISTS;
     }
 
-    public static void setup(@NotNull Plugin plugin) {
-        morePaperLib = new MorePaperLib(plugin);
+    public static void setup(@NotNull Plugin nexPlugin) {
+        morePaperLib = new MorePaperLib(nexPlugin);
     }
 
     public static void shutdown() {
-        morePaperLib.scheduling().cancelGlobalTasks();
+        if (morePaperLib != null) {
+            morePaperLib.scheduling().cancelGlobalTasks();
+            morePaperLib = null;
+        }
     }
 
     public static ScheduledTask execute(@NotNull Runnable runnable) {
+        if (morePaperLib == null) return null;
         return morePaperLib.scheduling().globalRegionalScheduler().run(runnable);
     }
 
     public static ScheduledTask executeAsync(@NotNull Runnable runnable) {
+        if (morePaperLib == null) return null;
         return morePaperLib.scheduling().asyncScheduler().run(runnable);
     }
 
     public static ScheduledTask executeLater(@NotNull Runnable runnable, long delay) {
+        if (morePaperLib == null) return null;
         return morePaperLib.scheduling().globalRegionalScheduler().runDelayed(runnable, delay);
     }
 
     public static ScheduledTask executeLaterAsync(@NotNull Runnable runnable, long delay) {
+        if (morePaperLib == null) return null;
         return morePaperLib.scheduling().asyncScheduler().runDelayed(runnable, delay);
     }
 
@@ -41,6 +49,7 @@ public final class Folia {
     }
 
     public static ScheduledTask executeTimer(@NotNull Runnable runnable, long delay, long period) {
+        if (morePaperLib == null) return null;
         return morePaperLib.scheduling().globalRegionalScheduler().runAtFixedRate(runnable, delay, period);
     }
 
@@ -49,13 +58,11 @@ public final class Folia {
     }
 
     public static ScheduledTask executeTimerAsync(@NotNull Runnable runnable, long delay, long period) {
+        if (morePaperLib == null) return null;
         return morePaperLib.scheduling().asyncScheduler().runAtFixedRate(runnable, delay, period);
     }
 
-    public static void cancelTasks() {
-        morePaperLib.scheduling().cancelGlobalTasks();
-    }
-
+    @Nullable
     public static MorePaperLib getMorePaperLib() {
         return morePaperLib;
     }
