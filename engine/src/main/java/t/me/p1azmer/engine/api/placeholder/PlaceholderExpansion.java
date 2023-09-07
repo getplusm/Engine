@@ -81,6 +81,10 @@ public class PlaceholderExpansion<P extends NexPlugin<P>> extends me.clip.placeh
         return super.unregister();
     }
 
+    public void addPlaceholder(@NotNull Placeholder placeholder){
+        this.placeholders.add(placeholder);
+    }
+
     @Override
     public String onPlaceholderRequest(Player one, Player two, String params) {
         if (one == null || two == null) return null;

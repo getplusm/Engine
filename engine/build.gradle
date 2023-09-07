@@ -1,7 +1,7 @@
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.20-R0.1-SNAPSHOT'
 
-    implementation 'org.jetbrains:annotations:19.0.0'
+    implementation 'org.jetbrains:annotations:24.0.1'
     compileOnly 'com.google.guava:guava:31.1-jre'
 
     compileOnly 'org.slf4j:slf4j-api:1.7.32'
@@ -46,7 +46,7 @@ dependencies {
 }
 
 shadowJar {
-
+    relocate("org.jetbrains", "t.me.p1azmer.libs.org.jetbrains")
     destinationDirectory.set(rootProject.buildDir)
 }
 
