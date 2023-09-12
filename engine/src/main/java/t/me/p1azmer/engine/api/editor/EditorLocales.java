@@ -8,10 +8,10 @@ import java.util.List;
 
 public class EditorLocales implements LangColors {
 
-    public static final EditorLocale CLOSE = EditorLocale.of("Editor.Generic.Close", "#FF5733(✕) &lExit");
-    public static final EditorLocale RETURN = EditorLocale.of("Editor.Generic.Return", "#ffee9a(↓) &fReturn");
-    public static final EditorLocale NEXT_PAGE = EditorLocale.of("Editor.Generic.NextPage", "#e3fbf9(→) &lNext Page");
-    public static final EditorLocale PREVIOUS_PAGE = EditorLocale.of("Editor.Generic.PreviousPage", "#e3fbf9(←) &lPrevious Page");
+    public static final EditorLocale CLOSE = EditorLocale.of("Editor.Generic.Close", "#FF5733(\u2715) &lExit");
+    public static final EditorLocale RETURN = EditorLocale.of("Editor.Generic.Return", "#ffee9a(\u2193) &fReturn");
+    public static final EditorLocale NEXT_PAGE = EditorLocale.of("Editor.Generic.NextPage", "#e3fbf9(\u2192) &lNext Page");
+    public static final EditorLocale PREVIOUS_PAGE = EditorLocale.of("Editor.Generic.PreviousPage", "#e3fbf9(\u2190) &lPrevious Page");
 
     @NotNull
     protected static Builder builder(@NotNull String key) {
@@ -58,7 +58,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder current(@NotNull String type, @NotNull String value) {
-            return this.addLore(YELLOW + "▪ " + GRAY, type + ": " + YELLOW + value);
+            return this.addLore(YELLOW + "\u25aa " + GRAY, type + ": " + YELLOW + value);
         }
 
         @NotNull
@@ -68,7 +68,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder warning(@NotNull String... info) {
-            return this.addLore(RED + "▪ " + GRAY, info);
+            return this.addLore(RED + "\u25aa " + GRAY, info);
         }
 
         @NotNull
@@ -78,7 +78,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder notes(@NotNull String... info) {
-            return this.addLore(ORANGE + "▪ " + GRAY, info);
+            return this.addLore(ORANGE + "\u25aa " + GRAY, info);
         }
 
         @NotNull
@@ -88,7 +88,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder action(@NotNull String click, @NotNull String action) {
-            return this.addLore(GREEN + "▪ " + GRAY, click + ": " + GREEN + action);
+            return this.addLore(GREEN + "\u25aa " + GRAY, click + ": " + GREEN + action);
         }
 
         @NotNull

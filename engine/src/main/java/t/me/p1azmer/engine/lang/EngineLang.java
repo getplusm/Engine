@@ -20,7 +20,7 @@ public class EngineLang implements LangColors {
                     "\n" + GRAY +
                     "\n" + RED + "&l<> " + GRAY + "- Required, " + GREEN + "&l[] " + GRAY + "- Optional." +
                     "\n" + GRAY +
-                    "\n" + LIGHT_YELLOW + "▪ " + YELLOW + "/" + Placeholders.COMMAND_LABEL + " " + LIGHT_YELLOW + Placeholders.COMMAND_USAGE + " " + GRAY + "- " + Placeholders.COMMAND_DESCRIPTION +
+                    "\n" + LIGHT_YELLOW + "\u25aa " + YELLOW + "/" + Placeholders.COMMAND_LABEL + " " + LIGHT_YELLOW + Placeholders.COMMAND_USAGE + " " + GRAY + "- " + Placeholders.COMMAND_DESCRIPTION +
                     "\n" + GRAY);
     public static final LangKey COMMAND_HELP_DESC = LangKey.of("Command.Help.Desc", "Show help page.");
     public static final LangKey COMMAND_ABOUT_DESC = LangKey.of("Command.About.Desc", "Some info about the plugin.");
@@ -39,7 +39,7 @@ public class EngineLang implements LangColors {
     public static final LangKey OTHER_NEVER = LangKey.of("Other.Never", "Never");
     public static final LangKey OTHER_ONE_TIMED = LangKey.of("Other.OneTimed", "One-Timed");
     public static final LangKey OTHER_UNLIMITED = LangKey.of("Other.Unlimited", "Unlimited");
-    public static final LangKey OTHER_INFINITY = LangKey.of("Other.Infinity", "?");
+    public static final LangKey OTHER_INFINITY = LangKey.of("Other.Infinity", "\u221e");
 
     public static final LangKey ERROR_PLAYER_INVALID = LangKey.of("Error.Player.Invalid", RED + "Player not found.");
     public static final LangKey ERROR_WORLD_INVALID = LangKey.of("Error.World.Invalid", RED + "World not found.");
