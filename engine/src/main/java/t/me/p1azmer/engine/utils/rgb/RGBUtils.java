@@ -1,6 +1,7 @@
 package t.me.p1azmer.engine.utils.rgb;
 
 import com.google.common.base.Preconditions;
+import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.utils.rgb.format.*;
 import t.me.p1azmer.engine.utils.rgb.gradient.CMIGradient;
 import t.me.p1azmer.engine.utils.rgb.gradient.CommonGradient;
@@ -84,8 +85,8 @@ public class RGBUtils {
      * @param text original text
      * @return text where everything is converted to #RRGGBB
      */
-    public String applyFormats(String text) {
-        Preconditions.checkNotNull(text, "text");
+    public String applyFormats(@NotNull String text) {
+        Preconditions.checkNotNull(text, "text for rgb is empty");
         String replaced = text;
         for (GradientPattern pattern : gradients) {
             replaced = pattern.applyPattern(replaced, false);

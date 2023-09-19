@@ -203,7 +203,7 @@ public class ActionManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         this.registerCondition(new Condition_VaultBalance(this.plugin));
         this.registerCondition(new Condition_EntityHealth(this.plugin));
         this.registerCondition(new Condition_EntityType(this.plugin));
-        this.registerCondition(new Condition_Group(this.plugin));
+//        this.registerCondition(new Condition_Group(this.plugin)); old custom group request
 
         // EXECUTORS //
         this.registerExecutor(new Action_ActionBar(this.plugin));
