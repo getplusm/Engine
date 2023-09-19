@@ -14,8 +14,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import t.me.p1azmer.engine.api.server.JGroup;
-import t.me.p1azmer.engine.config.EngineConfig;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;
@@ -276,14 +274,6 @@ public class LuckpermsHook {
             return group;
         }
         return getPlugin().getGroupManager().getGroup(user.getPrimaryGroup());
-    }
-
-    public static JGroup getCustomGroup(Player player) {
-        return EngineConfig.getGroup(getPrimaryGroup(player).getName());
-    }
-
-    public static JGroup getCustomGroup(UUID uuid) {
-        return EngineConfig.getGroup(getPrimaryGroup(uuid).getName());
     }
 
     private static UUID offlineUUID(String name) {

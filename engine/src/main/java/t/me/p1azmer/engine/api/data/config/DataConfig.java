@@ -61,7 +61,8 @@ public class DataConfig {
 
         this.sqliteFilename = JOption.create(path + "SQLite.FileName", "data.db",
                         "File name for the database file.",
-                        "Actually it's a path to the file, so you can use directories here.")
+                        "Actually it's a path to the file, so you can use directories here.",
+                        "You can change the file's location by adding @path= at the beginning of the file.")
                 .read(cfg);
 
         path = "Database.Purge.";

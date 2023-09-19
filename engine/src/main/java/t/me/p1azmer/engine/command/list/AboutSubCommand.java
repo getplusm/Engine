@@ -26,13 +26,13 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
         List<String> info = Colorizer.apply(Arrays.asList(
                 LangColors.GRAY,
                 LangColors.YELLOW + ChatColor.BOLD + plugin.getName() + LangColors.ORANGE + " v" + plugin.getDescription().getVersion(),
-                LangColors.GRAY + plugin.getDescription().getDescription(),
+                LangColors.GRAY + (plugin.getDescription().getDescription() == null || plugin.getDescription().getDescription().isEmpty() ? "Description to come later" : plugin.getDescription().getDescription()),
                 LangColors.GRAY,
                 LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "API Version: " + LangColors.YELLOW + plugin.getDescription().getAPIVersion(),
                 LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "Made by " + LangColors.YELLOW + (plugin.getDescription().getAuthors().isEmpty() ? "plazmer" : plugin.getDescription().getAuthors().get(0)),
                 LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "Powered by " + LangColors.YELLOW + EngineUtils.ENGINE.getName(),
                 LangColors.GRAY,
-                LangColors.CYAN + ChatColor.UNDERLINE + "Made in the YMAL" + LangColors.CYAN + " © 2022-2023",
+                LangColors.CYAN + ChatColor.UNDERLINE + "made in YAMAL" + LangColors.CYAN + " © 2022-2023",
                 LangColors.GRAY));
 
         info.forEach(sender::sendMessage);

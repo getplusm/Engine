@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.regex.Pattern;
 import java.util.stream.Stream;
 
 public class FileUtil {
@@ -84,5 +85,34 @@ public class FileUtil {
             }
         }
         return dir.delete();
+    }
+
+    @NotNull
+    public static File resolveRelative(@NotNull File file) {
+        if (!file.exists()) {
+            return new File(relativize(file.getPath()));
+        }
+        return file;
+    }
+
+    @NotNull
+    public static String relativize(@NotNull String path) {
+        String[] split = path.split(Pattern.quote(File.separator));
+        StringBuilder out = new StringBuilder();
+        int skip = 0;
+        int len = split.length - 1;
+        for (int i = len; i >= 0; i--) {
+            if (skip > 0) {
+                skip--;
+            } else {
+                String arg = split[i];
+                if (arg.equals("..")) {
+                    skip++;
+                } else {
+                    out.insert(0, arg + (i == len ? "" : File.separator));
+                }
+            }
+        }
+        return out.toString();
     }
 }
