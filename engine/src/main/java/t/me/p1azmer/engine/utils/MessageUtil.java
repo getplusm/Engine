@@ -24,9 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexEngine;
-import t.me.p1azmer.engine.api.lang.LangColors;
 import t.me.p1azmer.engine.api.manager.AbstractListener;
-import t.me.p1azmer.engine.integration.Hooks;
 import t.me.p1azmer.engine.integration.external.VaultHook;
 import t.me.p1azmer.engine.utils.message.NexParser;
 import t.me.p1azmer.engine.utils.regex.RegexUtil;
@@ -205,49 +203,49 @@ public class MessageUtil {
     public static void debug(@NotNull Player player, @NotNull String... message) {
         if (!player.isOp()) return;
         for (String text : message) {
-            player.sendMessage(Colorizer.apply(LangColors.GRAY + "[debug] | " + LangColors.YELLOW + text));
+            player.sendMessage(Colorizer.apply(Colors.GRAY + "[debug] | " + Colors.YELLOW + text));
         }
     }
 
     public static void debug(@NotNull Player player, @NotNull Object prefix, @NotNull String... message) {
         if (!player.isOp()) return;
         for (String text : message) {
-            player.sendMessage(Colorizer.apply(LangColors.GRAY + "[" + LangColors.RED + prefix + LangColors.GRAY + "-debug] | " + LangColors.YELLOW + text));
+            player.sendMessage(Colorizer.apply(Colors.GRAY + "[" + Colors.RED + prefix + Colors.GRAY + "-debug] | " + Colors.YELLOW + text));
         }
     }
 
     public static void debug(@NotNull Player player, @NotNull String message) {
         if (!player.isOp()) return;
-        player.sendMessage(Colorizer.apply(LangColors.GRAY + "[debug] | " + LangColors.YELLOW + message));
+        player.sendMessage(Colorizer.apply(Colors.GRAY + "[debug] | " + Colors.YELLOW + message));
     }
 
     public static void debug(@NotNull Player player, @NotNull Object prefix, @NotNull String message) {
         if (!player.isOp()) return;
-        player.sendMessage(Colorizer.apply(LangColors.GRAY + "[" + LangColors.RED + prefix + LangColors.GRAY + "-debug] | " + LangColors.YELLOW + message));
+        player.sendMessage(Colorizer.apply(Colors.GRAY + "[" + Colors.RED + prefix + Colors.GRAY + "-debug] | " + Colors.YELLOW + message));
     }
 
     public static void debug(@NotNull LivingEntity entity, @NotNull String... message) {
         if (!entity.isOp()) return;
         for (String text : message) {
-            entity.sendMessage(Colorizer.apply(LangColors.GRAY + "[debug] | " + LangColors.YELLOW + text));
+            entity.sendMessage(Colorizer.apply(Colors.GRAY + "[debug] | " + Colors.YELLOW + text));
         }
     }
 
     public static void debug(@NotNull LivingEntity entity, @NotNull Object prefix, @NotNull String... message) {
         if (!entity.isOp()) return;
         for (String text : message) {
-            entity.sendMessage(Colorizer.apply(LangColors.GRAY + "[" + LangColors.RED + prefix + LangColors.GRAY + "-debug] | " + LangColors.YELLOW + text));
+            entity.sendMessage(Colorizer.apply(Colors.GRAY + "[" + Colors.RED + prefix + Colors.GRAY + "-debug] | " + Colors.YELLOW + text));
         }
     }
 
     public static void debug(@NotNull LivingEntity entity, @NotNull String message) {
         if (!entity.isOp()) return;
-        entity.sendMessage(Colorizer.apply(LangColors.GRAY + "[debug] | " + LangColors.YELLOW + message));
+        entity.sendMessage(Colorizer.apply(Colors.GRAY + "[debug] | " + Colors.YELLOW + message));
     }
 
     public static void debug(@NotNull LivingEntity entity, @NotNull Object prefix, @NotNull String message) {
         if (!entity.isOp()) return;
-        entity.sendMessage(Colorizer.apply(LangColors.GRAY + "[" + LangColors.RED + prefix + LangColors.GRAY + "-debug] | " + LangColors.YELLOW + message));
+        entity.sendMessage(Colorizer.apply(Colors.GRAY + "[" + Colors.RED + prefix + Colors.GRAY + "-debug] | " + Colors.YELLOW + message));
     }
 
     public static void debug(@NotNull Object prefix, @NotNull String message) {

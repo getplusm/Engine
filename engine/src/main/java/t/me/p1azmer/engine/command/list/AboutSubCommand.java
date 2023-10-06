@@ -6,13 +6,14 @@ import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.api.command.AbstractCommand;
 import t.me.p1azmer.engine.api.command.CommandResult;
-import t.me.p1azmer.engine.api.lang.LangColors;
 import t.me.p1azmer.engine.lang.EngineLang;
 import t.me.p1azmer.engine.utils.Colorizer;
 import t.me.p1azmer.engine.utils.EngineUtils;
 
 import java.util.Arrays;
 import java.util.List;
+
+import static t.me.p1azmer.engine.utils.Colors.*;
 
 public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
@@ -24,16 +25,16 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
     @Override
     protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
         List<String> info = Colorizer.apply(Arrays.asList(
-                LangColors.GRAY,
-                LangColors.YELLOW + ChatColor.BOLD + plugin.getName() + LangColors.ORANGE + " v" + plugin.getDescription().getVersion(),
-                LangColors.GRAY + (plugin.getDescription().getDescription() == null || plugin.getDescription().getDescription().isEmpty() ? "Description to come later" : plugin.getDescription().getDescription()),
-                LangColors.GRAY,
-                LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "API Version: " + LangColors.YELLOW + plugin.getDescription().getAPIVersion(),
-                LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "Made by " + LangColors.YELLOW + (plugin.getDescription().getAuthors().isEmpty() ? "plazmer" : plugin.getDescription().getAuthors().get(0)),
-                LangColors.YELLOW + "\u25aa " + LangColors.GRAY + "Powered by " + LangColors.YELLOW + EngineUtils.ENGINE.getName(),
-                LangColors.GRAY,
-                LangColors.CYAN + ChatColor.UNDERLINE + "made in YAMAL" + LangColors.CYAN + " © 2022-2023",
-                LangColors.GRAY));
+                GRAY,
+                YELLOW + ChatColor.BOLD + plugin.getName() + ORANGE + " v" + plugin.getDescription().getVersion(),
+                GRAY + (plugin.getDescription().getDescription() == null || plugin.getDescription().getDescription().isEmpty() ? "Description to come later" : plugin.getDescription().getDescription()),
+                GRAY,
+                YELLOW + "\u25aa " + GRAY + "API Version: " + YELLOW + plugin.getDescription().getAPIVersion(),
+                YELLOW + "\u25aa " + GRAY + "Made by " + YELLOW + (plugin.getDescription().getAuthors().isEmpty() ? "plazmer" : plugin.getDescription().getAuthors().get(0)),
+                YELLOW + "\u25aa " + GRAY + "Powered by " + YELLOW + EngineUtils.ENGINE.getName(),
+                GRAY,
+                CYAN + ChatColor.UNDERLINE + "made in YAMAL" + CYAN + " © 2022-2023",
+                GRAY));
 
         info.forEach(sender::sendMessage);
     }

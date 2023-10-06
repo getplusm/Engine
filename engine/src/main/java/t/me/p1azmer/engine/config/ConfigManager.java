@@ -12,6 +12,9 @@ import t.me.p1azmer.engine.utils.ResourceExtractor;
 import java.io.File;
 import java.io.IOException;
 
+import static t.me.p1azmer.engine.utils.Colors.GRAY;
+import static t.me.p1azmer.engine.utils.Colors.YELLOW;
+
 public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     private JYML config;
@@ -35,7 +38,7 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
                         "Localized plugin name. It's used in messages and with internal placeholders.")
                 .read(config);
 
-        this.pluginPrefix = JOption.create("Plugin.Prefix", "&e" + Placeholders.PLUGIN_NAME + " &8» &7",
+        this.pluginPrefix = JOption.create("Plugin.Prefix", YELLOW + Placeholders.PLUGIN_NAME + GRAY + " » ",
                         "Plugin prefix. Used in messages.",
                         "You can use " + Placeholders.PLUGIN_NAME_LOCALIZED + " placeholder for a plugin name.")
                 .read(config).replace(Placeholders.PLUGIN_NAME, this.pluginName);

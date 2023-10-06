@@ -9,7 +9,7 @@ import t.me.p1azmer.engine.actions.actions.AbstractActionExecutor;
 import t.me.p1azmer.engine.actions.actions.ActionType;
 import t.me.p1azmer.engine.actions.params.IParamResult;
 import t.me.p1azmer.engine.actions.params.IParamType;
-import t.me.p1azmer.engine.api.particle.SimpleParticle;
+import t.me.p1azmer.engine.utils.values.UniParticle;
 
 import java.util.Set;
 
@@ -40,8 +40,8 @@ public class Action_ParticleSimple extends AbstractActionExecutor {
 
         float speed = (float) result.getParamValue(IParamType.SPEED).getDouble(0.1);
 
-        SimpleParticle simpleParticle = SimpleParticle.of(name);
-        if (simpleParticle == null) return;
+        UniParticle uniParticle = UniParticle.of(name);
+        if (uniParticle == null) return;
 
         for (Entity e : targets) {
             Location loc;
@@ -49,7 +49,7 @@ public class Action_ParticleSimple extends AbstractActionExecutor {
                 loc = ((LivingEntity) e).getEyeLocation();
             } else loc = e.getLocation();
 
-            simpleParticle.play(loc, offset[0], offset[1], offset[2], speed, amount);
+            uniParticle.play(loc, offset[0], offset[1], offset[2], speed, amount);
         }
     }
 

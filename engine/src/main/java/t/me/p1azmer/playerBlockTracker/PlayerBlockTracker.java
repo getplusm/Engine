@@ -10,6 +10,7 @@ import org.bukkit.block.BlockFace;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.utils.EngineUtils;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -22,10 +23,10 @@ public final class PlayerBlockTracker {
 
     private static TrackListener<?> listener;
 
-    public static <P extends NexPlugin<P>> void initialize(@NotNull P plugin) {
+    public static void initialize() {
         if (listener == null) {
             initCurrentlyLoadedWorlds();
-            (listener = new TrackListener<>(plugin)).registerListeners();
+            (listener = new TrackListener<>(EngineUtils.ENGINE)).registerListeners();
         }
     }
 

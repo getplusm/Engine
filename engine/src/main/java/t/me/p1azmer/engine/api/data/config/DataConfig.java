@@ -20,13 +20,6 @@ public class DataConfig {
     public String mysqlPassword;
     public String mysqlHost;
     public String mysqlBase;
-    public String mysqlParameters;
-
-    public int mysqlSize;
-    public int mysqlIdle;
-    public long mysqlLifetime;
-    public long mysqlKeepalive;
-    public long mysqlTimeout;
     public String sqliteFilename;
 
     public DataConfig(@NotNull JYML cfg) {

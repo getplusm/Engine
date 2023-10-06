@@ -33,6 +33,7 @@ public abstract class AbstractDataConnector {
         this.config.addDataSourceProperty("cachePrepStmts", "true");
         this.config.addDataSourceProperty("prepStmtCacheSize", "250");
         this.config.addDataSourceProperty("prepStmtCacheSqlLimit", "2048");
+
         // SQLite don't need more than 1 active connection.
         if (this instanceof ConnectorSQLite) {
             this.config.setMaximumPoolSize(1);

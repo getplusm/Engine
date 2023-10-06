@@ -1,26 +1,30 @@
 package t.me.p1azmer.engine.lang;
 
-import t.me.p1azmer.engine.api.lang.LangColors;
 import t.me.p1azmer.engine.api.lang.LangKey;
 import t.me.p1azmer.engine.editor.EditorManager;
 import t.me.p1azmer.engine.utils.Placeholders;
 
-public class EngineLang implements LangColors {
+import static t.me.p1azmer.engine.utils.Colors.*;
+import static t.me.p1azmer.engine.utils.Placeholders.*;
 
+public class EngineLang {
+
+    public static final String NO_PREFIX = "<! prefix:\"false\" !>";
     public static final LangKey COMMAND_USAGE = LangKey.of("Command.Usage",
             "<! prefix:\"false\" !>" +
                     "\n" + GRAY +
                     "\n" + RED + "Error: " + GRAY + "Wrong arguments!" +
-                    "\n" + RED + "Usage: " + YELLOW + "/" + Placeholders.COMMAND_LABEL + " " + LIGHT_YELLOW + Placeholders.COMMAND_USAGE +
+                    "\n" + RED + "Usage: " + YELLOW + "/" + COMMAND_LABEL + " " + ORANGE + Placeholders.COMMAND_USAGE +
                     "\n" + GRAY);
+
     public static final LangKey COMMAND_HELP_LIST = LangKey.of("Command.Help.List",
             "<! prefix:\"false\" !>" +
                     "\n" + GRAY +
-                    "\n" + YELLOW + "&l" + Placeholders.PLUGIN_NAME_LOCALIZED + GRAY + " - " + YELLOW + "&lCommands:" +
+                    "\n" + "  " + YELLOW + BOLD + PLUGIN_NAME_LOCALIZED + GRAY + " - " + YELLOW + BOLD + "Commands:" +
                     "\n" + GRAY +
-                    "\n" + RED + "&l<> " + GRAY + "- Required, " + GREEN + "&l[] " + GRAY + "- Optional." +
+                    "\n" + "  " + RED + BOLD + "<> " + GRAY + "- Required, " + GREEN + BOLD + "[] " + GRAY + "- Optional." +
                     "\n" + GRAY +
-                    "\n" + LIGHT_YELLOW + "\u25aa " + YELLOW + "/" + Placeholders.COMMAND_LABEL + " " + LIGHT_YELLOW + Placeholders.COMMAND_USAGE + " " + GRAY + "- " + Placeholders.COMMAND_DESCRIPTION +
+                    "\n" + "  " + YELLOW + "/" + COMMAND_LABEL + " " + ORANGE + Placeholders.COMMAND_USAGE + " " + GRAY + "- " + COMMAND_DESCRIPTION +
                     "\n" + GRAY);
     public static final LangKey COMMAND_HELP_DESC = LangKey.of("Command.Help.Desc", "Show help page.");
     public static final LangKey COMMAND_ABOUT_DESC = LangKey.of("Command.About.Desc", "Some info about the plugin.");
@@ -46,19 +50,19 @@ public class EngineLang implements LangColors {
     public static final LangKey ERROR_NUMBER_INVALID = LangKey.of("Error.Number.Invalid", RED + "%num% is not a valid number.");
     public static final LangKey ERROR_TIME_FORMAT_INVALID = LangKey.of("Error.Time.Format.Invalid", RED + "%time% is not a valid time format.");
     public static final LangKey ERROR_PERMISSION_DENY = LangKey.of("Error.Permission.Deny", RED + "You don't have permissions to do that!");
-    public static final LangKey ERROR_COMMAND_SELF = LangKey.of("Error.Command.Self", RED + "This command is not applicable to yourself.");
+    public static final LangKey ERROR_COMMAND_SELF = LangKey.of("Error.Command.Self", RED + "This command can not be used on yourself.");
     public static final LangKey ERROR_COMMAND_SENDER = LangKey.of("Error.Command.Sender", RED + "This command is for players only.");
 
-    public static final LangKey ERROR_INVENTORY_IS_FULL = LangKey.of("Error.Player.Inventory.Full", RED+"Your Inventory &lis full"+RED+"!");
-    public static final LangKey ERROR_ITEMS_DROP_UNDER_YOU = LangKey.of("Error.Player.Item.Drop.Under.You", RED+"Items &ldrop to the ground"+RED+"!");
+    public static final LangKey ERROR_INVENTORY_IS_FULL = LangKey.of("Error.Player.Inventory.Full", RED + "Your Inventory &lis full" + RED + "!");
+    public static final LangKey ERROR_ITEMS_DROP_UNDER_YOU = LangKey.of("Error.Player.Item.Drop.Under.You", RED + "Items &ldrop to the ground" + RED + "!");
 
     public static final LangKey EDITOR_TIP_EXIT = LangKey.of("Editor.Tip.Exit",
             "<! prefix:\"false\" !>" +
                     "<? showText:\"" + GRAY + "Click me or type " + RED + EditorManager.EXIT + "\" run_command:\"/" + EditorManager.EXIT + "\" ?>" + GRAY + "Click here to " + RED + "[Exit Edit Mode]</>");
-    public static final LangKey EDITOR_TITLE_DONE = LangKey.of("Editor.Title.Done", "&a&lDone!");
-    public static final LangKey EDITOR_TITLE_EDIT = LangKey.of("Editor.Title.Edit", "&a&l< Edit Mode >");
-    public static final LangKey EDITOR_TITLE_ERROR = LangKey.of("Editor.Title.Error", "&c&lError!");
-    public static final LangKey EDITOR_ERROR_NUMBER_GENERIC = LangKey.of("Editor.Error.Number.Generic", "&7Invalid number!");
-    public static final LangKey EDITOR_ERROR_NUMBER_NOT_INT = LangKey.of("Editor.Error.Number.NotInt", "&7Number must be &cInteger&7!");
-    public static final LangKey EDITOR_ERROR_ENUM = LangKey.of("Editor.Error.Enum", "&7Invalid type! See in chat.");
+    public static final LangKey EDITOR_TITLE_DONE = LangKey.of("Editor.Title.Done", GREEN + BOLD + "Done!");
+    public static final LangKey EDITOR_TITLE_EDIT = LangKey.of("Editor.Title.Edit", GREEN + BOLD + "< Edit Mode >");
+    public static final LangKey EDITOR_TITLE_ERROR = LangKey.of("Editor.Title.Error", RED + BOLD + "Error!");
+    public static final LangKey EDITOR_ERROR_NUMBER_GENERIC = LangKey.of("Editor.Error.Number.Generic", GRAY + "Invalid number!");
+    public static final LangKey EDITOR_ERROR_NUMBER_NOT_INT = LangKey.of("Editor.Error.Number.NotInt", GRAY + "Expecting " + RED + "whole" + GRAY + " number!");
+    public static final LangKey EDITOR_ERROR_ENUM = LangKey.of("Editor.Error.Enum", GRAY + "Invalid Input!");
 }

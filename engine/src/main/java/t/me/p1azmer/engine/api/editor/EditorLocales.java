@@ -1,12 +1,13 @@
 package t.me.p1azmer.engine.api.editor;
 
 import org.jetbrains.annotations.NotNull;
-import t.me.p1azmer.engine.api.lang.LangColors;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class EditorLocales implements LangColors {
+import static t.me.p1azmer.engine.utils.Colors.*;
+
+public class EditorLocales {
 
     public static final EditorLocale CLOSE = EditorLocale.of("Editor.Generic.Close", "#FF5733(\u2715) &lExit");
     public static final EditorLocale RETURN = EditorLocale.of("Editor.Generic.Return", "#ffee9a(\u2193) &fReturn");
@@ -37,7 +38,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder name(@NotNull String name) {
-            this.name = YELLOW + "&l" + name;
+            this.name = YELLOW  + BOLD + name;
             return this;
         }
 
@@ -53,7 +54,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder currentHeader() {
-            return this.addLore(YELLOW + "&l", "Current:");
+            return this.addLore(YELLOW + BOLD, "Current:");
         }
 
         @NotNull
@@ -63,7 +64,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder warningHeader() {
-            return this.addLore(RED + "&l", "Warning:");
+            return this.addLore(RED + BOLD, "Warning:");
         }
 
         @NotNull
@@ -73,7 +74,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder noteHeader() {
-            return this.addLore(ORANGE + "&l", "Notes:");
+            return this.addLore(ORANGE + BOLD, "Notes:");
         }
 
         @NotNull
@@ -83,7 +84,7 @@ public class EditorLocales implements LangColors {
 
         @NotNull
         public Builder actionsHeader() {
-            return this.addLore(GREEN + "&l", "Actions:");
+            return this.addLore(GREEN + BOLD, "Actions:");
         }
 
         @NotNull

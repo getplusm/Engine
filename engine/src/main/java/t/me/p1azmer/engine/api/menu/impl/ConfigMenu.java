@@ -19,6 +19,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
 
@@ -33,6 +34,26 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
     }
 
     public void load() {
+        if (!this.isCodeCreation() || this.cfg.getBoolean("set_up")) {
+            this.loadConfig();
+        }
+        else {
+            this.loadDefaults();
+            this.cfg.set("set_up", true);
+            this.cfg.remove(this.itemSection);
+            this.write();
+        }
+    }
+
+    public boolean isCodeCreation() {
+        return false;
+    }
+
+    public void loadDefaults() {
+
+    }
+
+    public void loadConfig() {
         String title = JOption.create("Title", "", "Sets the GUI title.")
                 .mapReader(Colorizer::apply).read(cfg);
 
@@ -42,9 +63,13 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
                 "Sets the GUI type.",
                 "https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/event/inventory/InventoryType.html").read(cfg);
 
+        int autoRefresh = JOption.create("Settings.Auto_Refresh", 0,
+                "Sets the GUI auto-refresh interval (in seconds). Set this to 0 to disable.").read(cfg);
+
         this.getOptions().setTitle(title);
         this.getOptions().setSize(size);
         this.getOptions().setType(type);
+        this.getOptions().setAutoRefresh(autoRefresh);
 
         this.cfg.getSection(this.itemSection).forEach(sId -> {
             MenuItem menuItem = this.readItem(this.itemSection + "." + sId);
@@ -53,6 +78,19 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
 
         /*this.useMiniMessage = JOption.create("Use_Mini_Message", false,
             "Sets whether to use Paper's MiniMessage API for the GUI Title.").read(cfg);*/
+    }
+
+    protected void write() {
+        this.cfg.set("Title", this.getOptions().getTitle());
+        this.cfg.set("Size", this.getOptions().getSize());
+        this.cfg.set("Type", this.getOptions().getType().name());
+        this.cfg.set("Settings.Auto_Refresh", this.getOptions().getAutoRefresh());
+
+        AtomicInteger count = new AtomicInteger();
+        this.getItems().forEach(menuItem -> {
+            this.writeItem(menuItem, this.itemSection + "." + menuItem.getType().name() + "_" + count.incrementAndGet());
+        });
+        this.cfg.save();
     }
 
     @Override
@@ -127,5 +165,12 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
         }));
 
         return menuItem;
+    }
+
+    protected void writeItem(@NotNull MenuItem menuItem, @NotNull String path) {
+        this.cfg.set(path + ".Priority", menuItem.getPriority());
+        this.cfg.setItem(path + ".Item", menuItem.getItem());
+        this.cfg.setIntArray(path + ".Slots", menuItem.getSlots());
+        this.cfg.set(path + ".Type", menuItem.getType().name());
     }
 }

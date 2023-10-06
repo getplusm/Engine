@@ -7,10 +7,7 @@ import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.api.placeholder.relational.AbstractRelationalPlaceholder;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 
 public class PlaceholderExpansion<P extends NexPlugin<P>> extends me.clip.placeholderapi.expansion.PlaceholderExpansion implements Relational {
@@ -72,18 +69,25 @@ public class PlaceholderExpansion<P extends NexPlugin<P>> extends me.clip.placeh
         return true;
     }
 
-    @Override
-    public boolean register() {
-        return super.register();
+    public void setup() {
+        super.register();
+        this.plugin.warn("Register self (" + this.placeholders.size() + ") PAPI expansions");
+    }
+
+    public void shutdown() {
+        super.unregister();
+        this.plugin.warn("Unregister self (" + this.placeholders.size() + ") PAPI expansions");
     }
 
     public boolean unRegister() {
         return super.unregister();
     }
 
-    public void addPlaceholder(@NotNull Placeholder placeholder){
-        this.placeholders.add(placeholder);
+    public PlaceholderExpansion<P> addPlaceholder(@NotNull Placeholder... placeholders) {
+        this.placeholders.addAll(Arrays.stream(placeholders).toList());
+        return this;
     }
+
 
     @Override
     public String onPlaceholderRequest(Player one, Player two, String params) {

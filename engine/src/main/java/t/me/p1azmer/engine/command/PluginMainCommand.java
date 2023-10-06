@@ -13,24 +13,5 @@ public class PluginMainCommand<P extends NexPlugin<P>> extends GeneralCommand<P>
     }
 
     @Override
-    @NotNull
-    public String getUsage() {
-        return "";
-    }
-
-    @Override
-    @NotNull
-    public String getDescription() {
-        return "";
-    }
-
-    @Override
-    public boolean isPlayerOnly() {
-        return false;
-    }
-
-    @Override
-    protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {
-
-    }
+    protected void onExecute(@NotNull CommandSender sender, @NotNull CommandResult result) {}
 }

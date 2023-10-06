@@ -9,6 +9,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.generator.WorldInfo;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import t.me.p1azmer.engine.config.EngineConfig;
 
 import java.util.*;
 import java.util.function.Predicate;
@@ -22,12 +23,36 @@ public class CollectionsUtil {
 
     @NotNull
     public static List<String> playerNames() {
-        return Bukkit.getServer().getOnlinePlayers().stream().map(Player::getName).toList();
+        return playerNames(null);
     }
 
     @NotNull
-    public static List<String> playerNames(@NotNull Player viewer) {
-        return Bukkit.getServer().getOnlinePlayers().stream().filter(viewer::canSee).map(Player::getName).toList();
+    public static List<String> playerNames(@Nullable Player viewer) {
+        return playerNames(viewer, true);
+    }
+
+    @NotNull
+    public static List<String> realPlayerNames() {
+        return realPlayerNames(null);
+    }
+
+    @NotNull
+    public static List<String> realPlayerNames(@Nullable Player viewer) {
+        return playerNames(viewer, false);
+    }
+
+    @NotNull
+    public static List<String> playerNames(@Nullable Player viewer, boolean includeCustom) {
+        Set<String> names = new HashSet<>();
+        for (Player player : Bukkit.getServer().getOnlinePlayers()) {
+            if (viewer != null && !viewer.canSee(player)) continue;
+
+            names.add(player.getName());
+            if (includeCustom && EngineConfig.RESPECT_PLAYER_DISPLAYNAME.get()) {
+                names.add(Colorizer.strip(player.getDisplayName()));
+            }
+        }
+        return names.stream().sorted(String::compareTo).toList();
     }
 
     @NotNull

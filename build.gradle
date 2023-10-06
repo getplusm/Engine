@@ -10,7 +10,7 @@ allprojects {
     apply plugin: 'maven-publish'
 
     group = 'plazmer'
-    version = '2.3.7'
+    version = '2.3.8'
     sourceCompatibility = 17
     targetCompatibility = 17
 
@@ -54,6 +54,8 @@ allprojects {
         // WorldGuard
         maven { url = 'https://maven.enginehub.org/repo/' }
         // PAPI
-        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
+        maven {
+            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
+        }
     }
 }

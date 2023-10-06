@@ -4,16 +4,15 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
+import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
-import t.me.p1azmer.engine.api.data.event.EngineUserCreatedEvent;
-import t.me.p1azmer.engine.api.data.event.EngineUserLoadEvent;
-import t.me.p1azmer.engine.api.data.event.EngineUserUnloadEvent;
 import t.me.p1azmer.engine.api.manager.AbstractListener;
 import t.me.p1azmer.engine.api.manager.AbstractManager;
 import t.me.p1azmer.engine.utils.EntityUtil;
+import t.me.p1azmer.engine.utils.PlayerUtil;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
@@ -49,7 +48,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     /**
      * Gets the preloaded user data for specified player.
      * Throwns an exception if user data is not loaded for the player, because it have to be loaded on player login.
-     *
      * @param player A player instance to get user data for.
      * @return User data for the specified player.
      */
@@ -62,7 +60,8 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         U user = this.getUserLoaded(player.getUniqueId());
         if (user == null) {
             user = this.getUserData(player.getUniqueId());
-            this.plugin.warn("Sync data load for '" + player.getUniqueId() + "'! (Lost user data?)");
+            new Throwable().printStackTrace();
+            this.plugin.warn("Main thread user data load for '" + player.getUniqueId() + "' aka '" + player.getName() + "'.");
         }
         if (user == null) {
             throw new IllegalStateException("User data for '" + player.getName() + "' is not loaded or created!");
@@ -71,35 +70,24 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     /**
-     * Attempts to load user data from online player with that Name (if there is any).
-     * In case if no such player is online, attempts to load data from the database.
-     *
+     * Attempts to load user data from online or cached player with that name.
+     * If no such player data found, attempts to load it from the database.
      * @param name A user name to load data for.
      * @return User data for the specified user name.
      */
     @Nullable
     public final U getUserData(@NotNull String name) {
-        Player player = this.plugin.getServer().getPlayer(name);
+        Player player = PlayerUtil.getPlayer(name);
         if (player != null) return this.getUserData(player);
 
-        U user = this.getUsersLoaded().stream().filter(userOff -> userOff.getName().equalsIgnoreCase(name))
+        U user = this.getUsersLoaded().stream().filter(userMemory -> userMemory.getName().equalsIgnoreCase(name))
                 .findFirst().orElse(null);
         if (user != null) return user;
 
         user = this.dataHolder.getData().getUser(name);
         if (user != null) {
-            EngineUserLoadEvent<P, U> event = new EngineUserLoadEvent<>(user);
-            plugin.getPluginManager().callEvent(event);
-            U finalUser = user;
-            if (event.getWaitTime() > 0) {
-                plugin.runTaskLaterAsync(bukkitTask -> {
-                    finalUser.onLoad();
-                    this.cache(finalUser);
-                }, event.getWaitTime());
-            } else {
-                finalUser.onLoad();
-                this.cache(finalUser);
-            }
+            user.onLoad();
+            this.cache(user);
         }
 
         return user;
@@ -108,7 +96,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     /**
      * Attempts to load user data from online player with that UUID (if there is any).
      * In case if no such player is online, attempts to load data from the database.
-     *
      * @param uuid A user unique id to load data for.
      * @return User data for the specified uuid.
      */
@@ -141,22 +128,29 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     public final void unloadUser(@NotNull UUID uuid) {
         U user = this.getUsersLoadedMap().remove(uuid);
         if (user == null) return;
+
         this.unloadUser(user);
     }
 
     public void unloadUser(@NotNull U user) {
-        EngineUserUnloadEvent<P, U> event = new EngineUserUnloadEvent<>(user);
-        plugin.getPluginManager().callEvent(event);
+        user.onUnload();
+        this.saveUser(user);
+    }
 
-        if (event.getWaitTime() > 0)
-            plugin.runTaskLater(bukkitTask -> {
-                user.onUnload();
-                user.saveData(this.dataHolder);
-            }, event.getWaitTime());
-        else {
-            user.onUnload();
-            user.saveData(this.dataHolder);
-        }
+    public void saveUser(@NotNull U user) {
+        this.plugin.runTaskAsync(task -> this.dataHolder.getData().saveUser(user));
+    }
+
+    @NotNull
+    public Set<U> getAllUsers() {
+        Map<UUID, U> users = new HashMap<>();
+        this.getUsersLoaded().forEach(user -> users.put(user.getId(), user));
+        this.dataHolder.getData().getUsers().forEach(user -> {
+            if (!users.containsKey(user.getId())) {
+                users.put(user.getId(), user);
+            }
+        });
+        return new HashSet<>(users.values());
     }
 
     @NotNull
@@ -189,31 +183,42 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
-        public void onUserLogin(AsyncPlayerPreLoginEvent e) {
-            if (e.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) return;
+        public void onUserLogin(AsyncPlayerPreLoginEvent event) {
+            if (event.getLoginResult() != AsyncPlayerPreLoginEvent.Result.ALLOWED) return;
 
-            UUID uuid = e.getUniqueId();
+            UUID uuid = event.getUniqueId();
             U user;
             if (!dataHolder.getData().isUserExists(uuid)) {
-                user = createData(uuid, e.getName());
-                EngineUserCreatedEvent<P, U> event = new EngineUserCreatedEvent<>(user);
-                plugin.getPluginManager().callEvent(event);
-
+                user = createData(uuid, event.getName());
                 user.setRecentlyCreated(true);
                 cache(user);
                 dataHolder.getData().addUser(user);
                 plugin.info("Created new user data for: '" + uuid + "'");
                 return;
-            } else {
+            }
+            else {
                 user = getUserData(uuid);
             }
 
-            if (user == null) e.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Unable to load your user data.");
+            if (user == null) {
+                event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, "Unable to load your user data.");
+            }
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
-        public void onUserQuit(PlayerQuitEvent e) {
-            unloadUser(e.getPlayer());
+        public void onUserQuit(PlayerQuitEvent event) {
+            CompletableFuture.runAsync(()-> {
+                plugin.runTask(sync -> unloadUser(event.getPlayer()));
+            }).join();
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR)
+        public void onUserQuit(PlayerKickEvent event){
+            // slow down the process without loading the main thread so that the data is saved without loss
+            // for Proxy switching
+            CompletableFuture.runAsync(()-> {
+                plugin.runTask(sync -> unloadUser(event.getPlayer()));
+            }).join();
         }
     }
 }

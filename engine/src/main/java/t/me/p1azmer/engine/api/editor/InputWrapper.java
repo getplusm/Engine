@@ -5,6 +5,8 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.utils.Colorizer;
 import t.me.p1azmer.engine.utils.StringUtil;
+import t.me.p1azmer.engine.utils.values.UniDouble;
+import t.me.p1azmer.engine.utils.values.UniInt;
 
 public class InputWrapper {
 
@@ -42,6 +44,22 @@ public class InputWrapper {
         return StringUtil.getDouble(this.getTextRaw(), def);
     }
 
+    @NotNull
+    public UniDouble asUniDouble() {
+        return this.asUniDouble(0, 0);
+    }
+
+    @NotNull
+    public UniDouble asUniDouble(double min, double max) {
+        String[] split = this.getTextRaw().split(" ");
+        return UniDouble.of(StringUtil.getDouble(split[0], min), StringUtil.getDouble(split.length >= 2 ? split[1] : split[0], max));
+    }
+
+    @NotNull
+    public UniInt asUniInt() {
+        return this.asUniDouble().asInt();
+    }
+
     public double asAnyDouble(double def) {
         return StringUtil.getDouble(this.getTextRaw(), def, true);
     }
@@ -54,12 +72,6 @@ public class InputWrapper {
     @NotNull
     public <E extends Enum<E>> E asEnum(@NotNull Class<E> clazz, @NotNull E def) {
         return StringUtil.getEnum(this.getTextRaw(), clazz).orElse(def);
-    }
-
-    @NotNull
-    @Deprecated
-    public String getMessage() {
-        return this.text;
     }
 
     @NotNull

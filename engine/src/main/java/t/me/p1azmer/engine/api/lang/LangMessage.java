@@ -1,15 +1,18 @@
 package t.me.p1azmer.engine.api.lang;
 
+import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.api.placeholder.PlaceholderMap;
 import t.me.p1azmer.engine.utils.*;
 import t.me.p1azmer.engine.utils.message.NexParser;
 import t.me.p1azmer.engine.utils.regex.RegexUtil;
+import t.me.p1azmer.engine.utils.values.UniSound;
 
 import java.util.*;
 import java.util.function.BiConsumer;
@@ -31,6 +34,7 @@ public class LangMessage {
         PREFIX("prefix"),
         SOUND("sound"),
         TYPE("type"),
+        PAPI("papi"),
         ;
 
         private final Pattern pattern;
@@ -52,6 +56,7 @@ public class LangMessage {
     private String msgLocalized;
     private OutputType type = OutputType.CHAT;
     private boolean hasPrefix = true;
+    private boolean papi = false;
     private Sound sound;
     private int[] titleTimes = new int[3];
 
@@ -71,6 +76,7 @@ public class LangMessage {
         this.msgLocalized = from.getLocalized();
         this.type = from.type;
         this.hasPrefix = from.hasPrefix;
+        this.papi = from.papi;
         this.sound = from.sound;
         this.titleTimes = Arrays.copyOf(from.titleTimes, from.titleTimes.length);
         this.placeholderMap = new PlaceholderMap(from.placeholderMap);
@@ -104,6 +110,7 @@ public class LangMessage {
                 }
                 case PREFIX -> this.hasPrefix = Boolean.parseBoolean(optionValue);
                 case SOUND -> this.sound = StringUtil.getEnum(optionValue, Sound.class).orElse(null);
+                case PAPI -> this.papi = Boolean.parseBoolean(optionValue) && EngineUtils.hasPlaceholderAPI();
             }
         }
     }
@@ -122,6 +129,15 @@ public class LangMessage {
     @NotNull
     public String getLocalized() {
         return this.msgLocalized;
+    }
+
+    @NotNull
+    public String getLocalized(@NotNull CommandSender sender) {
+        String localized = this.getLocalized();
+        if (this.papi && sender instanceof Player player) {
+            localized = PlaceholderAPI.setPlaceholders(player, localized);
+        }
+        return localized;
     }
 
     private void setLocalized(@NotNull String msgLocalized) {
@@ -171,11 +187,21 @@ public class LangMessage {
         this.send(Bukkit.getServer().getConsoleSender());
     }
 
+    public void broadcast(@NotNull Permission permission) {
+        if (this.isEmpty()) return;
+
+        Bukkit.getServer().getOnlinePlayers().forEach(player -> {
+            if (player.hasPermission(permission))
+                this.send(player);
+        });
+        this.send(Bukkit.getServer().getConsoleSender());
+    }
+
     public void send(@NotNull CommandSender sender) {
         if (this.isEmpty()) return;
 
         if (this.sound != null && sender instanceof Player player) {
-            PlayerUtil.sound(player, this.sound);
+            UniSound.of(this.sound).play(player);
         }
 
         if (this.type == LangMessage.OutputType.CHAT) {
@@ -201,7 +227,17 @@ public class LangMessage {
 
     @NotNull
     public List<String> asList() {
-        return this.isEmpty() ? Collections.emptyList() : Stream.of(this.getLocalized().split("\\\\n"))
+        return this.asList(this.getLocalized());
+    }
+
+    @NotNull
+    public List<String> asList(@NotNull CommandSender sender) {
+        return this.asList(this.getLocalized(sender));
+    }
+
+    @NotNull
+    private List<String> asList(@NotNull String localized) {
+        return this.isEmpty() ? Collections.emptyList() : Stream.of(localized.split("\\\\n"))
                 .filter(Predicate.not(String::isEmpty)).toList();
     }
 

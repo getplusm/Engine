@@ -57,7 +57,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     }
 
     @Override
-    public final void onEnable() {
+    public void onEnable() {
         long loadTook = System.currentTimeMillis();
         this.logger = this.getLogger();
         this.isEngine = this instanceof NexEngine;
@@ -93,7 +93,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     }
 
     @Override
-    public final void onDisable() {
+    public void onDisable() {
         this.unloadManagers();
     }
 
