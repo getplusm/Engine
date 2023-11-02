@@ -182,12 +182,12 @@ public class PlayerUtil {
     }
 
     public static boolean hasEmptyContents(@NotNull Player player) {
-        return Stream.of(player.getInventory().getStorageContents()).allMatch(item -> item == null || item.getType().isAir());
+        return Stream.of(player.getInventory().getContents()).allMatch(item -> item == null || item.getType().isAir());
     }
 
     public static int countItemSpace(@NotNull Player player, @NotNull ItemStack item) {
         int stackSize = item.getType().getMaxStackSize();
-        return Stream.of(player.getInventory().getStorageContents()).mapToInt(itemHas -> {
+        return Stream.of(player.getInventory().getContents()).mapToInt(itemHas -> {
             if (itemHas == null || itemHas.getType().isAir()) {
                 return stackSize;
             }
@@ -199,7 +199,7 @@ public class PlayerUtil {
     }
 
     public static int countItem(@NotNull Player player, @NotNull Predicate<ItemStack> predicate) {
-        return Stream.of(player.getInventory().getStorageContents())
+        return Stream.of(player.getInventory().getContents())
                 .filter(item -> item != null && !item.getType().isAir() && predicate.test(item))
                 .mapToInt(ItemStack::getAmount).sum();
     }
@@ -238,7 +238,7 @@ public class PlayerUtil {
         int takenAmount = 0;
 
         Inventory inventory = player.getInventory();
-        for (ItemStack itemHas : inventory.getStorageContents()) {
+        for (ItemStack itemHas : inventory.getContents()) {
             if (itemHas == null || !predicate.test(itemHas)) continue;
 
             int hasAmount = itemHas.getAmount();

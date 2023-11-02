@@ -22,7 +22,6 @@ public class PlaceholderExpansion<P extends NexPlugin<P>> extends me.clip.placeh
 
     public Map<String, CachedPlaceholder> placeholderCache = new HashMap<>();
 
-
     @Override
     public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
         if (offlinePlayer == null) return null;
@@ -79,6 +78,7 @@ public class PlaceholderExpansion<P extends NexPlugin<P>> extends me.clip.placeh
         this.plugin.warn("Unregister self (" + this.placeholders.size() + ") PAPI expansions");
     }
 
+    @Deprecated
     public boolean unRegister() {
         return super.unregister();
     }

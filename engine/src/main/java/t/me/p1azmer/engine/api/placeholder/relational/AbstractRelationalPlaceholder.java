@@ -9,9 +9,9 @@ import java.util.regex.Matcher;
 
 public abstract class AbstractRelationalPlaceholder extends Placeholder {
 
-    public AbstractRelationalPlaceholder(NexPlugin<?> plugin) {
+    public AbstractRelationalPlaceholder(@NotNull NexPlugin<?> plugin) {
         super(plugin);
     }
 
-    public abstract String parse(Matcher matcher, @NotNull Player player, @NotNull Player viewer);
+    public abstract String parse(@NotNull Matcher matcher, @NotNull Player player, @NotNull Player viewer);
 }

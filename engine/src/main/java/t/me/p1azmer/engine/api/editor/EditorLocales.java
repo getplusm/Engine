@@ -9,10 +9,18 @@ import static t.me.p1azmer.engine.utils.Colors.*;
 
 public class EditorLocales {
 
-    public static final EditorLocale CLOSE = EditorLocale.of("Editor.Generic.Close", "#FF5733(\u2715) &lExit");
-    public static final EditorLocale RETURN = EditorLocale.of("Editor.Generic.Return", "#ffee9a(\u2193) &fReturn");
-    public static final EditorLocale NEXT_PAGE = EditorLocale.of("Editor.Generic.NextPage", "#e3fbf9(\u2192) &lNext Page");
-    public static final EditorLocale PREVIOUS_PAGE = EditorLocale.of("Editor.Generic.PreviousPage", "#e3fbf9(\u2190) &lPrevious Page");
+    public static final EditorLocale CLOSE         = EditorLocale.of("Editor.Generic.Close", RED + "(\\u2715) Exit");
+    public static final EditorLocale RETURN        = EditorLocale.of("Editor.Generic.Return", GRAY + "(\\u2193) " + WHITE + "Return");
+    public static final EditorLocale NEXT_PAGE     = EditorLocale.of("Editor.Generic.NextPage", GRAY + "(\\u2192) " + WHITE + "Next Page");
+    public static final EditorLocale PREVIOUS_PAGE = EditorLocale.of("Editor.Generic.PreviousPage", GRAY + "(\\u2190) " + WHITE + "Previous Page");
+
+    protected static final String LMB       = "Left-Click";
+    protected static final String RMB       = "Right-Click";
+    protected static final String DROP_KEY  = "[Q] Drop Key";
+    protected static final String SWAP_KEY  = "[F] Swap Key";
+    protected static final String SHIFT_LMB = "Shift-Left";
+    protected static final String SHIFT_RMB = "Shift-Right";
+    protected static final String DRAG_DROP = "Drag & Drop";
 
     @NotNull
     protected static Builder builder(@NotNull String key) {
@@ -63,37 +71,53 @@ public class EditorLocales {
         }
 
         @NotNull
+        @Deprecated
         public Builder warningHeader() {
             return this.addLore(RED + BOLD, "Warning:");
         }
 
         @NotNull
+        @Deprecated
         public Builder warning(@NotNull String... info) {
             return this.addLore(RED + "\u25aa " + GRAY, info);
         }
 
         @NotNull
+        @Deprecated
         public Builder noteHeader() {
             return this.addLore(ORANGE + BOLD, "Notes:");
         }
 
         @NotNull
+        @Deprecated
         public Builder notes(@NotNull String... info) {
             return this.addLore(ORANGE + "\u25aa " + GRAY, info);
         }
 
         @NotNull
+        @Deprecated
         public Builder actionsHeader() {
             return this.addLore(GREEN + BOLD, "Actions:");
         }
 
         @NotNull
+        @Deprecated
         public Builder action(@NotNull String click, @NotNull String action) {
             return this.addLore(GREEN + "\u25aa " + GRAY, click + ": " + GREEN + action);
         }
 
+        public Builder click(@NotNull String click, @NotNull String action) {
+            return this.addLore(GRAY + "(" + WHITE + click + GRAY + " to " + action + GRAY + ")");
+        }
+
         @NotNull
+        @Deprecated
         public Builder breakLine() {
+            return this.emptyLine();
+        }
+
+        @NotNull
+        public Builder emptyLine() {
             return this.addLore("", "");
         }
 

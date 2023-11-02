@@ -1,7 +1,6 @@
 dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.20.2-R0.1-SNAPSHOT'
 
-    implementation 'org.jetbrains:annotations:24.0.1'
     compileOnly 'com.google.guava:guava:31.1-jre'
 
     compileOnly 'org.slf4j:slf4j-api:1.7.32'
@@ -14,6 +13,8 @@ dependencies {
     }
 
     compileOnly 'net.kyori:adventure-text-serializer-legacy:4.13.0'
+
+    compileOnly 'com.mojang:authlib:5.0.47'
 
     // Database
     compileOnly 'com.zaxxer:HikariCP:5.0.1'
@@ -46,7 +47,6 @@ dependencies {
 }
 
 shadowJar {
-    relocate("org.jetbrains", "t.me.p1azmer.libs.org.jetbrains")
     destinationDirectory.set(rootProject.buildDir)
 }
 

@@ -145,11 +145,19 @@ public class LocationUtil {
     }
 
     @NotNull
+    @Deprecated
     public static Vector getDirectionTo(@NotNull Location from, @NotNull Location to) {
         Location origin = from.clone();
         Vector target = to.clone().toVector();
         origin.setDirection(target.subtract(origin.toVector()));
 
+        return origin.getDirection();
+    }
+
+    @NotNull
+    public static Vector getDirection(@NotNull Location from, @NotNull Location to) {
+        Location origin = from.clone();
+        origin.setDirection(to.toVector().subtract(origin.toVector()));
         return origin.getDirection();
     }
 

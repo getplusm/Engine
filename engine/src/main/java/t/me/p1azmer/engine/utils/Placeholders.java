@@ -11,6 +11,13 @@ import java.util.function.UnaryOperator;
 
 public class Placeholders {
 
+    public static final String GITHUB_URL     = "https://github.com/getplusm/Engine/";
+    public static final String WIKI_MAIN_URL     = GITHUB_URL + "wiki/";
+    public static final String WIKI_ITEMS_URL    = WIKI_MAIN_URL + "Configuration-Tips#item-sections";
+    public static final String WIKI_PARTICLE_URL = WIKI_MAIN_URL + "Configuration-Tips#particle-sections";
+    public static final String WIKI_MENU_URL     = WIKI_MAIN_URL + "Menu-Config";
+    public static final String WIKI_LANG_URL     = WIKI_MAIN_URL + "Language-Config";
+
     public static final String DEFAULT  = "default";
     public static final String NONE     = "none";
     public static final String WILDCARD = "*";

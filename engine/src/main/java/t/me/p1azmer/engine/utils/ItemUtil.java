@@ -29,20 +29,20 @@ public class ItemUtil {
     private static final String VERSION = Version.getProtocol();
 
     private static final Class<?> NBT_TAG_COMPOUND = Reflex.getClass("net.minecraft.nbt", "NBTTagCompound");
-    private static final Class<?> NMS_ITEM         = Reflex.getClass("net.minecraft.world.item", "ItemStack");
+    private static final Class<?> NMS_ITEM = Reflex.getClass("net.minecraft.world.item", "ItemStack");
     private static final Class<?> CRAFT_ITEM_STACK = Reflex.getClass("org.bukkit.craftbukkit." + VERSION + ".inventory", "CraftItemStack");
-    private static final Class<?> NBT_IO           = Reflex.getClass("net.minecraft.nbt", "NBTCompressedStreamTools");
+    private static final Class<?> NBT_IO = Reflex.getClass("net.minecraft.nbt", "NBTCompressedStreamTools");
 
     private static final Constructor<?> NBT_TAG_COMPOUND_NEW = Reflex.getConstructor(NBT_TAG_COMPOUND);
 
-    private static final Method AS_NMS_COPY    = Reflex.getMethod(CRAFT_ITEM_STACK, "asNMSCopy", ItemStack.class);
+    private static final Method AS_NMS_COPY = Reflex.getMethod(CRAFT_ITEM_STACK, "asNMSCopy", ItemStack.class);
     private static final Method AS_BUKKIT_COPY = Reflex.getMethod(CRAFT_ITEM_STACK, "asBukkitCopy", NMS_ITEM);
 
     private static final Method NMS_ITEM_OF = Reflex.getMethod(NMS_ITEM, "a", NBT_TAG_COMPOUND);
-    private static final Method NMS_SAVE    = Reflex.getMethod(NMS_ITEM, "b", NBT_TAG_COMPOUND);
+    private static final Method NMS_SAVE = Reflex.getMethod(NMS_ITEM, "b", NBT_TAG_COMPOUND);
 
     private static final Method NBT_IO_WRITE = Reflex.getMethod(NBT_IO, "a", NBT_TAG_COMPOUND, DataOutput.class);
-    private static final Method NBT_IO_READ  = Reflex.getMethod(NBT_IO, "a", DataInput.class);
+    private static final Method NBT_IO_READ = Reflex.getMethod(NBT_IO, "a", DataInput.class);
 
     @NotNull
     public static String getItemName(@NotNull ItemStack item) {
@@ -83,8 +83,7 @@ public class ItemUtil {
         Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);
         if (method != null) {
             Reflex.invokeMethod(method, meta, profile);
-        }
-        else {
+        } else {
             Reflex.setFieldValue(meta, "profile", profile);
         }
 
@@ -103,10 +102,11 @@ public class ItemUtil {
 
         Collection<Property> properties = profile.getProperties().get("textures");
         Optional<Property> opt = properties.stream().filter(prop -> {
-            return prop.getName().equalsIgnoreCase("textures") || prop.getSignature().equalsIgnoreCase("textures");
+            String name = (String) Reflex.getFieldValue(profile, "name");
+            return name != null && name.equalsIgnoreCase("textures");
         }).findFirst();
 
-        return opt.map(Property::getValue).orElse(null);
+        return opt.map(Property::value).orElse(null);
     }
 
     public static void setPlaceholderAPI(@NotNull Player player, @NotNull ItemStack item) {
@@ -278,8 +278,7 @@ public class ItemUtil {
             NMS_SAVE.invoke(nmsItem, nbtTagCompoundItem);
             NBT_IO_WRITE.invoke(null, nbtTagCompoundItem, dataOutput);
             return new BigInteger(1, outputStream.toByteArray()).toString(32);
-        }
-        catch (ReflectiveOperationException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             return null;
         }
@@ -298,8 +297,7 @@ public class ItemUtil {
             nbtTagCompoundRoot = NBT_IO_READ.invoke(null, new DataInputStream(inputStream));
             Object nmsItem = NMS_ITEM_OF.invoke(null, nbtTagCompoundRoot);
             return (ItemStack) AS_BUKKIT_COPY.invoke(null, nmsItem);
-        }
-        catch (ReflectiveOperationException e) {
+        } catch (ReflectiveOperationException e) {
             e.printStackTrace();
             return null;
         }

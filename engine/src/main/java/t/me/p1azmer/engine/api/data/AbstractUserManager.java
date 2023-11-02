@@ -35,6 +35,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     @Override
     protected void onShutdown() {
+        this.getUsersLoaded().forEach(user -> this.dataHolder.getData().saveUser(user));
         this.getUsersLoadedMap().clear();
     }
 
@@ -47,7 +48,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     /**
      * Gets the preloaded user data for specified player.
-     * Throwns an exception if user data is not loaded for the player, because it have to be loaded on player login.
+     * Throws an exception if user data is not loaded for the player, because it has to be loaded on player login.
      * @param player A player instance to get user data for.
      * @return User data for the specified player.
      */
@@ -160,6 +161,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     @NotNull
     public Collection<@NotNull U> getUsersLoaded() {
+        
         return new HashSet<>(this.getUsersLoadedMap().values());
     }
 
@@ -207,6 +209,8 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onUserQuit(PlayerQuitEvent event) {
+            // slow down the process without loading the main thread so that the data is saved without loss
+            // for Proxy switching
             CompletableFuture.runAsync(()-> {
                 plugin.runTask(sync -> unloadUser(event.getPlayer()));
             }).join();
@@ -214,8 +218,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onUserQuit(PlayerKickEvent event){
-            // slow down the process without loading the main thread so that the data is saved without loss
-            // for Proxy switching
             CompletableFuture.runAsync(()-> {
                 plugin.runTask(sync -> unloadUser(event.getPlayer()));
             }).join();

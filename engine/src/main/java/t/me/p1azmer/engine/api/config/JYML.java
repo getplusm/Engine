@@ -114,9 +114,8 @@ public class JYML extends YamlConfiguration {
     public void save() {
         try {
             this.save(this.file);
-        } catch (IOException e) {
-            EngineUtils.ENGINE.error("Could not save config: " + file.getName());
-            e.printStackTrace();
+        } catch (IOException exception) {
+            exception.printStackTrace();
         }
     }
 
@@ -134,8 +133,8 @@ public class JYML extends YamlConfiguration {
             this.load(this.file);
             this.isChanged = false;
             return true;
-        } catch (IOException | InvalidConfigurationException e) {
-            e.printStackTrace();
+        } catch (IOException | InvalidConfigurationException exception) {
+            exception.printStackTrace();
         }
         return false;
     }
@@ -537,5 +536,23 @@ public class JYML extends YamlConfiguration {
                 return def;
             }
         }
+    }
+
+    public enum MetaDataType{
+        BYTE,
+        SHORT,
+        INTEGER,
+        LONG,
+        FLOAT,
+        DOUBLE,
+        BOOLEAN,
+        STRING,
+        UUID,
+        INTEGER_ARRAY,
+        LONG_ARRAY,
+        DOUBLE_ARRAY,
+        STRING_ARRAY,
+        TAG_CONTAINER_ARRAY,
+        TAG_CONTAINER;
     }
 }
