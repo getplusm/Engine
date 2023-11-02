@@ -9,10 +9,10 @@ import static t.me.p1azmer.engine.utils.Colors.*;
 
 public class EditorLocales {
 
-    public static final EditorLocale CLOSE         = EditorLocale.of("Editor.Generic.Close", RED + "(\\u2715) Exit");
-    public static final EditorLocale RETURN        = EditorLocale.of("Editor.Generic.Return", GRAY + "(\\u2193) " + WHITE + "Return");
-    public static final EditorLocale NEXT_PAGE     = EditorLocale.of("Editor.Generic.NextPage", GRAY + "(\\u2192) " + WHITE + "Next Page");
-    public static final EditorLocale PREVIOUS_PAGE = EditorLocale.of("Editor.Generic.PreviousPage", GRAY + "(\\u2190) " + WHITE + "Previous Page");
+    public static final EditorLocale CLOSE         = EditorLocale.of("Editor.Generic.Close", RED + "(\u2715) Exit");
+    public static final EditorLocale RETURN        = EditorLocale.of("Editor.Generic.Return", GRAY + "(\u2193) " + WHITE + "Return");
+    public static final EditorLocale NEXT_PAGE     = EditorLocale.of("Editor.Generic.NextPage", GRAY + "(\u2192) " + WHITE + "Next Page");
+    public static final EditorLocale PREVIOUS_PAGE = EditorLocale.of("Editor.Generic.PreviousPage", GRAY + "(\u2190) " + WHITE + "Previous Page");
 
     protected static final String LMB       = "Left-Click";
     protected static final String RMB       = "Right-Click";
