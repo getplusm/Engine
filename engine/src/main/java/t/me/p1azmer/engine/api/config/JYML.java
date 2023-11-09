@@ -238,34 +238,35 @@ public class JYML extends YamlConfiguration {
         this.set(path, String.join(",", IntStream.of(arr).boxed().map(String::valueOf).toList()));
     }
 
-    public int[] getMenuSlots(String path) {
+    public int[] getMenuSlots(@NotNull String path) {
         String input = Objects.requireNonNull(getString(path));
-        if (input.contains("-")) {
-            String[] split = input.split("-");
-            if (split.length == 2) {
-                int start = StringUtil.getInteger(split[0], -1);
-                int end = StringUtil.getInteger(split[1], -1);
-                List<Integer> current = new ArrayList<>();
+        if (input.contains("-") || input.contains(",")) {
+            String[] ranges = input.split(",");
+            List<Integer> slots = new ArrayList<>();
 
-                if (start >= 0 && start < 54 && end > 0 && end <= 54) {
-                    for (int i = start; i <= end; i++) {
-                        current.add(i);
+            for (String range : ranges) {
+                if (range.contains("-")) {
+                    String[] split = range.split("-");
+                    if (split.length == 2) {
+                        int start = StringUtil.getInteger(split[0].trim(), -1);
+                        int end = StringUtil.getInteger(split[1].trim(), -1);
+
+                        if (start >= 0 && start < 54 && end > 0 && end <= 54) {
+                            for (int i = start; i <= end; i++) {
+                                slots.add(i);
+                            }
+                        }
                     }
-                    return current.stream().mapToInt(i -> i).toArray();
+                } else {
+                    int value = StringUtil.getInteger(range.trim(), -1);
+                    if (value != -1) {
+                        slots.add(value);
+                    }
                 }
             }
-        } else if (input.contains(",")) {
-            String[] numbers = input.split(",");
-            List<Integer> current = new ArrayList<>();
 
-            for (String number : numbers) {
-                int value = StringUtil.getInteger(number.trim(), -1);
-                if (value != -1) {
-                    current.add(value);
-                }
-            }
-            if (!current.isEmpty()) {
-                return current.stream().mapToInt(i -> i).toArray();
+            if (!slots.isEmpty()) {
+                return slots.stream().mapToInt(i -> i).toArray();
             }
         }
 
