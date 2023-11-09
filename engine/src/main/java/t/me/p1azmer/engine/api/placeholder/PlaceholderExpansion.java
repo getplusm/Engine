@@ -4,6 +4,7 @@ import me.clip.placeholderapi.expansion.Relational;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.api.placeholder.relational.AbstractRelationalPlaceholder;
 
@@ -12,30 +13,30 @@ import java.util.regex.Matcher;
 
 public class PlaceholderExpansion<P extends NexPlugin<P>> extends me.clip.placeholderapi.expansion.PlaceholderExpansion implements Relational {
 
-    public final List<Placeholder> placeholders = new ArrayList<>();
+    public final List<Placeholder<P>> placeholders = new ArrayList<>();
 
     public final P plugin;
 
-    public PlaceholderExpansion(P plugin) {
+    public PlaceholderExpansion(@NotNull P plugin) {
         this.plugin = plugin;
     }
 
-    public Map<String, CachedPlaceholder> placeholderCache = new HashMap<>();
+    public Map<String, CachedPlaceholder<P>> placeholderCache = new HashMap<>();
 
     @Override
-    public String onRequest(OfflinePlayer offlinePlayer, @NotNull String params) {
+    public String onRequest(@Nullable OfflinePlayer offlinePlayer, @NotNull String params) {
         if (offlinePlayer == null) return null;
 
-        CachedPlaceholder cachedPlaceholder = placeholderCache.computeIfAbsent(params, s -> {
-            for (Placeholder placeholder : placeholders) {
+        CachedPlaceholder<P> cachedPlaceholder = placeholderCache.computeIfAbsent(params, s -> {
+            for (Placeholder<P> placeholder : placeholders) {
                 Matcher matcher = placeholder.getPattern().matcher(params);
                 if (!matcher.matches()) continue;
-                return new CachedPlaceholder(matcher, placeholder);
+                return new CachedPlaceholder<>(matcher, placeholder);
             }
             return null;
         });
         if (cachedPlaceholder == null) return null;
-        if (cachedPlaceholder.getPlaceholder() instanceof AbstractPlaceholder placeholder) {
+        if (cachedPlaceholder.getPlaceholder() instanceof AbstractPlaceholder<P> placeholder) {
             return placeholder.parse(cachedPlaceholder.getMatcher(), offlinePlayer);
         }
 
@@ -83,26 +84,27 @@ public class PlaceholderExpansion<P extends NexPlugin<P>> extends me.clip.placeh
         return super.unregister();
     }
 
-    public PlaceholderExpansion<P> addPlaceholder(@NotNull Placeholder... placeholders) {
+    @SafeVarargs
+    public final PlaceholderExpansion<P> addPlaceholder(@NotNull Placeholder<P>... placeholders) {
         this.placeholders.addAll(Arrays.stream(placeholders).toList());
         return this;
     }
 
 
     @Override
-    public String onPlaceholderRequest(Player one, Player two, String params) {
+    public String onPlaceholderRequest(@Nullable Player one, @Nullable Player two, @NotNull String params) {
         if (one == null || two == null) return null;
 
-        CachedPlaceholder cachedPlaceholder = placeholderCache.computeIfAbsent(params, s -> {
-            for (Placeholder placeholder : placeholders) {
+        CachedPlaceholder<P> cachedPlaceholder = placeholderCache.computeIfAbsent(params, s -> {
+            for (Placeholder<P> placeholder : placeholders) {
                 Matcher matcher = placeholder.getPattern().matcher(params);
                 if (!matcher.matches()) continue;
-                return new CachedPlaceholder(matcher, placeholder);
+                return new CachedPlaceholder<>(matcher, placeholder);
             }
             return null;
         });
         if (cachedPlaceholder == null) return null;
-        if (cachedPlaceholder.getPlaceholder() instanceof AbstractRelationalPlaceholder placeholder) {
+        if (cachedPlaceholder.getPlaceholder() instanceof AbstractRelationalPlaceholder<P> placeholder) {
             return placeholder.parse(cachedPlaceholder.getMatcher(), one, two);
         }
         return null;

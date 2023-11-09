@@ -10,12 +10,15 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import t.me.p1azmer.engine.NexEngine;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.api.menu.MenuItemType;
 import t.me.p1azmer.engine.api.menu.click.ItemClick;
 import t.me.p1azmer.engine.api.menu.item.ItemOptions;
 import t.me.p1azmer.engine.api.menu.item.MenuItem;
+import t.me.p1azmer.engine.api.menu.link.Linked;
+import t.me.p1azmer.folia.Folia;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -170,6 +173,10 @@ public abstract class Menu<P extends NexPlugin<P>> {
         this.getViewersMap().remove(player.getUniqueId());
         this.getItems().removeIf(menuItem -> menuItem.getOptions().canBeDestroyed(viewer));
         PLAYER_MENUS.remove(player.getUniqueId());
+
+        if (this instanceof Linked<?> linked) {
+            linked.getLink().clear(viewer);
+        }
 
         if (this.getViewers().isEmpty() && !this.isPersistent()) {
             this.clear();

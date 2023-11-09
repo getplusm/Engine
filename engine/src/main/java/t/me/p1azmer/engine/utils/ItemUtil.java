@@ -4,7 +4,9 @@ import com.google.common.base.Splitter;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import me.clip.placeholderapi.PlaceholderAPI;
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
@@ -77,6 +79,15 @@ public class ItemUtil {
         if (!(item.getItemMeta() instanceof SkullMeta meta)) return;
 
         UUID uuid = UUID.nameUUIDFromBytes(value.getBytes());
+        /* Temporary solution */
+        if (value.startsWith("player:")) {
+            value = value.replace("player:", "");
+            uuid = UUID.fromString(value);
+            OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+            meta.setOwningPlayer(player);
+            item.setItemMeta(meta);
+            return;
+        }
         GameProfile profile = new GameProfile(uuid, "null");
         profile.getProperties().put("textures", new Property("textures", value));
 

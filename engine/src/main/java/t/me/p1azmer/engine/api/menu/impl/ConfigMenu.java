@@ -93,9 +93,6 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
             MenuItem menuItem = this.readItem(this.itemSection + "." + sId);
             this.addItem(menuItem);
         });
-
-        /*this.useMiniMessage = JOption.create("Use_Mini_Message", false,
-            "Sets whether to use Paper's MiniMessage API for the GUI Title.").read(cfg);*/
     }
 
     protected void write() {

@@ -6,10 +6,10 @@ import t.me.p1azmer.engine.NexPlugin;
 
 import java.util.regex.Matcher;
 
-public abstract class AbstractPlaceholder extends Placeholder {
+public abstract class AbstractPlaceholder<P extends NexPlugin<P>> extends Placeholder<P> {
 
-    public AbstractPlaceholder(@NotNull NexPlugin<?> plugin) {
-        super(plugin);
+    public AbstractPlaceholder(@NotNull PlaceholderExpansion<P> expansion) {
+        super(expansion);
     }
 
     public abstract String parse(@NotNull Matcher matcher, @NotNull OfflinePlayer player);

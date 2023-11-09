@@ -5,7 +5,7 @@ import org.jetbrains.annotations.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
-import static t.me.p1azmer.engine.utils.Colors.*;
+import static t.me.p1azmer.engine.utils.Colors2.*;
 
 public class EditorLocales {
 
@@ -46,7 +46,7 @@ public class EditorLocales {
 
         @NotNull
         public Builder name(@NotNull String name) {
-            this.name = YELLOW  + BOLD + name;
+            this.name = YELLOW + BOLD + name;
             return this;
         }
 
@@ -106,6 +106,7 @@ public class EditorLocales {
             return this.addLore(GREEN + "\u25aa " + GRAY, click + ": " + GREEN + action);
         }
 
+        @NotNull
         public Builder click(@NotNull String click, @NotNull String action) {
             return this.addLore(GRAY + "(" + WHITE + click + GRAY + " to " + action + GRAY + ")");
         }

@@ -43,9 +43,9 @@ public class EntityUtil {
         if (equipment == null) return Collections.emptyMap();
 
         Map<EquipmentSlot, ItemStack> map = new HashMap<>();
-        Arrays.asList(slots).forEach(slot -> {
+        for (EquipmentSlot slot : slots) {
             map.put(slot, equipment.getItem(slot));
-        });
+        }
         return map;
     }
 
