@@ -1,4 +1,4 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
 import org.bukkit.ChatColor;
 import t.me.p1azmer.engine.utils.Colorizer;
@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Deprecated
 public class Fade {
 
     public List<String> execute(String text, boolean smooth, int length, boolean in, boolean out) {

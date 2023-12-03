@@ -1,5 +1,6 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
+@Deprecated
 public class Align {
 
     public static String execute(String text, int width, boolean right) {

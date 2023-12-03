@@ -10,7 +10,7 @@ allprojects {
     apply plugin: 'maven-publish'
 
     group = 'plazmer'
-    version = '2.4.0'
+    version = '2.4.1'
     sourceCompatibility = 17
     targetCompatibility = 17
 

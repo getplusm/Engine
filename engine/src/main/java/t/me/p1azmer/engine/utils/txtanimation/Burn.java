@@ -1,10 +1,11 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
 import t.me.p1azmer.engine.utils.Colorizer;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class Burn {
 
     public static List<String> execute(String text, int speed, int pause, String... args) {

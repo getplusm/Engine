@@ -1,5 +1,6 @@
 package t.me.p1azmer.engine.lang;
 
+import org.bukkit.ChatColor;
 import t.me.p1azmer.engine.api.lang.LangKey;
 import t.me.p1azmer.engine.editor.EditorManager;
 import t.me.p1azmer.engine.utils.Placeholders;
@@ -65,4 +66,8 @@ public class EngineLang {
     public static final LangKey EDITOR_ERROR_NUMBER_GENERIC = LangKey.of("Editor.Error.Number.Generic", GRAY + "Invalid number!");
     public static final LangKey EDITOR_ERROR_NUMBER_NOT_INT = LangKey.of("Editor.Error.Number.NotInt", GRAY + "Expecting " + RED + "whole" + GRAY + " number!");
     public static final LangKey EDITOR_ERROR_ENUM = LangKey.of("Editor.Error.Enum", GRAY + "Invalid Input!");
+    public static final LangKey Editor_Message_Value_Helper = LangKey.of("Editor.Message.Value_Helper", ORANGE+"[ " + YELLOW + "Value Helper" + ORANGE + " ]");
+    public static final LangKey Editor_Message_Click_Selection = LangKey.of("Editor.Message.Click_Selection", GRAY + "Click me to select " + BLUE);
+    public static final LangKey Editor_Message_Previous_Page = LangKey.of("Editor.Message.Page.Previous", GRAY + "Previous Page");
+    public static final LangKey Editor_Message_Next_Page = LangKey.of("Editor.Message.Page.Next", GRAY + "Next Page");
 }

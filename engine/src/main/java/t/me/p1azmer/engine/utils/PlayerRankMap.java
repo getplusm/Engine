@@ -12,8 +12,8 @@ public class PlayerRankMap<T extends Number> {
     private final Map<String, T> values;
 
     private boolean negativeBetter;
-    private boolean checkAsPermission;
-    private String permissionPrefix;
+    @Deprecated private boolean checkAsPermission;
+    @Deprecated private String permissionPrefix;
 
     public PlayerRankMap(@NotNull Map<String, T> values) {
         this.values = new HashMap<>(values);
@@ -119,5 +119,10 @@ public class PlayerRankMap<T extends Number> {
         this.checkAsPermission = true;
         this.permissionPrefix = permissionPrefix;
         return this;
+    }
+
+    @NotNull
+    public Map<String, T> getValues() {
+        return values;
     }
 }

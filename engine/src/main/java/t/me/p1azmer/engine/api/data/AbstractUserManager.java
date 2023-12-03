@@ -1,11 +1,14 @@
 package t.me.p1azmer.engine.api.data;
 
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.player.AsyncPlayerPreLoginEvent;
 import org.bukkit.event.player.PlayerKickEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.server.PluginDisableEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
@@ -16,6 +19,7 @@ import t.me.p1azmer.engine.utils.PlayerUtil;
 
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 
 public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends AbstractUser<P>> extends AbstractManager<P> {
 
@@ -25,7 +29,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     public AbstractUserManager(@NotNull P plugin, @NotNull UserDataHolder<P, U> dataHolder) {
         super(plugin);
         this.dataHolder = dataHolder;
-        this.usersLoaded = new HashMap<>();
+        this.usersLoaded = new ConcurrentHashMap<>();
     }
 
     @Override
@@ -49,6 +53,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     /**
      * Gets the preloaded user data for specified player.
      * Throws an exception if user data is not loaded for the player, because it has to be loaded on player login.
+     *
      * @param player A player instance to get user data for.
      * @return User data for the specified player.
      */
@@ -73,6 +78,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     /**
      * Attempts to load user data from online or cached player with that name.
      * If no such player data found, attempts to load it from the database.
+     *
      * @param name A user name to load data for.
      * @return User data for the specified user name.
      */
@@ -97,6 +103,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     /**
      * Attempts to load user data from online player with that UUID (if there is any).
      * In case if no such player is online, attempts to load data from the database.
+     *
      * @param uuid A user unique id to load data for.
      * @return User data for the specified uuid.
      */
@@ -127,15 +134,26 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     public final void unloadUser(@NotNull UUID uuid) {
-        U user = this.getUsersLoadedMap().remove(uuid);
+        U user = this.getUsersLoadedMap().get(uuid);
         if (user == null) return;
 
         this.unloadUser(user);
     }
 
     public void unloadUser(@NotNull U user) {
-        user.onUnload();
+        Player player = user.getPlayer();
+        if (player != null) {
+            user.setName(player.getName());
+            user.setLastOnline(System.currentTimeMillis());
+        }
         this.saveUser(user);
+
+        this.plugin.runTaskLaterAsync(task -> {
+            if (!user.isOnline()) {
+                this.getUsersLoadedMap().remove(user.getId());
+                user.onUnload();
+            }
+        }, 40L);
     }
 
     public void saveUser(@NotNull U user) {
@@ -161,7 +179,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
     @NotNull
     public Collection<@NotNull U> getUsersLoaded() {
-        
+
         return new HashSet<>(this.getUsersLoadedMap().values());
     }
 
@@ -197,8 +215,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
                 dataHolder.getData().addUser(user);
                 plugin.info("Created new user data for: '" + uuid + "'");
                 return;
-            }
-            else {
+            } else {
                 user = getUserData(uuid);
             }
 
@@ -211,16 +228,30 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         public void onUserQuit(PlayerQuitEvent event) {
             // slow down the process without loading the main thread so that the data is saved without loss
             // for Proxy switching
-            CompletableFuture.runAsync(()-> {
+            CompletableFuture.runAsync(() -> {
                 plugin.runTask(sync -> unloadUser(event.getPlayer()));
             }).join();
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
-        public void onUserQuit(PlayerKickEvent event){
-            CompletableFuture.runAsync(()-> {
+        public void onUserQuit(PlayerKickEvent event) {
+            CompletableFuture.runAsync(() -> {
                 plugin.runTask(sync -> unloadUser(event.getPlayer()));
             }).join();
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void onDisable(PluginDisableEvent event) {
+            if (event.getPlugin().equals(this.plugin)) {
+                CompletableFuture.runAsync(() -> getUsersLoaded().forEach(AbstractUserManager.this::saveUser));
+            }
+        }
+
+        @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
+        public void onDisable(WorldUnloadEvent event) {
+            if (event.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
+                CompletableFuture.runAsync(() -> getUsersLoaded().forEach(AbstractUserManager.this::saveUser));
+            }
         }
     }
 }

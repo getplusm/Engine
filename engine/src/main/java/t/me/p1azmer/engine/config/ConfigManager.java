@@ -67,14 +67,17 @@ public class ConfigManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         return this.config;
     }
 
+    @Deprecated
     public void extractResources(@NotNull String folder) {
         this.extractResources(folder, plugin.getDataFolder() + folder, false);
     }
 
+    @Deprecated
     public void extractResources(@NotNull String jarPath, @NotNull String toPath) {
         this.extractResources(jarPath, toPath, false);
     }
 
+    @Deprecated
     public void extractResources(@NotNull String jarPath, @NotNull String toPath, boolean override) {
         File destination = new File(toPath);
         if (destination.exists() && !override) return;

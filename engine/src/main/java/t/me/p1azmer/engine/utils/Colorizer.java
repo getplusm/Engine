@@ -5,7 +5,6 @@ import net.md_5.bungee.api.ChatColor;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.utils.random.Rnd;
 import t.me.p1azmer.engine.utils.regex.RegexUtil;
-import t.me.p1azmer.engine.utils.rgb.RGBUtils;
 
 import javax.annotation.Nonnull;
 import java.awt.*;
@@ -39,11 +38,11 @@ public class Colorizer {
             .put(new Color(16777215), ChatColor.getByChar('f'))
             .build();
     public static final Pattern PATTERN_HEX = Pattern.compile("#([A-Fa-f0-9]{6})");
+    public static final Pattern PATTERN_HEX_BRACKETS = Pattern.compile("<#([A-Fa-f0-9]{6})>");
     public static final Pattern PATTERN_GRADIENT = Pattern.compile("<gradient:" + PATTERN_HEX.pattern() + ">(.*?)</gradient:" + PATTERN_HEX.pattern() + ">");
 
     @NotNull
     public static String apply(@NotNull String str) {
-        str = RGBUtils.getInstance().applyFormats(str);
         return hex(gradient(legacy(str)));
     }
 

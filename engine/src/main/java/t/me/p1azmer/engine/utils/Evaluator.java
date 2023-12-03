@@ -2,6 +2,7 @@ package t.me.p1azmer.engine.utils;
 
 import org.jetbrains.annotations.NotNull;
 
+@Deprecated
 public class Evaluator {
 
     public static double evaluate(@NotNull final String str) {

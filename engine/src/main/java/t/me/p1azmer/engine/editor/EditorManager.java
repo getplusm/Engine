@@ -20,6 +20,8 @@ import t.me.p1azmer.engine.utils.message.NexMessage;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static t.me.p1azmer.engine.utils.Colors2.*;
+
 public class EditorManager extends AbstractManager<NexEngine> {
 
     private static final Map<Player, Pair<Menu<?>, Integer>> CACHE_MENU = new WeakHashMap<>();
@@ -103,17 +105,17 @@ public class EditorManager extends AbstractManager<NexEngine> {
         boolean isLastPage = page == pages;
         boolean isFirstPage = page == 1;
         boolean fixCommand = Version.isAbove(Version.V1_18_R2);
-        String prefix = ChatColor.DARK_GRAY + "> ";
-        String header = ChatColor.GOLD + "=".repeat(8) + "[ " + ChatColor.YELLOW + "Value Helper" + ChatColor.GOLD + " ]" + "=".repeat(8);
-        String footer = ChatColor.GOLD + "=".repeat(9) + ChatColor.GRAY + " [<] " + ChatColor.YELLOW + page + ChatColor.GOLD + "/" + ChatColor.YELLOW + pages + ChatColor.GRAY + " [>] " + ChatColor.GOLD + "=".repeat(9);
+        String prefix = DARK_GRAY + "> ";
+        String header = ORANGE + "=".repeat(8) + EngineUtils.ENGINE.getMessage(EngineLang.Editor_Message_Value_Helper).getLocalized(player) + "=".repeat(8);
+        String footer = ORANGE + "=".repeat(9) + GRAY + " [<] " + YELLOW + page + ORANGE + "/" + YELLOW + pages + GRAY + " [>] " + ORANGE + "=".repeat(9);
 
         List<String> items = new ArrayList<>(values.stream().skip(skip).limit(perPage).toList());
         List<String> prefixed = items.stream().map(str -> prefix + str).toList();
 
         NexMessage message = new NexMessage(String.join("\n", prefixed) + "\n" + footer);
         items.forEach(item -> {
-            NexComponent component = message.addComponent(Colorizer.strip(item), ChatColor.GREEN + item);
-            component.showText(ChatColor.GRAY + "Click me to select " + ChatColor.AQUA + item);
+            NexComponent component = message.addComponent(Colorizer.strip(item), GREEN + item);
+            component.showText(EngineUtils.ENGINE.getMessage(EngineLang.Editor_Message_Click_Selection).getLocalized(player) + item);
 
             if (autoRun && fixCommand && !item.startsWith("/")) item = "/" + item;
 
@@ -121,11 +123,13 @@ public class EditorManager extends AbstractManager<NexEngine> {
             else component.suggestCommand(Colorizer.strip(item));
         });
         if (!isFirstPage)
-            message.addComponent("[<]", ChatColor.RED + "[<]").showText(ChatColor.GRAY + "Previous Page").runCommand("/" + VALUES + " " + (page - 1) + " " + autoRun);
+            message.addComponent("[<]", RED + "[<]")
+                    .showText(EngineUtils.ENGINE.getMessage(EngineLang.Editor_Message_Previous_Page).getLocalized(player)).runCommand("/" + VALUES + " " + (page - 1) + " " + autoRun);
         if (!isLastPage)
-            message.addComponent("[>]", ChatColor.RED + "[>]").showText(ChatColor.GRAY + "Next Page").runCommand("/" + VALUES + " " + (page + 1) + " " + autoRun);
+            message.addComponent("[>]", RED + "[>]")
+                    .showText(EngineUtils.ENGINE.getMessage(EngineLang.Editor_Message_Next_Page).getLocalized(player)).runCommand("/" + VALUES + " " + (page + 1) + " " + autoRun);
 
-        player.sendMessage(header);
+        player.sendMessage(Colorizer.hex(header));
         message.send(player);
     }
 

@@ -15,27 +15,29 @@ public class UniParticle {
     private final Particle particle;
     private final Object data;
 
-    public UniParticle(@NotNull Particle particle, @Nullable Object data) {
+    public UniParticle(@Nullable Particle particle, @Nullable Object data) {
         this.particle = particle;
         this.data = data;
     }
 
     @NotNull
-    public static UniParticle of(@NotNull Particle particle) {
+    public static UniParticle of(@Nullable Particle particle) {
         return UniParticle.of(particle, null);
     }
 
     @NotNull
-    public static UniParticle of(@NotNull Particle particle, @Nullable Object data) {
+    public static UniParticle of(@Nullable Particle particle, @Nullable Object data) {
         return new UniParticle(particle, data);
     }
 
-    @Nullable
-    public static UniParticle of(@NotNull String parameter) {
+    @NotNull
+    public static UniParticle of(@Nullable String parameter) {
+        if (parameter == null || parameter.isEmpty()) return UniParticle.of(null, null);
+
         String[] nameSplit = parameter.split(":");
         String particleName = nameSplit[0];
         Particle particle = StringUtil.getEnum(particleName, Particle.class).orElse(null);
-        if (particle == null) return null;
+        if (particle == null) return UniParticle.of(null, null);
         Object particleData = nameSplit.length >= 2 ? nameSplit[1].toUpperCase() : "";
         return new UniParticle(Particle.valueOf(particleName), particleData);
     }
@@ -73,7 +75,8 @@ public class UniParticle {
     @NotNull
     public static UniParticle read(@NotNull JYML cfg, @NotNull String path) {
         String name = cfg.getString(path + ".Name", "");
-        Particle particle = StringUtil.getEnum(name, Particle.class).orElse(Particle.REDSTONE);
+        Particle particle = StringUtil.getEnum(name, Particle.class).orElse(null);
+        if (particle == null) return UniParticle.of(null, null);
 
         Class<?> dataType = particle.getDataType();
         Object data = null;
@@ -103,7 +106,7 @@ public class UniParticle {
     }
 
     public void write(@NotNull JYML cfg, @NotNull String path) {
-        cfg.set(path + ".Name", this.getParticle().name());
+        cfg.set(path + ".Name", this.isEmpty() ? "null" : this.getParticle().name());
 
         Object data = this.getData();
         if (data instanceof BlockData blockData) {
@@ -123,6 +126,10 @@ public class UniParticle {
         }
     }
 
+    public boolean isEmpty() {
+        return this.particle == null;
+    }
+
     @NotNull
     public Particle getParticle() {
         return particle;
@@ -135,6 +142,8 @@ public class UniParticle {
 
     @NotNull
     public UniParticle parseData(@NotNull String from) {
+        if (this.isEmpty()) return this;
+
         String[] split = from.split(" ");
         Class<?> dataType = this.getParticle().getDataType();
         Object data = null;
@@ -180,6 +189,8 @@ public class UniParticle {
     }
 
     public void play(@Nullable Player player, @NotNull Location location, double xOffset, double yOffset, double zOffset, double speed, int amount) {
+        if (this.isEmpty()) return;
+
         if (player == null) {
             World world = location.getWorld();
             if (world == null) return;

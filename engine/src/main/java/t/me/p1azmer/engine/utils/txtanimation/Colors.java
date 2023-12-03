@@ -1,4 +1,4 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
 import com.google.common.collect.Lists;
 
@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+@Deprecated
 public class Colors {
 
     private static final List<String> DEFAULT_COLORS = Lists.newArrayList("&c", "&6", "&e", "&a", "&b", "&d");

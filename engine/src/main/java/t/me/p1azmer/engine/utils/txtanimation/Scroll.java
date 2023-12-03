@@ -1,10 +1,11 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
 import org.bukkit.ChatColor;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class Scroll {
 
     public static List<String> execute(String text, int width, int space) {

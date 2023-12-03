@@ -58,7 +58,7 @@ public final class CreateTableExecutor extends SQLExecutor<Void> {
                 .map(column -> column.getNameEscaped() + " " + column.formatType(this.storageType))
                 .collect(Collectors.joining(", "));
 
-        String sql = "CREATE TABLE IF NOT EXISTS " + this.getTable() + "(" + columns + ");";
+        String sql = "CREATE TABLE IF NOT EXISTS " + this.getTable() + "(" + columns + ") CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;";
 
         SQLQueries.executeStatement(connector, sql);
         return null;

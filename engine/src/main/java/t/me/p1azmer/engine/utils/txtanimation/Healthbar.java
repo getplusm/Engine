@@ -1,8 +1,9 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
 import java.util.Collections;
 import java.util.List;
 
+@Deprecated
 public class Healthbar {
     public static List<String> execute(String text, String symbol, String fill, String empty, int size, int max) {
 

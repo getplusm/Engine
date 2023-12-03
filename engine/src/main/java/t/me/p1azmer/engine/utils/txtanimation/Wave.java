@@ -1,4 +1,4 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
 import org.bukkit.ChatColor;
 import t.me.p1azmer.engine.utils.Colorizer;
@@ -6,6 +6,7 @@ import t.me.p1azmer.engine.utils.Colorizer;
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class Wave {
 
 

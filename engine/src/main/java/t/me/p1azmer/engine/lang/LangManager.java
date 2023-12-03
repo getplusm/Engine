@@ -31,7 +31,7 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     protected static JYML assetsConfig;
 
     protected final Map<String, LangMessage> messages;
-    protected final Map<String, String> placeholders;
+    @Deprecated protected final Map<String, String> placeholders;
     protected JYML config;
 
     public LangManager(@NotNull P plugin) {
@@ -77,7 +77,7 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
         FileUtil.create(file);
 
         this.plugin.info("Downloading assets for your language from github...");
-        String url = "https://github.com/getplusm/Engine/raw/master/assets/" + langCode + ".yml";
+        String url = "https://github.com/getplusm/Engine/raw/main/assets/" + langCode + ".yml";
 
         try (BufferedInputStream in = new BufferedInputStream(new URL(url).openStream());
              FileOutputStream fileOutputStream = new FileOutputStream(file)) {
@@ -133,6 +133,7 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     }
 
     @NotNull
+    @Deprecated
     public Map<String, String> getPlaceholders() {
         return placeholders;
     }
@@ -269,17 +270,17 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @NotNull
     public static String getPotionType(@NotNull PotionEffectType type) {
-        return getAsset("PotionEffectType", type.getKey().getKey());//EngineUtils.ENGINE.getLangManager().getMessage("PotionEffectType." + type.getName()).orElse(type.getName());
+        return getAsset("PotionEffectType", type.getKey().getKey());
     }
 
     @NotNull
     public static String getEntityType(@NotNull EntityType type) {
-        return getAsset("EntityType", type.getKey().getKey());//EngineUtils.ENGINE.getLangManager().getEnum(type);
+        return getAsset("EntityType", type.getKey().getKey());
     }
 
     @NotNull
     public static String getMaterial(@NotNull Material type) {
-        return getAsset("Material", type.getKey().getKey());//EngineUtils.ENGINE.getLangManager().getEnum(type);
+        return getAsset("Material", type.getKey().getKey());
     }
 
     @NotNull

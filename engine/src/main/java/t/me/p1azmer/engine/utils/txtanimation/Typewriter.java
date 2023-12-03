@@ -1,8 +1,9 @@
-package t.me.p1azmer.engine.utils.TextAnimation;
+package t.me.p1azmer.engine.utils.txtanimation;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@Deprecated
 public class Typewriter {
 
     public static List<String> execute(String text, String cursor, int pause, boolean reverse) {
