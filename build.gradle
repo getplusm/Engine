@@ -10,7 +10,7 @@ allprojects {
     apply plugin: 'maven-publish'
 
     group = 'plazmer'
-    version = '2.4.1'
+    version = '2.4.2'
     sourceCompatibility = 17
     targetCompatibility = 17
 
@@ -58,4 +58,42 @@ allprojects {
             url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
         }
     }
+}
+
+dependencies {
+    implementation(project(path: ":engine"))
+    implementation(project(path: ":folia"))
+}
+
+tasks {
+
+    shadowJar {
+        archivesBaseName = "PLAZMER-ENGINE"
+        archiveClassifier.set ""
+        destinationDirectory.set(rootProject.buildDir)
+    }
+
+    build {
+        dependsOn(shadowJar)
+    }
+
+    publishing {
+        publications {
+            maven(MavenPublication) {
+                groupId = 'com.github.getplusm'
+                artifactId = 'Engine'
+                version = project.version
+
+                from components.java
+            }
+        }
+
+        repositories {
+            maven {
+                name = 'jitpack'
+                url = 'https://jitpack.io'
+            }
+        }
+    }
+
 }

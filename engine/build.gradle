@@ -46,30 +46,8 @@ dependencies {
     implementation(project":folia")
 }
 
-shadowJar {
-    destinationDirectory.set(rootProject.buildDir)
-}
-
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.github.getplusm'
-            artifactId = 'Engine'
-            version = project.version
-
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            name = 'jitpack'
-            url = 'https://jitpack.io'
-        }
+tasks {
+    build {
+        dependsOn(shadowJar)
     }
 }
-
-artifacts {
-    archives shadowJar
-}
-assemble.dependsOn(shadowJar)
