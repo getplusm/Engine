@@ -76,24 +76,22 @@ tasks {
     build {
         dependsOn(shadowJar)
     }
+}
+publishing {
+    publications {
+        maven(MavenPublication) {
+            groupId = 'com.github.getplusm'
+            artifactId = 'Engine'
+            version = project.version
 
-    publishing {
-        publications {
-            maven(MavenPublication) {
-                groupId = 'com.github.getplusm'
-                artifactId = 'Engine'
-                version = project.version
-
-                from components.java
-            }
-        }
-
-        repositories {
-            maven {
-                name = 'jitpack'
-                url = 'https://jitpack.io'
-            }
+            from components.java
         }
     }
 
+    repositories {
+        maven {
+            name = 'jitpack'
+            url = 'https://jitpack.io'
+        }
+    }
 }
