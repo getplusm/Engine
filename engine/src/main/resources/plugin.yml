@@ -3,6 +3,7 @@ version: ${version}
 main: t.me.p1azmer.engine.NexEngine
 author: "plazmer"
 website: "t.me/p1azmer"
+description: "Plugin Engine"
 api-version: 1.17
 softdepend: [ Vault ]
 load: STARTUP

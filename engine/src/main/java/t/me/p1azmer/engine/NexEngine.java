@@ -5,11 +5,14 @@ import t.me.p1azmer.engine.api.command.GeneralCommand;
 import t.me.p1azmer.engine.api.editor.EditorLocales;
 import t.me.p1azmer.engine.api.menu.impl.MenuListener;
 import t.me.p1azmer.engine.api.menu.impl.MenuRefreshTask;
+import t.me.p1azmer.engine.command.list.CheckPermCommand;
+import t.me.p1azmer.engine.command.list.ReloadSubCommand;
 import t.me.p1azmer.engine.config.EngineConfig;
 import t.me.p1azmer.engine.editor.EditorManager;
 import t.me.p1azmer.engine.integration.external.VaultHook;
 import t.me.p1azmer.engine.lang.EngineLang;
 import t.me.p1azmer.engine.utils.EngineUtils;
+import t.me.p1azmer.engine.utils.Placeholders;
 import t.me.p1azmer.playerBlockTracker.PlayerBlockTracker;
 
 import java.util.HashSet;
@@ -60,7 +63,8 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
     @Override
     public void registerCommands(@NotNull GeneralCommand<NexEngine> mainCommand) {
-
+        mainCommand.addChildren(new ReloadSubCommand<>(this, Placeholders.WILDCARD));
+        mainCommand.addChildren(new CheckPermCommand(this));
     }
 
     @Override

@@ -10,7 +10,7 @@ allprojects {
     apply plugin: 'maven-publish'
 
     group = 'plazmer'
-    version = '2.4.2'
+    version = '2.4.3'
     sourceCompatibility = 17
     targetCompatibility = 17
 
@@ -75,23 +75,5 @@ tasks {
 
     build {
         dependsOn(shadowJar)
-    }
-}
-publishing {
-    publications {
-        maven(MavenPublication) {
-            groupId = 'com.github.getplusm'
-            artifactId = 'Engine'
-            version = project.version
-
-            from components.java
-        }
-    }
-
-    repositories {
-        maven {
-            name = 'jitpack'
-            url = 'https://jitpack.io'
-        }
     }
 }

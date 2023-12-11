@@ -31,13 +31,13 @@ public class NexMessage {
         this.components = new HashMap<>();
 
         // Originally was in 'fromLegacyText' method of the TextComponent class.
-        Matcher matcher = RegexUtil.getMatcher(URL, Colorizer.strip(this.message));
+        /*Matcher matcher = RegexUtil.getMatcher(URL, Colorizer.strip(this.message));
         while (RegexUtil.matcherFind(matcher)) {
             String url = matcher.group(0);
             String link = url.startsWith("http") ? url : "http://" + url;
 
             this.addComponent(url, url).openURL(link);
-        }
+        }*/
     }
 
     @NotNull
