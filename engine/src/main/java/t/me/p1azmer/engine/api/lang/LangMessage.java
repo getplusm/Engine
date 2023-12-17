@@ -128,11 +128,7 @@ public class LangMessage {
 
     @NotNull
     public String getLocalized() {
-        String localized = this.msgLocalized;
-        if (this.papi) {
-            localized = PlaceholderAPI.setPlaceholders(Bukkit.getOfflinePlayer(UUID.fromString("1492a9a4-4277-4eb6-897a-b346d76bc1e0")), localized);
-        }
-        return localized;
+        return this.msgLocalized;
     }
 
     @NotNull

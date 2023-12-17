@@ -6,9 +6,9 @@ import t.me.p1azmer.engine.api.data.sql.column.ColumnType;
 
 public class SQLColumn {
 
-    private final String name;
+    private final String     name;
     private final ColumnType type;
-    private final int length;
+    private final int        length;
 
     public SQLColumn(@NotNull String name, @NotNull ColumnType type, int length) {
         this.name = name.replace(" ", "_");

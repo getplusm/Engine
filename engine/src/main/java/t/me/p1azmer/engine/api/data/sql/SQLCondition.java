@@ -21,6 +21,7 @@ public class SQLCondition {
     public static SQLCondition equal(@NotNull SQLValue value) {
         return of(value, Type.EQUAL);
     }
+
     @NotNull
     public static SQLCondition not(@NotNull SQLValue value) {
         return of(value, Type.NOT_EQUAL);

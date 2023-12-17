@@ -64,7 +64,9 @@ public class NexEngine extends NexPlugin<NexEngine> {
     @Override
     public void registerCommands(@NotNull GeneralCommand<NexEngine> mainCommand) {
         mainCommand.addChildren(new ReloadSubCommand<>(this, Placeholders.WILDCARD));
-        mainCommand.addChildren(new CheckPermCommand(this));
+        if (EngineUtils.hasVault() && VaultHook.hasPermissions()) {
+            mainCommand.addChildren(new CheckPermCommand(this));
+        }
     }
 
     @Override

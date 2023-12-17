@@ -16,7 +16,7 @@ import java.util.List;
 
 public final class AlterTableExecutor extends SQLExecutor<Void> {
 
-    private final StorageType storageType;
+    private final StorageType    storageType;
     private final List<SQLValue> columns;
     private Type type;
 
@@ -87,6 +87,7 @@ public final class AlterTableExecutor extends SQLExecutor<Void> {
                 if (connector instanceof ConnectorSQLite || value.getColumn().getType() != ColumnType.STRING) {
                     sql = sql + " DEFAULT '" + value.getValue() + "'";
                 }
+
                 SQLQueries.executeStatement(connector, sql);
             });
         }

@@ -14,6 +14,7 @@ import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.api.manager.AbstractListener;
 import t.me.p1azmer.engine.api.manager.AbstractManager;
+import t.me.p1azmer.engine.config.EngineConfig;
 import t.me.p1azmer.engine.utils.EntityUtil;
 import t.me.p1azmer.engine.utils.PlayerUtil;
 
@@ -48,38 +49,36 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     protected abstract U createData(@NotNull UUID uuid, @NotNull String name);
 
     public void loadOnlineUsers() {
-        this.plugin.getServer().getOnlinePlayers().stream().map(Player::getUniqueId).forEach(this::getUserData);
+        this.plugin.getServer().getOnlinePlayers().stream().map(Player::getUniqueId).forEach(id -> {
+            U user = this.getUserData(id);
+            if (user != null) this.cachePermanent(user);
+        });
     }
 
-    /**
-     * Gets the preloaded user data for specified player.
-     * Throws an exception if user data is not loaded for the player, because it has to be loaded on player login.
-     *
-     * @param player A player instance to get user data for.
-     * @return User data for the specified player.
-     */
     @NotNull
     public final U getUserData(@NotNull Player player) {
-        if (EntityUtil.isNPC(player)) {
-            throw new IllegalStateException("Could not load user data from an NPC!");
+        UUID uuid = player.getUniqueId();
+
+        U user = this.getUserLoaded(uuid);
+        if (user != null) return user;
+
+        if (PlayerUtil.isReal(player)) {
+            user = this.getUserData(uuid);
+            if (user != null) {
+                if (EngineConfig.USER_DEBUG_ENABLED.get()) {
+                    new Throwable().printStackTrace();
+                    this.plugin.warn("Main thread user data load for '" + uuid + "' aka '" + player.getName() + "'.");
+                }
+                return user;
+            }
         }
 
-        U user = this.getUserLoaded(player.getUniqueId());
-        if (user == null) {
-            user = this.getUserData(player.getUniqueId());
-            new Throwable().printStackTrace();
-            this.plugin.warn("Main thread user data load for '" + player.getUniqueId() + "' aka '" + player.getName() + "'.");
-        }
-        if (user == null) {
-            throw new IllegalStateException("User data for '" + player.getName() + "' is not loaded or created!");
-        }
-        return user;
+        return this.createData(uuid, player.getName());
     }
 
     /**
      * Attempts to load user data from online or cached player with that name.
      * If no such player data found, attempts to load it from the database.
-     *
      * @param name A user name to load data for.
      * @return User data for the specified user name.
      */
@@ -94,7 +93,8 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         user = this.dataHolder.getData().getUser(name);
         if (user != null) {
             user.onLoad();
-            this.cache(user);
+            //this.plugin.debug("Loaded by name from DB: " + user.getName());
+            this.cacheTemporary(user);
         }
 
         return user;
@@ -103,7 +103,6 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     /**
      * Attempts to load user data from online player with that UUID (if there is any).
      * In case if no such player is online, attempts to load data from the database.
-     *
      * @param uuid A user unique id to load data for.
      * @return User data for the specified uuid.
      */
@@ -115,7 +114,8 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         user = this.dataHolder.getData().getUser(uuid);
         if (user != null) {
             user.onLoad();
-            this.cache(user);
+            //this.plugin.debug("Loaded by UUID from DB: " + user.getName());
+            this.cacheTemporary(user);
         }
 
         return user;
@@ -179,13 +179,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
             user.setLastOnline(System.currentTimeMillis());
         }
         this.saveUser(user);
-
-        this.plugin.runTaskLaterAsync(task -> {
-            if (!user.isOnline()) {
-                this.getUsersLoadedMap().remove(user.getId());
-                user.onUnload();
-            }
-        }, 40L);
+        this.cacheTemporary(user);
     }
 
     public void saveUser(@NotNull U user) {
@@ -205,13 +199,21 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     @NotNull
-    public Map<UUID, @NotNull U> getUsersLoadedMap() {
+    public Map<UUID, U> getUsersLoadedMap() {
+        this.usersLoaded.values().removeIf(user -> {
+            if (user.isCacheExpired()) {
+                user.onUnload();
+                //this.plugin.debug("Cache expired: " + user.getName());
+                return true;
+            }
+            return false;
+        });
+
         return this.usersLoaded;
     }
 
     @NotNull
-    public Collection<@NotNull U> getUsersLoaded() {
-
+    public Collection<U> getUsersLoaded() {
         return new HashSet<>(this.getUsersLoadedMap().values());
     }
 
@@ -230,8 +232,28 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         return this.getUsersLoadedMap().containsKey(player.getUniqueId());
     }
 
-    public void cache(@NotNull U user) {
-        this.getUsersLoadedMap().put(user.getId(), user);
+    public boolean isUserExists(@NotNull String name) {
+        return this.dataHolder.getData().isUserExists(name);
+    }
+
+    public boolean isUserExists(@NotNull UUID uuid) {
+        return this.dataHolder.getData().isUserExists(uuid);
+    }
+
+    public void cacheTemporary(@NotNull U user) {
+        user.setCachedUntil(System.currentTimeMillis() + EngineConfig.USER_CACHE_LIFETIME.get() * 1000L);
+        this.cache(user);
+        //this.plugin.debug("Temp user cache: " + user.getName());
+    }
+
+    public void cachePermanent(@NotNull U user) {
+        user.setCachedUntil(-1);
+        this.cache(user);
+        //this.plugin.debug("Permanent user cache: " + user.getName());
+    }
+
+    private void cache(@NotNull U user) {
+        this.getUsersLoadedMap().putIfAbsent(user.getId(), user);
     }
 
     class PlayerListener extends AbstractListener<P> {

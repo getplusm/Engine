@@ -8,7 +8,7 @@ import t.me.p1azmer.engine.api.data.sql.SQLQueries;
 
 public final class RenameTableExecutor extends SQLExecutor<Void> {
 
-    private final StorageType storageType;
+    private final StorageType     storageType;
     private String renameTo;
 
     private RenameTableExecutor(@NotNull String table, @NotNull StorageType storageType) {

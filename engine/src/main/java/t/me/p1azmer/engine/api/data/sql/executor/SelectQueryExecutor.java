@@ -15,10 +15,10 @@ import java.util.stream.Collectors;
 
 public final class SelectQueryExecutor<T> extends SQLExecutor<List<T>> {
 
-    private final List<SQLColumn> columns;
-    private final List<SQLCondition> wheres;
+    private final List<SQLColumn>        columns;
+    private final List<SQLCondition>     wheres;
     private final Function<ResultSet, T> dataFunction;
-    private int amount;
+    private       int                    amount;
 
     private SelectQueryExecutor(@NotNull String table, @NotNull Function<ResultSet, T> dataFunction) {
         super(table);
@@ -82,6 +82,7 @@ public final class SelectQueryExecutor<T> extends SQLExecutor<List<T>> {
 
         //List<String> values2 = this.columns.stream().map(SQLColumn::getName).toList();
         List<String> whers2 = this.wheres.stream().map(SQLCondition::getValue).map(SQLValue::getValue).toList();
+
         return SQLQueries.executeQuery(connector, sql, whers2, this.dataFunction, this.amount);
     }
 }

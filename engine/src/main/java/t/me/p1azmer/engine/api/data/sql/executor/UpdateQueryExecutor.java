@@ -70,5 +70,4 @@ public final class UpdateQueryExecutor extends SQLExecutor<Void> {
         return null;
     }
 
-
 }
