@@ -229,7 +229,7 @@ public class JYML extends YamlConfiguration {
 
     public int @NotNull [] getIntArray(@NotNull String path, int[] def) {
         String str = this.getString(path);
-        return str == null ? def : StringUtil.getIntArray(str);
+        return str == null ? def : NumberUtil.getIntArray(str);
     }
 
     public void setIntArray(@NotNull String path, int[] arr) {
@@ -250,8 +250,8 @@ public class JYML extends YamlConfiguration {
                 if (range.contains("-")) {
                     String[] split = range.split("-");
                     if (split.length == 2) {
-                        int start = StringUtil.getInteger(split[0].trim(), -1);
-                        int end = StringUtil.getInteger(split[1].trim(), -1);
+                        int start = NumberUtil.getInteger(split[0].trim(), -1);
+                        int end = NumberUtil.getInteger(split[1].trim(), -1);
 
                         if (start >= 0 && start < 54 && end > 0 && end <= 54) {
                             for (int i = start; i <= end; i++) {
@@ -260,7 +260,7 @@ public class JYML extends YamlConfiguration {
                         }
                     }
                 } else {
-                    int value = StringUtil.getInteger(range.trim(), -1);
+                    int value = NumberUtil.getInteger(range.trim(), -1);
                     if (value != -1) {
                         slots.add(value);
                     }
@@ -375,7 +375,7 @@ public class JYML extends YamlConfiguration {
 
         String colorRaw = this.getString(path + "Color");
         if (colorRaw != null && !colorRaw.isEmpty()) {
-            Color color = StringUtil.parseColor(colorRaw);
+            Color color = StringUtil.getColor(colorRaw);
             if (meta instanceof LeatherArmorMeta armorMeta) {
                 armorMeta.setColor(color);
             } else if (meta instanceof PotionMeta potionMeta) {

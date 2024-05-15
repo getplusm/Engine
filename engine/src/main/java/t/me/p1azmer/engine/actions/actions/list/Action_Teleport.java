@@ -9,6 +9,7 @@ import t.me.p1azmer.engine.actions.actions.AbstractActionExecutor;
 import t.me.p1azmer.engine.actions.actions.ActionType;
 import t.me.p1azmer.engine.actions.params.IParamResult;
 import t.me.p1azmer.engine.actions.params.IParamType;
+import t.me.p1azmer.engine.utils.NumberUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
 
 import java.util.Set;
@@ -51,9 +52,9 @@ public class Action_Teleport extends AbstractActionExecutor {
             if (world == null) continue;
 
 
-            double   x   = split.length >= 2 ? StringUtil.getDouble(split[1], 0, true) : 0;
-            double   y   = split.length >= 3 ? StringUtil.getDouble(split[2], 0, true) : 0;
-            double   z   = split.length >= 4 ? StringUtil.getDouble(split[3], 0, true) : 0;
+            double   x   = split.length >= 2 ? NumberUtil.getAnyDouble(split[1], 0) : 0;
+            double   y   = split.length >= 3 ? NumberUtil.getAnyDouble(split[2], 0) : 0;
+            double   z   = split.length >= 4 ? NumberUtil.getAnyDouble(split[3], 0) : 0;
             Location loc = new Location(world, x, y, z);
 
             e.teleport(loc);

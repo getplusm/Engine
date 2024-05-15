@@ -4,8 +4,8 @@ import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.utils.TriFunction;
-import t.me.p1azmer.engine.utils.values.UniParticle;
-import t.me.p1azmer.engine.utils.values.UniSound;
+import t.me.p1azmer.engine.utils.wrapper.UniParticle;
+import t.me.p1azmer.engine.utils.wrapper.UniSound;
 
 import java.util.*;
 import java.util.function.Function;

@@ -4,6 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.utils.Colorizer;
+import t.me.p1azmer.engine.utils.NumberUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
 
 import java.util.function.Function;
@@ -38,12 +39,12 @@ public class CommandFlag<T> {
 
     @NotNull
     public static CommandFlag<Integer> intFlag(@NotNull String name) {
-        return new CommandFlag<>(name, str -> StringUtil.getInteger(str, 0, true));
+        return new CommandFlag<>(name, str -> NumberUtil.getAnyInteger(str, 0));
     }
 
     @NotNull
     public static CommandFlag<Double> doubleFlag(@NotNull String name) {
-        return new CommandFlag<>(name, str -> StringUtil.getDouble(str, 0, true));
+        return new CommandFlag<>(name, str -> NumberUtil.getAnyDouble(str, 0));
     }
 
     @NotNull

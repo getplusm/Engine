@@ -43,11 +43,11 @@ public class LocationUtil {
             return null;
         }
 
-        double x = StringUtil.getDouble(split[0], 0, true);
-        double y = StringUtil.getDouble(split[1], 0, true);
-        double z = StringUtil.getDouble(split[2], 0, true);
-        float pitch = (float) StringUtil.getDouble(split[3], 0, true);
-        float yaw = (float) StringUtil.getDouble(split[4], 0, true);
+        double x = NumberUtil.getAnyDouble(split[0], 0);
+        double y = NumberUtil.getAnyDouble(split[1], 0);
+        double z = NumberUtil.getAnyDouble(split[2], 0);
+        float pitch = (float) NumberUtil.getAnyDouble(split[3], 0);
+        float yaw = (float) NumberUtil.getAnyDouble(split[4], 0);
 
         return new Location(world, x, y, z, yaw, pitch);
     }

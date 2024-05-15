@@ -12,6 +12,7 @@ import t.me.p1azmer.engine.api.editor.InputHandler;
 import t.me.p1azmer.engine.api.editor.InputWrapper;
 import t.me.p1azmer.engine.api.manager.AbstractListener;
 import t.me.p1azmer.engine.utils.Colorizer;
+import t.me.p1azmer.engine.utils.NumberUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
 
 import java.util.HashSet;
@@ -59,7 +60,7 @@ public class EditorListener extends AbstractListener<NexEngine> {
         String text = Colorizer.apply(raw.substring(1));
         if (text.startsWith(EditorManager.VALUES)) {
             String[] split = text.split(" ");
-            int page = split.length >= 2 ? StringUtil.getInteger(split[1], 0) : 0;
+            int page = split.length >= 2 ? NumberUtil.getInteger(split[1], 0) : 0;
             boolean auto = split.length >= 3 && Boolean.parseBoolean(split[2]);
             EditorManager.displayValues(player, auto, page);
             return;

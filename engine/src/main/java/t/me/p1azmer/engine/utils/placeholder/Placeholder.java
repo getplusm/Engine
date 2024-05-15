@@ -1,10 +1,10 @@
-package t.me.p1azmer.engine.api.placeholder;
+package t.me.p1azmer.engine.utils.placeholder;
 
 import org.jetbrains.annotations.NotNull;
 
 import java.util.function.UnaryOperator;
 
-public interface IPlaceholderMap {
+public interface Placeholder {
 
     @NotNull PlaceholderMap getPlaceholders();
 

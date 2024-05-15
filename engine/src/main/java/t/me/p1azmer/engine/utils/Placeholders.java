@@ -5,7 +5,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
-import t.me.p1azmer.engine.api.placeholder.PlaceholderMap;
+import t.me.p1azmer.engine.utils.placeholder.PlaceholderMap;
 
 import java.util.function.UnaryOperator;
 
@@ -45,6 +45,13 @@ public class Placeholders {
                 .add(LOCATION_Z, () -> NumberUtil.format(location.getZ()))
                 .add(LOCATION_WORLD, () -> LocationUtil.getWorldName(location))
                 .replacer();
+    }
+
+    @NotNull
+    public static String formattedLocation(@NotNull Location location) {
+        String worldName = LocationUtil.getWorldName(location);
+        return forLocation(location)
+          .apply(worldName + " - " + location.getBlockX() + ", " + location.getBlockY() + ", " + location.getBlockZ());
     }
 
     @NotNull

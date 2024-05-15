@@ -1,4 +1,4 @@
-package t.me.p1azmer.engine.api.placeholder;
+package t.me.p1azmer.engine.utils.placeholder;
 
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.utils.Pair;
@@ -35,9 +35,9 @@ public class PlaceholderMap {
     }
 
     @NotNull
-    public static PlaceholderMap fusion(@NotNull IPlaceholderMap... others) {
+    public static PlaceholderMap fusion(@NotNull Placeholder... others) {
         PlaceholderMap map = new PlaceholderMap();
-        for (IPlaceholderMap other : others) {
+        for (Placeholder other : others) {
             map.add(other.getPlaceholders());
         }
         return map;
@@ -50,7 +50,7 @@ public class PlaceholderMap {
 
     @NotNull
     public PlaceholderMap add(@NotNull PlaceholderMap other) {
-        this.getKeys().addAll(other.getKeys());
+        this.keys.addAll(other.getKeys());
         return this;
     }
 
@@ -62,16 +62,16 @@ public class PlaceholderMap {
 
     @NotNull
     public PlaceholderMap add(@NotNull String key, @NotNull Supplier<String> replacer) {
-        this.getKeys().add(Pair.of(key, replacer));
+        this.keys.add(Pair.of(key, replacer));
         return this;
     }
 
     public void clear() {
-        this.getKeys().clear();
+        this.keys.clear();
     }
 
     @NotNull
     public UnaryOperator<String> replacer() {
-        return str -> StringUtil.replaceEach(str, this.getKeys());
+        return str -> StringUtil.replaceEach(str, this.keys);
     }
 }

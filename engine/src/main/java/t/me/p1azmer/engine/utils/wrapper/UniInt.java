@@ -1,4 +1,4 @@
-package t.me.p1azmer.engine.utils.values;
+package t.me.p1azmer.engine.utils.wrapper;
 
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.api.config.JYML;

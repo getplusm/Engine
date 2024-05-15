@@ -1,4 +1,4 @@
-package t.me.p1azmer.engine.utils.values;
+package t.me.p1azmer.engine.utils.wrapper;
 
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
@@ -38,15 +38,15 @@ public class UniTask {
 
         if (this.async) {
             if (NexPlugin.isFolia) {
-                this.taskId = Folia.executeTimer(runnable, 0L, interval).taskId();
+                this.taskId = Folia.executeTimer(runnable, 1L, interval).taskId();
             } else {
-                this.taskId = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, 0L, interval).getTaskId();
+                this.taskId = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, runnable, 1L, interval).getTaskId();
             }
         } else {
             if (NexPlugin.isFolia) {
-                this.taskId = Folia.executeTimer(runnable, 0L, interval).taskId();
+                this.taskId = Folia.executeTimer(runnable, 1L, interval).taskId();
             } else {
-                this.taskId = plugin.getServer().getScheduler().runTaskTimer(this.plugin, runnable, 0L, interval).getTaskId();
+                this.taskId = plugin.getServer().getScheduler().runTaskTimer(this.plugin, runnable, 1L, interval).getTaskId();
             }
         }
         return true;

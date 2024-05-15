@@ -2,6 +2,7 @@ package t.me.p1azmer.engine.api.command;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import t.me.p1azmer.engine.utils.NumberUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
 
 import java.util.Map;
@@ -40,11 +41,11 @@ public class CommandResult {
     }
 
     public int getInt(int index, int def) {
-        return StringUtil.getInteger(this.getArg(index, ""), def, true);
+        return NumberUtil.getAnyInteger(this.getArg(index, ""), def);
     }
 
     public double getDouble(int index, double def) {
-        return StringUtil.getDouble(this.getArg(index, ""), def, true);
+        return NumberUtil.getAnyDouble(this.getArg(index, ""), def);
     }
 
     public boolean hasFlag(@NotNull CommandFlag<?> flag) {

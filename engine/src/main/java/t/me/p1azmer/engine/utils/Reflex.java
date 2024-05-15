@@ -11,147 +11,138 @@ import java.util.List;
 
 public class Reflex {
 
-    public static Class<?> getClass(@NotNull String path, @NotNull String name) {
-        return getClass(path + "." + name);
+  public static Class<?> getClass(@NotNull String path, @NotNull String name) {
+    return getClass(path + "." + name);
+  }
+
+  public static Class<?> getInnerClass(@NotNull String path, @NotNull String name) {
+    return getClass(path + "$" + name);
+  }
+
+  private static Class<?> getClass(@NotNull String path) {
+    try {
+      return Class.forName(path);
+    } catch (ClassNotFoundException exception) {
+      exception.printStackTrace();
+      return null;
+    }
+  }
+
+  public static Constructor<?> getConstructor(@NotNull Class<?> source, Class<?>... types) {
+    try {
+      Constructor<?> constructor = source.getDeclaredConstructor(types);
+      constructor.setAccessible(true);
+      return constructor;
+    } catch (ReflectiveOperationException exception) {
+      exception.printStackTrace();
+    }
+    return null;
+  }
+
+  public static Object invokeConstructor(@NotNull Constructor<?> constructor, Object... obj) {
+    try {
+      return constructor.newInstance(obj);
+    } catch (ReflectiveOperationException exception) {
+      exception.printStackTrace();
+    }
+    return null;
+  }
+
+  @NotNull
+  public static <T> List<T> getFields(@NotNull Class<?> source, @NotNull Class<T> type) {
+    List<T> list = new ArrayList<>();
+
+    for (Field field : Reflex.getFields(source)) {
+      if (!field.getDeclaringClass().equals(source)) continue;
+      //if (!field.canAccess(null)) continue;
+      if (!Modifier.isStatic(field.getModifiers())) continue;
+      if (!Modifier.isFinal(field.getModifiers())) continue;
+      if (!type.isAssignableFrom(field.getType())) continue;
+      if (!field.trySetAccessible()) continue;
+
+      try {
+        list.add(type.cast(field.get(null)));
+      } catch (IllegalArgumentException | IllegalAccessException exception) {
+        exception.printStackTrace();
+      }
     }
 
-    public static Class<?> getInnerClass(@NotNull String path, @NotNull String name) {
-        return getClass(path + "$" + name);
+    return list;
+  }
+
+  @NotNull
+  public static List<Field> getFields(@NotNull Class<?> source) {
+    List<Field> result = new ArrayList<>();
+
+    Class<?> clazz = source;
+    while (clazz != null && clazz != Object.class) {
+      if (!result.isEmpty()) {
+        result.addAll(0, Arrays.asList(clazz.getDeclaredFields()));
+      } else {
+        Collections.addAll(result, clazz.getDeclaredFields());
+      }
+      clazz = clazz.getSuperclass();
     }
 
-    private static Class<?> getClass(@NotNull String path) {
-        try {
-            return Class.forName(path);
-        }
-        catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            return null;
-        }
+    return result;
+  }
+
+  public static Field getField(@NotNull Class<?> source, @NotNull String name) {
+    try {
+      return source.getDeclaredField(name);
+    } catch (NoSuchFieldException exception) {
+      Class<?> superClass = source.getSuperclass();
+      return superClass == null ? null : getField(superClass, name);
     }
+  }
 
-    public static Constructor<?> getConstructor(@NotNull Class<?> clazz, Class<?>... types) {
-        try {
-            Constructor<?> constructor = clazz.getDeclaredConstructor(types);
-            constructor.setAccessible(true);
-            return constructor;
-        }
-        catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
-        return null;
+  public static Object getFieldValue(@NotNull Object source, @NotNull String name) {
+    try {
+      Class<?> clazz = source instanceof Class<?> ? (Class<?>) source : source.getClass();
+      Field field = getField(clazz, name);
+      if (field == null) return null;
+
+      field.setAccessible(true);
+      return field.get(source);
+    } catch (IllegalAccessException exception) {
+      exception.printStackTrace();
     }
+    return null;
+  }
 
-    public static Object invokeConstructor(@NotNull Constructor<?> constructor, Object... obj) {
-        try {
-            return constructor.newInstance(obj);
-        }
-        catch (ReflectiveOperationException e) {
-            e.printStackTrace();
-        }
-        return obj;
+  public static boolean setFieldValue(@NotNull Object source, @NotNull String name, @Nullable Object value) {
+    try {
+      boolean isStatic = source instanceof Class;
+      Class<?> clazz = isStatic ? (Class<?>) source : source.getClass();
+
+      Field field = getField(clazz, name);
+      if (field == null) return false;
+
+      field.setAccessible(true);
+      field.set(isStatic ? null : source, value);
+      return true;
+    } catch (IllegalAccessException exception) {
+      exception.printStackTrace();
     }
+    return false;
+  }
 
-    @NotNull
-    public static <T> List<T> getFields(@NotNull Class<?> clazz, @NotNull Class<T> type) {
-        List<T> list = new ArrayList<>();
-
-        for (Field field : Reflex.getFields(clazz)) {
-            if (!field.getDeclaringClass().equals(clazz)) continue;
-            if (!Modifier.isStatic(field.getModifiers())) continue;
-            if (!Modifier.isFinal(field.getModifiers())) continue;
-            if (!type.isAssignableFrom(field.getType())) continue;
-
-            //T langText;
-            try {
-                list.add(type.cast(field.get(null)));
-            }
-            catch (IllegalArgumentException | IllegalAccessException exception) {
-                exception.printStackTrace();
-            }
-        }
-
-        return list;
+  public static Method getMethod(@NotNull Class<?> source, @NotNull String name, @NotNull Class<?>... params) {
+    try {
+      return source.getDeclaredMethod(name, params);
+    } catch (NoSuchMethodException exception) {
+      Class<?> superClass = source.getSuperclass();
+      return superClass == null ? null : getMethod(superClass, name);
     }
+  }
 
-    @NotNull
-    public static List<Field> getFields(@NotNull Class<?> type) {
-        List<Field> result = new ArrayList<>();
-
-        Class<?> clazz = type;
-        while (clazz != null && clazz != Object.class) {
-            if (!result.isEmpty()) {
-                result.addAll(0, Arrays.asList(clazz.getDeclaredFields()));
-            }
-            else {
-                Collections.addAll(result, clazz.getDeclaredFields());
-            }
-            clazz = clazz.getSuperclass();
-        }
-
-        return result;
+  public static Object invokeMethod(@NotNull Method method, @Nullable Object by, @Nullable Object... param) {
+    method.setAccessible(true);
+    try {
+      return method.invoke(by, param);
+    } catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException exception) {
+      exception.printStackTrace();
     }
-
-    public static Field getField(@NotNull Class<?> clazz, @NotNull String fieldName) {
-        try {
-            return clazz.getDeclaredField(fieldName);
-        }
-        catch (NoSuchFieldException e) {
-            Class<?> superClass = clazz.getSuperclass();
-            return superClass == null ? null : getField(superClass, fieldName);
-        }
-    }
-
-    public static Object getFieldValue(@NotNull Object from, @NotNull String fieldName) {
-        try {
-            Class<?> clazz = from instanceof Class<?> ? (Class<?>) from : from.getClass();
-            Field field = getField(clazz, fieldName);
-            if (field == null) return null;
-
-            field.setAccessible(true);
-            return field.get(from);
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
-    public static boolean setFieldValue(@NotNull Object of, @NotNull String fieldName, @Nullable Object value) {
-        try {
-            boolean isStatic = of instanceof Class;
-            Class<?> clazz = isStatic ? (Class<?>) of : of.getClass();
-
-            Field field = getField(clazz, fieldName);
-            if (field == null) return false;
-
-            field.setAccessible(true);
-            field.set(isStatic ? null : of, value);
-            return true;
-        }
-        catch (IllegalAccessException e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
-
-    public static Method getMethod(@NotNull Class<?> clazz, @NotNull String fieldName, @NotNull Class<?>... o) {
-        try {
-            return clazz.getDeclaredMethod(fieldName, o);
-        }
-        catch (NoSuchMethodException e) {
-            Class<?> superClass = clazz.getSuperclass();
-            return superClass == null ? null : getMethod(superClass, fieldName);
-        }
-    }
-
-    public static Object invokeMethod(@NotNull Method method, @Nullable Object by, @Nullable Object... param) {
-        method.setAccessible(true);
-        try {
-            return method.invoke(by, param);
-        }
-        catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
+    return null;
+  }
 }

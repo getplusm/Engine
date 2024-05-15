@@ -9,24 +9,18 @@ import java.util.*;
 
 public class Rnd {
 
-    public static final MTRandom rnd = new MTRandom();
+    public static final MTRandom RANDOM = new MTRandom();
 
-    public static float get() {
-        return Rnd.rnd.nextFloat();
-    }
-
-    public static float get(boolean normalize) {
-        float f = Rnd.get();
-        if (normalize) f *= 100f;
-        return f;
+    public static float getChance() {
+        return nextFloat() * 100f;
     }
 
     public static int get(int n) {
-        return Rnd.nextInt(n);
+        return nextInt(n);
     }
 
     public static int get(int min, int max) {
-        return min + (int) Math.floor(Rnd.rnd.nextDouble() * (max - min + 1));
+        return min + (int) Math.floor(RANDOM.nextDouble() * (max - min + 1));
     }
 
     public static double getDouble(double max) {
@@ -34,7 +28,7 @@ public class Rnd {
     }
 
     public static double getDouble(double min, double max) {
-        return min + (max - min) * rnd.nextDouble();
+        return min + (max - min) * RANDOM.nextDouble();
     }
 
     @NotNull
@@ -58,50 +52,21 @@ public class Rnd {
         return get(new ArrayList<>(list));
     }
 
-    @Nullable
-    @Deprecated
-    public static <T> T get(@NotNull Map<@NotNull T, Double> map) {
-        List<T> list = get(map, 1);
-        return list.isEmpty() ? null : list.get(0);
-    }
-
     @NotNull
     public static <T> T getByWeight(@NotNull Map<T, Double> itemsMap) {
-        List<Pair<T, Double>> items = CollectionsUtil.sortAscent(itemsMap).entrySet().stream()
-                .filter(e -> e.getValue() > 0D)
-                .map(e -> Pair.of(e.getKey(), e.getValue())).toList();
+        List<Pair<T, Double>> items = itemsMap.entrySet().stream()
+                .filter(entry -> entry.getValue() > 0D)
+                .map(entry -> Pair.of(entry.getKey(), entry.getValue()))
+                .sorted(Comparator.comparing(Pair::getSecond))
+                .toList();
         double totalWeight = items.stream().mapToDouble(Pair::getSecond).sum();
 
         int index = 0;
-        for (double chance = Rnd.nextDouble() * totalWeight; index < items.size() - 1; ++index) {
-            chance -= items.get(index).getSecond();
-            if (chance <= 0D) break;
+        for (double roll = nextDouble() * totalWeight; index < items.size() - 1; ++index) {
+            roll -= items.get(index).getSecond();
+            if (roll <= 0D) break;
         }
         return items.get(index).getFirst();
-    }
-
-    @NotNull
-    @Deprecated
-    public static <T> List<T> get(@NotNull Map<@NotNull T, Double> map, int amount) {
-        map.values().removeIf(chance -> chance <= 0D);
-        if (map.isEmpty()) return Collections.emptyList();
-
-        List<T> list = new ArrayList<>();
-        double total = map.values().stream().mapToDouble(d -> d).sum();
-
-        for (int count = 0; count < amount; count++) {
-            double index = Rnd.getDouble(0D, total);// Math.random() * total;
-            double countWeight = 0D;
-
-            for (Map.Entry<T, Double> en : map.entrySet()) {
-                countWeight += en.getValue();
-                if (countWeight >= index) {
-                    list.add(en.getKey());
-                    break;
-                }
-            }
-        }
-        return list;
     }
 
     public static boolean chance(int chance) {
@@ -113,22 +78,26 @@ public class Rnd {
     }
 
     public static int nextInt(int n) {
-        return (int) Math.floor(Rnd.rnd.nextDouble() * n);
+        return (int) Math.floor(RANDOM.nextDouble() * n);
     }
 
     public static int nextInt() {
-        return Rnd.rnd.nextInt();
+        return RANDOM.nextInt();
     }
 
     public static double nextDouble() {
-        return Rnd.rnd.nextDouble();
+        return RANDOM.nextDouble();
+    }
+
+    public static float nextFloat() {
+        return RANDOM.nextFloat();
     }
 
     public static double nextGaussian() {
-        return Rnd.rnd.nextGaussian();
+        return RANDOM.nextGaussian();
     }
 
     public static boolean nextBoolean() {
-        return Rnd.rnd.nextBoolean();
+        return RANDOM.nextBoolean();
     }
 }

@@ -4,9 +4,10 @@ import org.bukkit.event.player.AsyncPlayerChatEvent;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.utils.Colorizer;
+import t.me.p1azmer.engine.utils.NumberUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
-import t.me.p1azmer.engine.utils.values.UniDouble;
-import t.me.p1azmer.engine.utils.values.UniInt;
+import t.me.p1azmer.engine.utils.wrapper.UniDouble;
+import t.me.p1azmer.engine.utils.wrapper.UniInt;
 
 public class InputWrapper {
 
@@ -29,11 +30,11 @@ public class InputWrapper {
     }
 
     public int asInt(int def) {
-        return StringUtil.getInteger(this.getTextRaw(), def);
+        return NumberUtil.getInteger(this.getTextRaw(), def);
     }
 
     public int asAnyInt(int def) {
-        return StringUtil.getInteger(this.getTextRaw(), def, true);
+        return NumberUtil.getAnyInteger(this.getTextRaw(), def);
     }
 
     public double asDouble() {
@@ -41,7 +42,7 @@ public class InputWrapper {
     }
 
     public double asDouble(double def) {
-        return StringUtil.getDouble(this.getTextRaw(), def);
+        return NumberUtil.getDouble(this.getTextRaw(), def);
     }
 
     @NotNull
@@ -52,7 +53,7 @@ public class InputWrapper {
     @NotNull
     public UniDouble asUniDouble(double min, double max) {
         String[] split = this.getTextRaw().split(" ");
-        return UniDouble.of(StringUtil.getDouble(split[0], min), StringUtil.getDouble(split.length >= 2 ? split[1] : split[0], max));
+        return UniDouble.of(NumberUtil.getDouble(split[0], min), NumberUtil.getDouble(split.length >= 2 ? split[1] : split[0], max));
     }
 
     @NotNull
@@ -61,7 +62,7 @@ public class InputWrapper {
     }
 
     public double asAnyDouble(double def) {
-        return StringUtil.getDouble(this.getTextRaw(), def, true);
+        return NumberUtil.getAnyDouble(this.getTextRaw(), def);
     }
 
     @Nullable

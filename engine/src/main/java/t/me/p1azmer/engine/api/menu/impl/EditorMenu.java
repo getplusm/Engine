@@ -76,7 +76,7 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
 
     @NotNull
     public MenuItem addItem(@NotNull ItemStack item, @NotNull EditorLocale locale, int... slots) {
-        ItemUtil.mapMeta(item, meta -> {
+        ItemUtil.editMeta(item, meta -> {
             meta.setDisplayName(locale.getLocalizedName());
             meta.setLore(locale.getLocalizedLore());
             meta.addItemFlags(ItemFlag.values());

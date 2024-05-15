@@ -9,6 +9,7 @@ import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.utils.CollectionsUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
 
 import java.util.ArrayList;
@@ -113,6 +114,6 @@ public abstract class GeneralCommand<P extends NexPlugin<P>> extends AbstractCom
         else {
             list.addAll(command.getTab(player, command.equals(this) ? (args.length) : (args.length - 1), args));
         }
-        return StringUtil.getByPartialMatches(list, args[args.length - 1], 2);
+        return CollectionsUtil.getSequentialMatches(list, args[args.length - 1]);
     }
 }

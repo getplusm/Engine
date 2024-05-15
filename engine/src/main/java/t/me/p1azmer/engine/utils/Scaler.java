@@ -23,7 +23,7 @@ public class Scaler {
         Set<String> lvlKeys = cfg.getSection(path);
         if (!lvlKeys.isEmpty()) {
             for (String sLvl : lvlKeys) {
-                int eLvl = StringUtil.getInteger(sLvl, 0);
+                int eLvl = NumberUtil.getInteger(sLvl, 0);
                 if (eLvl < this.getLevelMin() || eLvl > this.getLevelMax()) continue;
 
                 String formula = cfg.getString(path + "." + sLvl, "0").replace(levelPlaceholder, sLvl);

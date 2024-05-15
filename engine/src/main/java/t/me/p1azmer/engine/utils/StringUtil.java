@@ -2,354 +2,225 @@ package t.me.p1azmer.engine.utils;
 
 import org.bukkit.Color;
 import org.jetbrains.annotations.NotNull;
-import t.me.p1azmer.engine.config.EngineConfig;
+import org.jetbrains.annotations.Nullable;
+import t.me.p1azmer.engine.utils.collections.Lists;
 import t.me.p1azmer.engine.utils.random.Rnd;
-import t.me.p1azmer.engine.utils.regex.RegexUtil;
 import t.me.p1azmer.engine.utils.regex.TimedMatcher;
 
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class StringUtil {
-    private static final Pattern ID_PATTERN = Pattern.compile("[<>\\%\\$\\!\\@\\#\\^\\&\\*\\(\\)\\,\\.\\'\\:\\;\\\"\\}\\]\\{\\[\\=\\+\\`\\~\\\\]");//Pattern.compile("[^a-zA-Zà-ÿÀ-ß_0-9]");
-    private static final Pattern ID_STRICT_PATTERN = Pattern.compile("[^a-zA-Zà-ÿÀ-ß_0-9]");
 
-    @NotNull
-    public static String oneSpace(@NotNull String str) {
-        return str.trim().replaceAll("\\s+", " ");
+  private static final Pattern ID_PATTERN = Pattern.compile("[<>\\%\\$\\!\\@\\#\\^\\&\\*\\(\\)\\,\\.\\'\\:\\;\\\"\\}\\]\\{\\[\\=\\+\\`\\~\\\\]");
+  private static final Pattern ID_STRICT_PATTERN = Pattern.compile("[^a-zA-Zà-ÿÀ-ß_0-9]");
+
+  @NotNull
+  @Deprecated
+  public static String oneSpace(@NotNull String str) {
+    return str.trim().replaceAll("\\s+", " ");
+  }
+
+  @NotNull
+  @Deprecated
+  public static String noSpace(@NotNull String str) {
+    return str.trim().replaceAll("\\s+", "");
+  }
+
+  @NotNull
+  public static String replaceEach(@NotNull String text, @NotNull List<Pair<String, Supplier<String>>> replacements) {
+    if (text.isEmpty() || replacements.isEmpty()) {
+      return text;
     }
 
-    @NotNull
-    public static String noSpace(@NotNull String str) {
-        return str.trim().replaceAll("\\s+", "");
+    final int searchLength = replacements.size();
+    // keep track of which still have matches
+    final boolean[] noMoreMatchesForReplIndex = new boolean[searchLength];
+
+    // index on index that the match was found
+    int textIndex = -1;
+    int replaceIndex = -1;
+    int tempIndex;
+
+    // index of replace array that will replace the search string found
+    for (int i = 0; i < searchLength; i++) {
+      if (noMoreMatchesForReplIndex[i]) {
+        continue;
+      }
+      tempIndex = text.indexOf(replacements.get(i).getFirst());
+
+      // see if we need to keep searching for this
+      if (tempIndex == -1) {
+        noMoreMatchesForReplIndex[i] = true;
+      } else if (textIndex == -1 || tempIndex < textIndex) {
+        textIndex = tempIndex;
+        replaceIndex = i;
+      }
     }
 
-    @NotNull
-    @Deprecated
-    public static List<String> replace(@NotNull List<String> orig, @NotNull String placeholder, boolean keep, String... replacer) {
-        return StringUtil.replace(orig, placeholder, keep, Arrays.asList(replacer));
+    // no search strings found, we are done
+    if (textIndex == -1) {
+      return text;
     }
 
-    @NotNull
-    @Deprecated
-    public static List<String> replace(@NotNull List<String> orig, @NotNull String placeholder, boolean keep, List<String> replacer) {
-        List<String> replaced = new ArrayList<>();
-        for (String line : orig) {
-            if (line.contains(placeholder)) {
-                if (!keep) {
-                    replaced.addAll(replacer);
-                } else {
-                    replacer.forEach(lineRep -> replaced.add(line.replace(placeholder, lineRep)));
-                }
-                continue;
-            }
-            replaced.add(line);
+    int start = 0;
+    final StringBuilder buf = new StringBuilder();
+    while (textIndex != -1) {
+      for (int i = start; i < textIndex; i++) {
+        buf.append(text.charAt(i));
+      }
+      buf.append(replacements.get(replaceIndex).getSecond().get());
+
+      start = textIndex + replacements.get(replaceIndex).getFirst().length();
+
+      textIndex = -1;
+      replaceIndex = -1;
+      // find the next earliest match
+      for (int i = 0; i < searchLength; i++) {
+        if (noMoreMatchesForReplIndex[i]) {
+          continue;
         }
+        tempIndex = text.indexOf(replacements.get(i).getFirst(), start);
 
-        return replaced;
-    }
-
-    @NotNull
-    public static List<String> replaceInList(@NotNull List<String> orig, @NotNull String placeholder, String... replacer) {
-        return StringUtil.replaceInList(orig, placeholder, Arrays.asList(replacer));
-    }
-
-    @NotNull
-    public static List<String> replaceInList(@NotNull List<String> orig, @NotNull String placeholder, @NotNull List<String> replacer) {
-        List<String> replaced = new ArrayList<>();
-        for (String line : orig) {
-            if (line.equalsIgnoreCase(placeholder)) {
-                replaced.addAll(replacer);
-            } else replaced.add(line);
+        // see if we need to keep searching for this
+        if (tempIndex == -1) {
+          noMoreMatchesForReplIndex[i] = true;
+        } else if (textIndex == -1 || tempIndex < textIndex) {
+          textIndex = tempIndex;
+          replaceIndex = i;
         }
-        return replaced;
+      }
     }
 
-    @NotNull
-    public static String replaceEach(@NotNull String text, @NotNull List<Pair<String, Supplier<String>>> replacements) {
-        if (text.isEmpty() || replacements.isEmpty()) {
-            return text;
-        }
+    final int textLength = text.length();
+    for (int i = start; i < textLength; i++) {
+      buf.append(text.charAt(i));
+    }
+    return buf.toString();
+  }
 
-        final int searchLength = replacements.size();
-        // keep track of which still have matches
-        final boolean[] noMoreMatchesForReplIndex = new boolean[searchLength];
+  @Nullable
+  public static String parseQuotedContent(@NotNull String string) {
+    char quote = string.charAt(0);
+    if (quote != '\'' && quote != '"') return null;
+    if (string.length() < 3) return null;
 
-        // index on index that the match was found
-        int textIndex = -1;
-        int replaceIndex = -1;
-        int tempIndex;
+    int indexEnd = -1;
+    for (int index = 1; index < string.length(); index++) {
+      char letter = string.charAt(index);
+      if (letter == '\\') {
+        index += 2;
+        continue;
+      }
+      if (letter == quote) {
+        indexEnd = index;
+        break;
+      }
+    }
+    if (indexEnd == -1) return null;
 
-        // index of replace array that will replace the search string found
-        // NOTE: logic duplicated below START
-        for (int i = 0; i < searchLength; i++) {
-            if (noMoreMatchesForReplIndex[i]) {
-                continue;
-            }
-            tempIndex = text.indexOf(replacements.get(i).getFirst());
+    return string.substring(1, indexEnd);
+  }
 
-            // see if we need to keep searching for this
-            if (tempIndex == -1) {
-                noMoreMatchesForReplIndex[i] = true;
-            } else if (textIndex == -1 || tempIndex < textIndex) {
-                textIndex = tempIndex;
-                replaceIndex = i;
-            }
-        }
-        // NOTE: logic mostly below END
+  @NotNull
+  public static <T extends Enum<T>> Optional<T> getEnum(String str, @NotNull Class<T> clazz) {
+    try {
+      return str == null ? Optional.empty() : Optional.of(Enum.valueOf(clazz, str.toUpperCase()));
+    } catch (Exception exception) {
+      return Optional.empty();
+    }
+  }
 
-        // no search strings found, we are done
-        if (textIndex == -1) {
-            return text;
-        }
+  @NotNull
+  public static String inlineEnum(@NotNull Class<? extends Enum<?>> clazz, @NotNull String delimiter) {
+    return String.join(delimiter, Lists.getEnums(clazz));
+  }
 
-        int start = 0;
-        final StringBuilder buf = new StringBuilder();
-        while (textIndex != -1) {
-            for (int i = start; i < textIndex; i++) {
-                buf.append(text.charAt(i));
-            }
-            buf.append(replacements.get(replaceIndex).getSecond().get());
+  @NotNull
+  public static Color getColor(@NotNull String str) {
+    String[] rgb = str.split(",");
+    int red = NumberUtil.getInteger(rgb[0], 0);
+    if (red < 0) red = Rnd.get(255);
 
-            start = textIndex + replacements.get(replaceIndex).getFirst().length();
+    int green = rgb.length >= 2 ? NumberUtil.getInteger(rgb[1], 0) : 0;
+    if (green < 0) green = Rnd.get(255);
 
-            textIndex = -1;
-            replaceIndex = -1;
-            // find the next earliest match
-            // NOTE: logic mostly duplicated above START
-            for (int i = 0; i < searchLength; i++) {
-                if (noMoreMatchesForReplIndex[i]) {
-                    continue;
-                }
-                tempIndex = text.indexOf(replacements.get(i).getFirst(), start);
+    int blue = rgb.length >= 3 ? NumberUtil.getInteger(rgb[2], 0) : 0;
+    if (blue < 0) blue = Rnd.get(255);
 
-                // see if we need to keep searching for this
-                if (tempIndex == -1) {
-                    noMoreMatchesForReplIndex[i] = true;
-                } else if (textIndex == -1 || tempIndex < textIndex) {
-                    textIndex = tempIndex;
-                    replaceIndex = i;
-                }
-            }
-            // NOTE: logic duplicated above END
+    return Color.fromRGB(red, green, blue);
+  }
 
-        }
-        final int textLength = text.length();
-        for (int i = start; i < textLength; i++) {
-            buf.append(text.charAt(i));
-        }
-        return buf.toString();
+  @NotNull
+  public static String lowerCaseUnderscore(@NotNull String str) {
+    return lowerCaseUnderscore(str, -1);
+  }
+
+  @NotNull
+  public static String lowerCaseUnderscore(@NotNull String str, int length) {
+    return lowerCaseAndClean(str, ID_PATTERN, length);
+  }
+
+  @NotNull
+  public static String lowerCaseUnderscoreStrict(@NotNull String str) {
+    return lowerCaseUnderscoreStrict(str, -1);
+  }
+
+  @NotNull
+  public static String lowerCaseUnderscoreStrict(@NotNull String str, int length) {
+    return lowerCaseAndClean(str, ID_STRICT_PATTERN, length);
+  }
+
+  @NotNull
+  private static String lowerCaseAndClean(@NotNull String str, @NotNull Pattern pattern, int length) {
+    String clean = Colorizer.restrip(str).toLowerCase().replace(" ", "_");
+    if (length > 0 && clean.length() > length) {
+      clean = clean.substring(0, length);
     }
 
-    public static double getDouble(@NotNull String input, double def) {
-        return getDouble(input, def, false);
+    TimedMatcher matcher = TimedMatcher.create(pattern, clean, 200);
+    //Matcher matcher = RegexUtil.getMatcher(ID_STRICT_PATTERN, clean);
+    return matcher.replaceAll("");
+  }
+
+  @NotNull
+  public static String capitalizeUnderscored(@NotNull String str) {
+    return capitalizeFully(str.replace("_", " "));
+  }
+
+  @NotNull
+  public static String capitalizeFully(@NotNull String str) {
+    return capitalize(str.toLowerCase());
+  }
+
+  @NotNull
+  public static String capitalize(@NotNull String str) {
+    if (str.isEmpty()) return str;
+
+    int length = str.length();
+    StringBuilder builder = new StringBuilder(length);
+    boolean capitalizeNext = true;
+
+    for (int index = 0; index < length; ++index) {
+      char letter = str.charAt(index);
+      if (Character.isWhitespace(letter)) {
+        builder.append(letter);
+        capitalizeNext = true;
+      } else if (capitalizeNext) {
+        builder.append(Character.toTitleCase(letter));
+        capitalizeNext = false;
+      } else {
+        builder.append(letter);
+      }
     }
+    return builder.toString();
+  }
 
-    public static double getDouble(@NotNull String input, double def, boolean allowNegative) {
-        try {
-            double amount = Double.parseDouble(input);
-            return (amount < 0D && !allowNegative ? def : amount);
-        } catch (NumberFormatException ex) {
-            return def;
-        }
-    }
-
-    public static int getInteger(@NotNull String input, int def) {
-        return getInteger(input, def, false);
-    }
-
-    public static int getInteger(@NotNull String input, int def, boolean allowNegative) {
-        return (int) getDouble(input, def, allowNegative);
-    }
-
-    public static int[] getIntArray(@NotNull String str) {
-        String[] split = noSpace(str).split(",");
-        int[] array = new int[split.length];
-        for (int index = 0; index < split.length; index++) {
-            try {
-                array[index] = Integer.parseInt(split[index]);
-            } catch (NumberFormatException e) {
-                array[index] = 0;
-            }
-        }
-        return array;
-    }
-
-    @NotNull
-    public static <T extends Enum<T>> Optional<T> getEnum(@NotNull String str, @NotNull Class<T> clazz) {
-        try {
-            return Optional.of(Enum.valueOf(clazz, str.toUpperCase()));
-        } catch (Exception ex) {
-            return Optional.empty();
-        }
-    }
-
-    @NotNull
-    public static Color parseColor(@NotNull String colorRaw) {
-        String[] rgb = colorRaw.split(",");
-        int red = StringUtil.getInteger(rgb[0], 0);
-        if (red < 0) red = Rnd.get(255);
-
-        int green = rgb.length >= 2 ? StringUtil.getInteger(rgb[1], 0) : 0;
-        if (green < 0) green = Rnd.get(255);
-
-        int blue = rgb.length >= 3 ? StringUtil.getInteger(rgb[2], 0) : 0;
-        if (blue < 0) blue = Rnd.get(255);
-
-        return Color.fromRGB(red, green, blue);
-    }
-
-    @NotNull
-    public static String lowerCaseUnderscore(@NotNull String str) {
-        return lowerCaseUnderscore(str, -1);
-    }
-
-    @NotNull
-    public static String lowerCaseUnderscore(@NotNull String str, int length) {
-        return lowerCaseAndClean(str, ID_PATTERN, length);
-    }
-
-    @NotNull
-    public static String lowerCaseUnderscoreStrict(@NotNull String str) {
-        return lowerCaseUnderscoreStrict(str, -1);
-    }
-
-    @NotNull
-    public static String lowerCaseUnderscoreStrict(@NotNull String str, int length) {
-        return lowerCaseAndClean(str, ID_STRICT_PATTERN, length);
-    }
-
-    @NotNull
-    private static String lowerCaseAndClean(@NotNull String str, @NotNull Pattern pattern, int length) {
-        String clean = Colorizer.restrip(str).toLowerCase().replace(" ", "_");
-        if (length > 0 && clean.length() > length) {
-            clean = clean.substring(0, length);
-        }
-
-        TimedMatcher matcher = TimedMatcher.create(pattern, clean, 200);
-        //Matcher matcher = RegexUtil.getMatcher(ID_STRICT_PATTERN, clean);
-        return matcher.replaceAll("");
-    }
-
-    @NotNull
-    public static String capitalizeUnderscored(@NotNull String str) {
-        return capitalizeFully(str.replace("_", " "));
-    }
-
-    @NotNull
-    public static String capitalizeFully(@NotNull String str) {
-        if (str.length() == 0) return str;
-
-        return capitalize(str.toLowerCase());
-    }
-
-    @NotNull
-    public static String capitalize(@NotNull String str) {
-        if (str.length() == 0) return str;
-
-        int length = str.length();
-        StringBuilder builder = new StringBuilder(length);
-        boolean capitalizeNext = true;
-
-        for (int index = 0; index < length; ++index) {
-            char letter = str.charAt(index);
-            if (Character.isWhitespace(letter)) {
-                builder.append(letter);
-                capitalizeNext = true;
-            }
-            else if (capitalizeNext) {
-                builder.append(Character.toTitleCase(letter));
-                capitalizeNext = false;
-            }
-            else {
-                builder.append(letter);
-            }
-        }
-        return builder.toString();
-    }
-
-    @NotNull
-    public static String capitalizeFirstLetter(@NotNull String original) {
-        if (original.isEmpty()) return original;
-        return original.substring(0, 1).toUpperCase() + original.substring(1);
-    }
-
-    /**
-     * @param original List to remove empty lines from.
-     * @return A list with no multiple empty lines in a row.
-     */
-    @NotNull
-    public static List<String> stripEmpty(@NotNull List<String> original) {
-        List<String> stripped = new ArrayList<>();
-        for (int index = 0; index < original.size(); index++) {
-            String line = original.get(index);
-            if (line.isEmpty()) {
-                String last = stripped.isEmpty() ? null : stripped.get(stripped.size() - 1);
-                if (last == null || last.isEmpty() || index == (original.size() - 1)) continue;
-            }
-            stripped.add(line);
-        }
-        return stripped;
-    }
-
-    /**
-     * Kinda half-smart completer like in IDEA by partial word matches.
-     *
-     * @param results A list of all completions.
-     * @param input   A string to find partial matches for.
-     * @param steps   Part's size.
-     * @return A list of completions that has partial matches to the given string.
-     */
-    @NotNull
-    public static List<String> getByPartialMatches(@NotNull List<String> results, @NotNull String input, int steps) {
-        if (input.length() > EngineConfig.TAB_COMPLETER_REGEX_MAX_LENGTH.get()) {
-            return copyPartialMatches(input, results);
-        }
-
-        StringBuilder builder = new StringBuilder();
-        for (char letter : input.toLowerCase().toCharArray()) {
-            builder.append(Pattern.quote(String.valueOf(letter))).append("(?:.*)");
-        }
-
-        Pattern pattern = Pattern.compile(builder.toString());
-        return new ArrayList<>(results.stream()
-                .filter(orig -> {
-                    TimedMatcher matcher = TimedMatcher.create(pattern, orig.toLowerCase(), EngineConfig.TAB_COMPLETER_REGEX_TIMEOUT.get());
-                    return matcher.find();
-                    //pattern.matcher(orig.toLowerCase()).find()
-                })
-                .sorted(String::compareTo)
-                .toList());
-    }
-
-    @NotNull
-    private static List<String> copyPartialMatches(@NotNull String token, @NotNull Collection<String> originals) {
-        List<String> collection = new ArrayList<>();
-
-        for (String string : originals) {
-            if (startsWithIgnoreCase(string, token)) {
-                collection.add(string);
-            }
-        }
-
-        return collection;
-    }
-
-    private static boolean startsWithIgnoreCase(@NotNull String string, @NotNull String prefix) {
-        return string.length() >= prefix.length() && string.regionMatches(true, 0, prefix, 0, prefix.length());
-    }
-
-    @NotNull
-    public static String extractCommandName(@NotNull String command) {
-        String commandName = Colorizer.strip(command).split(" ")[0].substring(1);
-
-        String[] pluginPrefix = commandName.split(":");
-        if (pluginPrefix.length == 2) {
-            commandName = pluginPrefix[1];
-        }
-
-        return commandName;
-    }
+  @NotNull
+  public static String capitalizeFirstLetter(@NotNull String original) {
+    if (original.isEmpty()) return original;
+    return original.substring(0, 1).toUpperCase() + original.substring(1);
+  }
 }

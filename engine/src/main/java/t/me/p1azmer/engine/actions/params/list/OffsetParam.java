@@ -5,6 +5,7 @@ import t.me.p1azmer.engine.actions.params.IParam;
 import t.me.p1azmer.engine.actions.params.IParamType;
 import t.me.p1azmer.engine.actions.params.IParamValue;
 import t.me.p1azmer.engine.actions.params.parser.IParamParser;
+import t.me.p1azmer.engine.utils.NumberUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
 
 public class OffsetParam extends IParam {
@@ -18,16 +19,16 @@ public class OffsetParam extends IParam {
             String[] split = str.replace(" ", "").split(",");
 
             double x = 0;
-            x = StringUtil.getDouble(split[0], 0, true);
+            x = NumberUtil.getAnyDouble(split[0], 0);
 
             double y = 0;
             if (split.length >= 2) {
-                y = StringUtil.getDouble(split[1], 0, true);
+                y = NumberUtil.getAnyDouble(split[1], 0);
             }
 
             double z = 0;
             if (split.length == 3) {
-                z = StringUtil.getDouble(split[2], 0, true);
+                z = NumberUtil.getAnyDouble(split[2], 0);
             }
 
             double[] arr = new double[]{x, y, z};

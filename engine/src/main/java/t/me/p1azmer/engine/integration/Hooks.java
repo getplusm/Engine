@@ -43,21 +43,6 @@ public class Hooks {
     }
 
     @Deprecated
-    public static long getGroupValueLong(@NotNull Player player, @NotNull Map<String, Long> rankMap, boolean isNegaBetter) {
-        return PlayerUtil.getGroupValueLong(player, rankMap, isNegaBetter);
-    }
-
-    @Deprecated
-    public static int getGroupValueInt(@NotNull Player player, @NotNull Map<String, Integer> map, boolean isNegaBetter) {
-        return PlayerUtil.getGroupValueInt(player, map, isNegaBetter);
-    }
-
-    @Deprecated
-    public static double getGroupValueDouble(@NotNull Player player, @NotNull Map<String, Double> map, boolean isNegaBetter) {
-        return PlayerUtil.getGroupValueDouble(player, map, isNegaBetter);
-    }
-
-    @Deprecated
     @NotNull
     public static String getPrefix(@NotNull Player player) {
         return PlayerUtil.getPrefix(player);

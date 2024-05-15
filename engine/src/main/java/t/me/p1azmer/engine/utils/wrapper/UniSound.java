@@ -1,4 +1,4 @@
-package t.me.p1azmer.engine.utils.values;
+package t.me.p1azmer.engine.utils.wrapper;
 
 import org.bukkit.Location;
 import org.bukkit.Sound;
@@ -42,14 +42,17 @@ public class UniSound {
     @NotNull
     public static UniSound read(@NotNull JYML cfg, @NotNull String path) {
         String soundName = JOption.create(path + ".Name", "null",
-            "Sound name. You can use Spigot sound names, or ones from your resource pack.",
-            "Spigot Sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html").read(cfg);
+          "Sound name. You can use Spigot sound names, or ones from your resource pack.",
+          "Spigot Sounds: https://hub.spigotmc.org/javadocs/bukkit/org/bukkit/Sound.html"
+        ).read(cfg);
 
-        float volume = JOption.create(path + ".Volume", 0.8F,
-            "Sound volume. From 0.0 to 1.0.").read(cfg).floatValue();
+        float volume = JOption.create(path + ".Volume", 0.8D,
+          "Sound volume. From 0.0 to 1.0."
+        ).read(cfg).floatValue();
 
         float pitch = JOption.create(path + ".Pitch", 1D,
-            "Sound speed. From 0.5 to 2.0").read(cfg).floatValue();
+          "Sound speed. From 0.5 to 2.0"
+        ).read(cfg).floatValue();
 
         Sound soundType = StringUtil.getEnum(soundName, Sound.class).orElse(null);
 

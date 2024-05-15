@@ -1,6 +1,7 @@
 package t.me.p1azmer.engine.actions.actions.list;
 
 import org.bukkit.Location;
+import org.bukkit.Particle;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
@@ -9,7 +10,7 @@ import t.me.p1azmer.engine.actions.actions.AbstractActionExecutor;
 import t.me.p1azmer.engine.actions.actions.ActionType;
 import t.me.p1azmer.engine.actions.params.IParamResult;
 import t.me.p1azmer.engine.actions.params.IParamType;
-import t.me.p1azmer.engine.utils.values.UniParticle;
+import t.me.p1azmer.engine.utils.wrapper.UniParticle;
 
 import java.util.Set;
 
@@ -40,8 +41,7 @@ public class Action_ParticleSimple extends AbstractActionExecutor {
 
         float speed = (float) result.getParamValue(IParamType.SPEED).getDouble(0.1);
 
-        UniParticle uniParticle = UniParticle.of(name);
-        if (uniParticle == null) return;
+        UniParticle uniParticle = UniParticle.of(Particle.valueOf(name));
 
         for (Entity e : targets) {
             Location loc;
