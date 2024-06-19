@@ -43,31 +43,11 @@ dependencies {
     compileOnly 'org.projectlombok:lombok:1.18.26'
     annotationProcessor 'org.projectlombok:lombok:1.18.26'
 
-    implementation(project(path: ":folia"))
+    implementation project(":folia")
 }
 
 tasks {
     build {
         dependsOn(shadowJar)
-    }
-}
-publishing {
-    publications {
-        mavenJava(MavenPublication) {
-            from components.java
-            artifactId = "PLAZMER-ENGINE"
-
-            pom {
-                name.set("PLAZMER-ENGINE")
-                description.set("Plugin Engine")
-                url.set("https://github.com/getplusm/Engine")
-            }
-        }
-    }
-    repositories {
-        maven {
-            name = 'jitpack'
-            url = 'https://jitpack.io'
-        }
     }
 }

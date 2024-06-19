@@ -7,10 +7,9 @@ plugins {
 allprojects {
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
-    apply plugin: 'maven-publish'
 
     group = 'com.github.getplusm'
-    version = '2.4.6'
+    version = '2.4.7'
     sourceCompatibility = 17
     targetCompatibility = 17
 
@@ -69,11 +68,36 @@ tasks {
 
     shadowJar {
         archivesBaseName = "PLAZMER-ENGINE"
-        archiveClassifier.set ""
+        archiveClassifier.set("")
         destinationDirectory.set(rootProject.buildDir)
     }
 
     build {
         dependsOn(shadowJar)
+    }
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            artifact(tasks.shadowJar) {
+                classifier = null
+            }
+            groupId = "com.github.getplusm"
+            artifactId = "PLAZMER-ENGINE"
+            version = project.version
+
+            pom {
+                name.set("PLAZMER-ENGINE")
+                description.set("Plugin Engine")
+                url.set("https://github.com/getplusm/Engine")
+            }
+        }
+    }
+    repositories {
+        maven {
+            name = 'jitpack'
+            url = 'https://jitpack.io'
+        }
     }
 }
