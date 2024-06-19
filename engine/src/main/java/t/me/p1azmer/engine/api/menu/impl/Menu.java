@@ -10,7 +10,6 @@ import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import t.me.p1azmer.engine.NexEngine;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.api.menu.MenuItemType;
@@ -18,20 +17,20 @@ import t.me.p1azmer.engine.api.menu.click.ItemClick;
 import t.me.p1azmer.engine.api.menu.item.ItemOptions;
 import t.me.p1azmer.engine.api.menu.item.MenuItem;
 import t.me.p1azmer.engine.api.menu.link.Linked;
-import t.me.p1azmer.folia.Folia;
 
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 public abstract class Menu<P extends NexPlugin<P>> {
 
     static final Map<UUID, Menu<?>> PLAYER_MENUS = new HashMap<>();
 
-    protected final P                     plugin;
-    protected final UUID                  id;
-    protected final MenuOptions           options;
+    protected final P plugin;
+    protected final UUID id;
+    protected final MenuOptions options;
     protected final Map<UUID, MenuViewer> viewers;
-    protected final Set<MenuItem>         items;
+    protected final Set<MenuItem> items;
 
     public Menu(@NotNull P plugin, @NotNull String title, @NotNull InventoryType type) {
         this(plugin, new MenuOptions(title, 27, type));
@@ -78,7 +77,7 @@ public abstract class Menu<P extends NexPlugin<P>> {
     }
 
     public void openNextTick(@NotNull Player player, int page) {
-        this.plugin.runTask(task -> this.open(player, page));
+        this.plugin.runTask(sync -> this.open(player, page));
     }
 
     public boolean open(@NotNull MenuViewer viewer, int page) {
@@ -87,7 +86,7 @@ public abstract class Menu<P extends NexPlugin<P>> {
 
     public boolean open(@NotNull Player player, int page) {
         if (!this.canOpen(player, page)) {
-            this.plugin.runTask(task -> player.closeInventory());
+            player.closeInventory();
             return false;
         }
 
@@ -103,8 +102,7 @@ public abstract class Menu<P extends NexPlugin<P>> {
         Inventory inventory;
         if (isFresh) {
             inventory = options.createInventory();
-        }
-        else {
+        } else {
             inventory = player.getOpenInventory().getTopInventory();
             inventory.clear();
         }
@@ -124,8 +122,7 @@ public abstract class Menu<P extends NexPlugin<P>> {
         if (isFresh) {
             player.openInventory(inventory);
             this.getViewersMap().put(player.getUniqueId(), viewer);
-        }
-        else {
+        } else {
             if (Version.isAtLeast(Version.V1_19_R3)) {
                 viewer.getPlayer().getOpenInventory().setTitle(options.getTitle());
             }
@@ -133,6 +130,17 @@ public abstract class Menu<P extends NexPlugin<P>> {
 
         PLAYER_MENUS.put(player.getUniqueId(), this);
         return true;
+    }
+
+    public CompletableFuture<Boolean> openAsync(@NotNull MenuViewer viewer, int page) {
+        return this.openAsync(viewer.getPlayer(), page);
+    }
+
+    public CompletableFuture<Boolean> openAsync(@NotNull Player player, int page) {
+        return CompletableFuture.completedFuture(this.open(player, page)).exceptionally(throwable -> {
+            throwable.printStackTrace();
+            return null;
+        });
     }
 
     public boolean canOpen(@NotNull Player player, int page) {
@@ -198,7 +206,6 @@ public abstract class Menu<P extends NexPlugin<P>> {
     }
 
 
-
     @NotNull
     public Set<MenuItem> getItems(@NotNull Enum<?> type) {
         return this.getItems().stream().filter(menuItem -> menuItem.getType() == type).collect(Collectors.toSet());
@@ -207,26 +214,27 @@ public abstract class Menu<P extends NexPlugin<P>> {
     @NotNull
     public List<MenuItem> getItems(@NotNull MenuViewer viewer) {
         return this.getItems().stream()
-                .filter(menuItem -> {
-                    if (menuItem.getType() == MenuItemType.PAGE_NEXT && viewer.getPage() >= viewer.getPages()) return false;
-                    if (menuItem.getType() == MenuItemType.PAGE_PREVIOUS && viewer.getPage() == 1) return false;
-                    return menuItem.getOptions().canSee(viewer);
-                })
-                .sorted(Comparator.comparingInt(MenuItem::getPriority)).toList();
+                   .filter(menuItem -> {
+                       if (menuItem.getType() == MenuItemType.PAGE_NEXT && viewer.getPage() >= viewer.getPages())
+                           return false;
+                       if (menuItem.getType() == MenuItemType.PAGE_PREVIOUS && viewer.getPage() == 1) return false;
+                       return menuItem.getOptions().canSee(viewer);
+                   })
+                   .sorted(Comparator.comparingInt(MenuItem::getPriority)).toList();
     }
 
     @Nullable
     public MenuItem getItem(int slot) {
         return this.getItems().stream()
-                .filter(item -> ArrayUtils.contains(item.getSlots(), slot))
-                .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
+                   .filter(item -> ArrayUtils.contains(item.getSlots(), slot))
+                   .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
     }
 
     @Nullable
     public MenuItem getItem(@NotNull MenuViewer viewer, int slot) {
         return this.getItems(viewer).stream()
-                .filter(menuItem -> ArrayUtils.contains(menuItem.getSlots(), slot))
-                .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
+                   .filter(menuItem -> ArrayUtils.contains(menuItem.getSlots(), slot))
+                   .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
     }
 
     @NotNull
