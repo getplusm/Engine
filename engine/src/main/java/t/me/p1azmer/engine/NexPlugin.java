@@ -21,6 +21,7 @@ import t.me.p1azmer.engine.config.ConfigManager;
 import t.me.p1azmer.engine.lang.LangManager;
 import t.me.p1azmer.engine.utils.CollectionsUtil;
 import t.me.p1azmer.engine.utils.EngineUtils;
+import t.me.p1azmer.engine.utils.FileUtil;
 import t.me.p1azmer.engine.utils.Reflex;
 import t.me.p1azmer.folia.Folia;
 
@@ -310,6 +311,24 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
   public ClassLoader getClazzLoader() {
     return this.getClassLoader();
+  }
+
+  public void extractResources(@NotNull String jarPath) {
+    this.extractResources(jarPath, this.getDataFolder() + jarPath);
+  }
+
+  public void extractResources(@NotNull String jarPath, @NotNull String targetPath) {
+    File destination = new File(targetPath);
+    if (destination.exists()) return;
+
+    if (jarPath.startsWith("/")) {
+      jarPath = jarPath.substring(1);
+    }
+    if (jarPath.endsWith("/")) {
+      jarPath = jarPath.substring(0, jarPath.length() - 1);
+    }
+
+    FileUtil.extractResources(this.getFile(), jarPath, destination);
   }
 
   public void runTask(@NotNull Consumer<BukkitTask> consumer) {
