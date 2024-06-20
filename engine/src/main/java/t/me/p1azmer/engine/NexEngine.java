@@ -133,6 +133,6 @@ public class NexEngine extends NexPlugin<NexEngine> {
         if (nbt == null) return false;
 
         ItemStack decompressed = ItemNbt.decompress(nbt);
-        return decompressed != null && decompressed.getType() == testItem.getType();
+        return decompressed != null && decompressed.isSimilar(testItem);
     }
 }

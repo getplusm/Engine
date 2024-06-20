@@ -15,7 +15,6 @@ import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.api.manager.AbstractListener;
 import t.me.p1azmer.engine.api.manager.AbstractManager;
 import t.me.p1azmer.engine.config.EngineConfig;
-import t.me.p1azmer.engine.utils.EntityUtil;
 import t.me.p1azmer.engine.utils.PlayerUtil;
 
 import java.util.*;
@@ -133,36 +132,32 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
         U user = this.getUserLoaded(name);
         if (user != null) {
             consumer.accept(user);
-        }
-        else this.getUserDataAsync(name).thenAccept(user2 -> this.plugin.runTask(task -> consumer.accept(user2)));
+        } else this.getUserDataAsync(name).thenAccept(user2 -> this.plugin.runTask(task -> consumer.accept(user2)));
     }
 
     public void getUserDataAndPerform(@NotNull UUID uuid, Consumer<U> consumer) {
         U user = this.getUserLoaded(uuid);
         if (user != null) {
             consumer.accept(user);
-        }
-        else this.getUserDataAsync(uuid).thenAccept(user2 -> this.plugin.runTask(task -> consumer.accept(user2)));
+        } else this.getUserDataAsync(uuid).thenAccept(user2 -> this.plugin.runTask(task -> consumer.accept(user2)));
     }
 
     public void getUserDataAndPerformAsync(@NotNull String name, Consumer<U> consumer) {
         U user = this.getUserLoaded(name);
         if (user != null) {
             consumer.accept(user);
-        }
-        else this.getUserDataAsync(name).thenAccept(consumer);
+        } else this.getUserDataAsync(name).thenAccept(consumer);
     }
 
     public void getUserDataAndPerformAsync(@NotNull UUID uuid, Consumer<U> consumer) {
         U user = this.getUserLoaded(uuid);
         if (user != null) {
             consumer.accept(user);
-        }
-        else this.getUserDataAsync(uuid).thenAccept(consumer);
+        } else this.getUserDataAsync(uuid).thenAccept(consumer);
     }
 
     public final void unloadUser(@NotNull Player player) {
-        this.unloadUser(player.getUniqueId());
+        CompletableFuture.runAsync(() -> this.unloadUser(player.getUniqueId()));
     }
 
     public final void unloadUser(@NotNull UUID uuid) {
@@ -183,7 +178,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     }
 
     public void saveUser(@NotNull U user) {
-        this.plugin.runTaskAsync(task -> this.dataHolder.getData().saveUser(user));
+        CompletableFuture.runAsync(() -> this.dataHolder.getData().saveUser(user));
     }
 
     @NotNull
@@ -225,7 +220,7 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     @Nullable
     public U getUserLoaded(@NotNull String name) {
         return this.getUsersLoaded().stream().filter(user -> user.getName().equalsIgnoreCase(name))
-                .findFirst().orElse(null);
+                   .findFirst().orElse(null);
     }
 
     public boolean isUserLoaded(@NotNull Player player) {
@@ -243,13 +238,11 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
     public void cacheTemporary(@NotNull U user) {
         user.setCachedUntil(System.currentTimeMillis() + EngineConfig.USER_CACHE_LIFETIME.get() * 1000L);
         this.cache(user);
-        //this.plugin.debug("Temp user cache: " + user.getName());
     }
 
     public void cachePermanent(@NotNull U user) {
         user.setCachedUntil(-1);
         this.cache(user);
-        //this.plugin.debug("Permanent user cache: " + user.getName());
     }
 
     private void cache(@NotNull U user) {
@@ -286,31 +279,25 @@ public abstract class AbstractUserManager<P extends NexPlugin<P>, U extends Abst
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onUserQuit(PlayerQuitEvent event) {
-            // slow down the process without loading the main thread so that the data is saved without loss
-            // for Proxy switching
-            CompletableFuture.runAsync(() -> {
-                plugin.runTask(sync -> unloadUser(event.getPlayer()));
-            }).join();
+            unloadUser(event.getPlayer());
         }
 
         @EventHandler(priority = EventPriority.MONITOR)
         public void onUserQuit(PlayerKickEvent event) {
-            CompletableFuture.runAsync(() -> {
-                plugin.runTask(sync -> unloadUser(event.getPlayer()));
-            }).join();
+            unloadUser(event.getPlayer());
         }
 
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onDisable(PluginDisableEvent event) {
             if (event.getPlugin().equals(this.plugin)) {
-                CompletableFuture.runAsync(() -> getUsersLoaded().forEach(AbstractUserManager.this::saveUser));
+                getUsersLoaded().forEach(AbstractUserManager.this::saveUser);
             }
         }
 
         @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
         public void onDisable(WorldUnloadEvent event) {
             if (event.getWorld().getEnvironment().equals(World.Environment.NORMAL)) {
-                CompletableFuture.runAsync(() -> getUsersLoaded().forEach(AbstractUserManager.this::saveUser));
+                getUsersLoaded().forEach(AbstractUserManager.this::saveUser);
             }
         }
     }
