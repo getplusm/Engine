@@ -10,8 +10,4 @@ load: STARTUP
 folia-supported: true
 libraries:
   - it.unimi.dsi:fastutil:8.5.11
-  - org.jooq:jooq:3.19.11
-  - org.jooq:jooq-meta:3.19.11
-  - org.jooq:jooq-codegen:3.19.11
-  - mysql:mysql-connector-java:8.0.33
   - com.zaxxer:HikariCP:5.0.1
