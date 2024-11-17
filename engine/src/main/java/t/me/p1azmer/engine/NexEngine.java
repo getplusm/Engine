@@ -1,8 +1,8 @@
 package t.me.p1azmer.engine;
 
-import org.bukkit.Material;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemStack;
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.api.command.GeneralCommand;
 import t.me.p1azmer.engine.api.editor.EditorLocales;
@@ -14,21 +14,25 @@ import t.me.p1azmer.engine.config.EngineConfig;
 import t.me.p1azmer.engine.editor.EditorManager;
 import t.me.p1azmer.engine.integration.external.VaultHook;
 import t.me.p1azmer.engine.lang.EngineLang;
-import t.me.p1azmer.engine.utils.*;
-import t.me.p1azmer.engine.utils.collections.Lists;
+import t.me.p1azmer.engine.utils.EngineUtils;
+import t.me.p1azmer.engine.utils.Placeholders;
 import t.me.p1azmer.playerBlockTracker.PlayerBlockTracker;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class NexEngine extends NexPlugin<NexEngine> {
-
     private final Set<NexPlugin<?>> childrens = new HashSet<>();
 
-    private EditorManager editorManager;
-    private MenuListener menuListener;
-    private MenuRefreshTask menuRefreshTask;
+    EditorManager editorManager;
+    MenuListener menuListener;
+    MenuRefreshTask menuRefreshTask;
+
+    public NexEngine() {
+        Version.load(this);
+    }
 
     @Override
     @NotNull
@@ -46,8 +50,6 @@ public class NexEngine extends NexPlugin<NexEngine> {
 
         this.editorManager = new EditorManager(this);
         this.editorManager.setup();
-
-        this.testMethods();
     }
 
     @Override
@@ -95,44 +97,5 @@ public class NexEngine extends NexPlugin<NexEngine> {
     void addChildren(@NotNull NexPlugin<?> child) {
         this.childrens.add(child);
         child.info("Powered by: " + this.getName());
-    }
-
-    @NotNull
-    public Set<NexPlugin<?>> getChildrens() {
-        return this.childrens;
-    }
-
-    private void testMethods() {
-        if (Version.getCurrent() == Version.UNKNOWN) {
-            this.warn("Server Version: UNSUPPORTED \u2718");
-        }
-        else this.info("Server Version: " + Version.getCurrent().getLocalized() + " \u2714");
-
-        if (EntityUtil.setupEntityCounter(this)) {
-            this.info("Entity Id Counter: OK \u2714");
-        }
-        else this.error("Entity Id Counter: FAIL \u2718");
-
-        if (this.testItemNbt()) {
-            this.info("Item NBT Compress: OK \u2714");
-        }
-        else this.error("Item NBT Compress: FAIL \u2718");
-    }
-
-    private boolean testItemNbt() {
-        if (!ItemNbt.setup(this)) return false;
-
-        ItemStack testItem = new ItemStack(Material.DIAMOND_SWORD);
-        ItemUtil.editMeta(testItem, meta -> {
-            meta.setDisplayName("Test Item");
-            meta.setLore(Lists.newList("Test Lore 1", "Test Lore 2", "Test Lore 3"));
-            meta.addEnchant(Enchantment.FIRE_ASPECT, 10, true);
-        });
-
-        String nbt = ItemNbt.compress(testItem);
-        if (nbt == null) return false;
-
-        ItemStack decompressed = ItemNbt.decompress(nbt);
-        return decompressed != null && decompressed.isSimilar(testItem);
     }
 }

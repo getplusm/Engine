@@ -20,22 +20,17 @@ public class EngineConfig {
             "This will improve database performance when checking if user exists, but will increase memory usage.",
             "[Default is true]");
 
-    public static final JOption<Integer> TAB_COMPLETER_REGEX_MAX_LENGTH = JOption.create("TabCompleter.Regex_Max_Length",
-            32,
-            "Sets maximal length for input text to use a regex based search (aka smart tab-completer).",
-            "When player entered text with length that exceeds this value, basic text search will be used instead.",
-            "[Default is 32]");
-
-    public static final JOption<Integer> TAB_COMPLETER_REGEX_TIMEOUT = JOption.create("TabCompleter.Regex_Timeout",
-            25,
-            "Amount of milliseconds for regex matcher timeout in tab completion.",
-            "If tab-completion takes more than this amount to find matches from a list, it will be interrupted.",
-            "[Default is 25ms]");
-
     public static final JOption<Boolean> RESPECT_PLAYER_DISPLAYNAME = JOption.create("Engine.Respect_Player_DisplayName",
             false,
             "Sets whether or not 'Player#getDisplayName' can be used to find & get players in addition to regular 'Player#getName'.",
             "This is useful if you want to use custom player nicknames in commands.",
             "(Works only for NexEngine based plugins.)",
             "[Default is false]");
+
+    @Deprecated
+    public static final JOption<Boolean> DATA_FIXER_ENABLED = JOption.create("DataFixer.Enabled",
+            false,
+            "When enabled, uses Mojang's DataFixer util to update ItemStacks from <= 1.20.4 NBT format to 1.20.5+ NBT format.",
+            "IMPORTANT NOTE: You need to use this setting only once! Enable it, reboot the server and re-save all configurations that stores compressed item data: shops, crates, etc."
+    );
 }

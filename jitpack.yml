@@ -1,8 +1,2 @@
-before_install:
-  - source "$HOME/.sdkman/bin/sdkman-init.sh"
-  - sdk update
-  - sdk install java 17.0.7-tem
-  - sdk use java 17.0.7-tem
-jdk: openjdk17
-env:
-  ARTIFACT: 'Engine'
+jdk:
+  - openjdk17

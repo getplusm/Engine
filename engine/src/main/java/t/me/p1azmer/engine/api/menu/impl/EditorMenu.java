@@ -6,6 +6,7 @@ import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.api.editor.EditorLocale;
 import t.me.p1azmer.engine.api.editor.EditorLocales;
 import t.me.p1azmer.engine.api.editor.InputHandler;
@@ -28,8 +29,7 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
 
     @NotNull
     protected MenuItem addNextPage(int... slots) {
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-        ItemUtil.setSkullTexture(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjgyYWQxYjljYjRkZDIxMjU5YzBkNzVhYTMxNWZmMzg5YzNjZWY3NTJiZTM5NDkzMzgxNjRiYWM4NGE5NmUifX19");
+        ItemStack item = ItemUtil.getSkinHead("f32ca66056b72863e98f7f32bd7d94c7a0d796af691c9ac3a9136331352288f9");
         MenuItem menuItem = this.addItem(item, EditorLocales.NEXT_PAGE, slots);
         menuItem.setType(MenuItemType.PAGE_NEXT);
         menuItem.setClick(ClickHandler.forNextPage(this));
@@ -38,8 +38,7 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
 
     @NotNull
     protected MenuItem addPreviousPage(int... slots) {
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-        ItemUtil.setSkullTexture(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzdhZWU5YTc1YmYwZGY3ODk3MTgzMDE1Y2NhMGIyYTdkNzU1YzYzMzg4ZmYwMTc1MmQ1ZjQ0MTlmYzY0NSJ9fX0=");
+        ItemStack item = ItemUtil.getSkinHead("86971dd881dbaf4fd6bcaa93614493c612f869641ed59d1c9363a3666a5fa6");
         MenuItem menuItem = this.addItem(item, EditorLocales.PREVIOUS_PAGE, slots);
         menuItem.setType(MenuItemType.PAGE_PREVIOUS);
         menuItem.setClick(ClickHandler.forPreviousPage(this));
@@ -48,22 +47,20 @@ public class EditorMenu<P extends NexPlugin<P>, T> extends Menu<P> {
 
     @NotNull
     protected MenuItem addReturn(int... slots) {
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-        ItemUtil.setSkullTexture(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTM4NTJiZjYxNmYzMWVkNjdjMzdkZTRiMGJhYTJjNWY4ZDhmY2E4MmU3MmRiY2FmY2JhNjY5NTZhODFjNCJ9fX0=");
+        ItemStack item = ItemUtil.getSkinHead("be9ae7a4be65fcbaee65181389a2f7d47e2e326db59ea3eb789a92c85ea46");
         return this.addItem(item, EditorLocales.RETURN, slots);
     }
 
     @NotNull
     protected MenuItem addCreation(@NotNull EditorLocale locale, int... slots) {
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-        ItemUtil.setSkullTexture(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWZmMzE0MzFkNjQ1ODdmZjZlZjk4YzA2NzU4MTA2ODFmOGMxM2JmOTZmNTFkOWNiMDdlZDc4NTJiMmZmZDEifX19");
+        ItemStack item = ItemUtil.getSkinHead("5ff31431d64587ff6ef98c0675810681f8c13bf96f51d9cb07ed7852b2ffd1");
         return this.addItem(item, locale, slots);
     }
 
     @NotNull
     protected MenuItem addExit(int... slots) {
-        ItemStack item = new ItemStack(Material.PLAYER_HEAD);
-        ItemUtil.setSkullTexture(item, "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYmViNTg4YjIxYTZmOThhZDFmZjRlMDg1YzU1MmRjYjA1MGVmYzljYWI0MjdmNDYwNDhmMThmYzgwMzQ3NWY3In19fQ==");
+        ItemStack item = ItemUtil.getSkinHead("27548362a24c0fa8453e4d93e68c5969ddbde57bf6666c0319c1ed1e84d89065");
+
         MenuItem menuItem = this.addItem(item, EditorLocales.CLOSE, slots);
         menuItem.setClick((viewer, event) -> viewer.getPlayer().closeInventory());
         return menuItem;

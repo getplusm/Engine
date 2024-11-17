@@ -13,7 +13,7 @@ import t.me.p1azmer.engine.utils.EngineUtils;
 import java.util.Arrays;
 import java.util.List;
 
-import static t.me.p1azmer.engine.utils.Colors.*;
+import static t.me.p1azmer.engine.utils.Colors2.*;
 
 public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> {
 
@@ -29,11 +29,11 @@ public class AboutSubCommand<P extends NexPlugin<P>> extends AbstractCommand<P> 
                 YELLOW + ChatColor.BOLD + plugin.getName() + ORANGE + " v" + plugin.getDescription().getVersion(),
                 GRAY + (plugin.getDescription().getDescription() == null || plugin.getDescription().getDescription().isEmpty() ? "Description to come later" : plugin.getDescription().getDescription()),
                 GRAY,
-                YELLOW + "\u25aa " + GRAY + "API Version: " + YELLOW + plugin.getDescription().getAPIVersion(),
-                YELLOW + "\u25aa " + GRAY + "Made by " + YELLOW + (plugin.getDescription().getAuthors().isEmpty() ? "plazmer" : plugin.getDescription().getAuthors().get(0)),
-                YELLOW + "\u25aa " + GRAY + "Powered by " + YELLOW + EngineUtils.ENGINE.getName(),
+                YELLOW + "▪ " + GRAY + "API Version: " + YELLOW + plugin.getDescription().getAPIVersion(),
+                YELLOW + "▪ " + GRAY + "Made by " + YELLOW + (plugin.getDescription().getAuthors().isEmpty() ? "plazmer" : plugin.getDescription().getAuthors().get(0)),
+                YELLOW + "▪ " + GRAY + "Powered by " + YELLOW + EngineUtils.ENGINE.getName(),
                 GRAY,
-                CYAN + ChatColor.UNDERLINE + "made in YAMAL" + CYAN + " � 2022-2023",
+                CYAN + ChatColor.UNDERLINE + "made in YAMAL" + CYAN + " © 2022-2024",
                 GRAY));
 
         info.forEach(sender::sendMessage);

@@ -6,6 +6,7 @@ import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.actions.conditions.IConditionType;
 import t.me.p1azmer.engine.actions.conditions.IConditionValidator;
 import t.me.p1azmer.engine.actions.params.IParamResult;
@@ -47,11 +48,14 @@ public class Condition_EntityHealth extends IConditionValidator {
         IParamValue.IOperator operator = valHp.getOperator();
 
         return target -> {
-            if (!(target instanceof LivingEntity)) return false;
+            if (!(target instanceof LivingEntity livingEntity)) return false;
 
-            LivingEntity livingEntity = (LivingEntity) target;
+            Attribute healthAttribute = Attribute.valueOf("GENERIC_MAX_HEALTH");
+            if (Version.isAtLeast(Version.MC_1_21_3)) {
+                healthAttribute = Attribute.MAX_HEALTH;
+            }
             double hpTarget = livingEntity.getHealth();
-            double hpTargetMax = EntityUtil.getAttribute(livingEntity, Attribute.GENERIC_MAX_HEALTH);
+            double hpTargetMax = EntityUtil.getAttribute(livingEntity, healthAttribute);
 
             if (isPercent) {
                 hpTarget = hpTarget / hpTargetMax * 100D;

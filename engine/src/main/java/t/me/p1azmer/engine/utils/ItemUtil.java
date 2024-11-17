@@ -1,14 +1,10 @@
 package t.me.p1azmer.engine.utils;
 
-import com.google.common.base.Splitter;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
-import me.clip.placeholderapi.PlaceholderAPI;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.Tag;
-import org.bukkit.entity.Player;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -20,14 +16,10 @@ import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.lang.LangManager;
 
-import java.io.*;
-import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
-import java.math.BigInteger;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
-import java.util.function.UnaryOperator;
 
 public class ItemUtil {
 
@@ -54,7 +46,7 @@ public class ItemUtil {
     }
 
     @NotNull
-    @Deprecated
+    @Deprecated(since = "1.21")
     public static ItemStack createCustomHead(@NotNull String texture) {
         ItemStack item = new ItemStack(Material.PLAYER_HEAD);
         setSkullTexture(item, texture);
@@ -88,8 +80,7 @@ public class ItemUtil {
             profile.setTextures(textures);
             meta.setOwnerProfile(profile);
             item.setItemMeta(meta);
-        }
-        catch (Exception exception) {
+        } catch (Exception exception) {
             exception.printStackTrace();
         }
     }
@@ -109,7 +100,7 @@ public class ItemUtil {
         return raw.substring(TEXTURES_HOST.length());
     }
 
-    @Deprecated
+    @Deprecated(since = "1.21")
     public static void setSkullTexture(@NotNull ItemStack item, @NotNull String value) {
         if (item.getType() != Material.PLAYER_HEAD) return;
         if (!(item.getItemMeta() instanceof SkullMeta meta)) return;
@@ -121,8 +112,7 @@ public class ItemUtil {
         Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);
         if (method != null) {
             Reflex.invokeMethod(method, meta, profile);
-        }
-        else {
+        } else {
             Reflex.setFieldValue(meta, "profile", profile);
         }
 
@@ -130,7 +120,7 @@ public class ItemUtil {
     }
 
     @Nullable
-    @Deprecated
+    @Deprecated(since = "1.21")
     public static String getSkullTexture(@NotNull ItemStack item) {
         if (item.getType() != Material.PLAYER_HEAD) return null;
 
@@ -145,8 +135,7 @@ public class ItemUtil {
             String name;
             if (Version.isAtLeast(Version.V1_20_R2)) {
                 name = prop.name();
-            }
-            else {
+            } else {
                 name = (String) Reflex.getFieldValue(profile, "name");
             }
             return name != null && name.equalsIgnoreCase("textures");
@@ -156,8 +145,7 @@ public class ItemUtil {
 
         if (Version.isAtLeast(Version.V1_20_R2)) {
             return opt.get().value();
-        }
-        else {
+        } else {
             return (String) Reflex.getFieldValue(opt.get(), "value");
         }
     }
@@ -181,8 +169,8 @@ public class ItemUtil {
 
         Material material = item.getType();
         return material == Material.DIAMOND_SWORD || material == Material.GOLDEN_SWORD
-          || material == Material.IRON_SWORD || material == Material.NETHERITE_SWORD
-          || material == Material.STONE_SWORD || material == Material.WOODEN_SWORD;
+                || material == Material.IRON_SWORD || material == Material.NETHERITE_SWORD
+                || material == Material.STONE_SWORD || material == Material.WOODEN_SWORD;
     }
 
     public static boolean isAxe(@NotNull ItemStack item) {
@@ -192,8 +180,8 @@ public class ItemUtil {
 
         Material material = item.getType();
         return material == Material.DIAMOND_AXE || material == Material.GOLDEN_AXE
-          || material == Material.IRON_AXE || material == Material.NETHERITE_AXE
-          || material == Material.STONE_AXE || material == Material.WOODEN_AXE;
+                || material == Material.IRON_AXE || material == Material.NETHERITE_AXE
+                || material == Material.STONE_AXE || material == Material.WOODEN_AXE;
     }
 
     public static boolean isTrident(@NotNull ItemStack item) {
@@ -207,8 +195,8 @@ public class ItemUtil {
 
         Material material = item.getType();
         return material == Material.DIAMOND_PICKAXE || material == Material.GOLDEN_PICKAXE
-          || material == Material.IRON_PICKAXE || material == Material.NETHERITE_PICKAXE
-          || material == Material.STONE_PICKAXE || material == Material.WOODEN_PICKAXE;
+                || material == Material.IRON_PICKAXE || material == Material.NETHERITE_PICKAXE
+                || material == Material.STONE_PICKAXE || material == Material.WOODEN_PICKAXE;
     }
 
     public static boolean isShovel(@NotNull ItemStack item) {
@@ -218,8 +206,8 @@ public class ItemUtil {
 
         Material material = item.getType();
         return material == Material.DIAMOND_SHOVEL || material == Material.GOLDEN_SHOVEL
-          || material == Material.IRON_SHOVEL || material == Material.NETHERITE_SHOVEL
-          || material == Material.STONE_SHOVEL || material == Material.WOODEN_SHOVEL;
+                || material == Material.IRON_SHOVEL || material == Material.NETHERITE_SHOVEL
+                || material == Material.STONE_SHOVEL || material == Material.WOODEN_SHOVEL;
     }
 
     public static boolean isHoe(@NotNull ItemStack item) {
@@ -229,8 +217,8 @@ public class ItemUtil {
 
         Material material = item.getType();
         return material == Material.DIAMOND_HOE || material == Material.GOLDEN_HOE
-          || material == Material.IRON_HOE || material == Material.NETHERITE_HOE
-          || material == Material.STONE_HOE || material == Material.WOODEN_HOE;
+                || material == Material.IRON_HOE || material == Material.NETHERITE_HOE
+                || material == Material.STONE_HOE || material == Material.WOODEN_HOE;
     }
 
     public static boolean isElytra(@NotNull ItemStack item) {

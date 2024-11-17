@@ -4,15 +4,15 @@
     <file url="file://$PROJECT_DIR$/build.gradle" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/api/data/config/DataConfig.java" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/api/editor/EditorLocales.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/command/list/AboutSubCommand.java" charset="windows-1251" />
-    <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/config/ConfigManager.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/command/list/AboutSubCommand.java" charset="UTF-8" />
+    <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/config/ConfigManager.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/config/EngineConfig.java" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/lang/EngineLang.java" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/Colorizer.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/Cooldowner.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/MessageUtil.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/NumberUtil.java" charset="UTF-8" />
-    <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/StringUtil.java" charset="windows-1251" />
+    <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/StringUtil.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/message/NexMessage.java" charset="UTF-8" />
     <file url="file://$PROJECT_DIR$/engine/src/main/java/t/me/p1azmer/engine/utils/regex/RegexUtil.java" charset="windows-1251" />
     <file url="file://$PROJECT_DIR$/engine/src/main/resources/config.yml" charset="windows-1251" />

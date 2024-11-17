@@ -3,24 +3,17 @@ plugins {
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
+group = 'com.github.getplusm'
+version = '2.4.8'
+description = 'PLAZMER-ENGINE'
+
+java.sourceCompatibility = JavaVersion.VERSION_17
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
 
 allprojects {
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
-
-    group = 'com.github.getplusm'
-    version = '2.4.7'
-    sourceCompatibility = 17
-    targetCompatibility = 17
-
-    processResources {
-        def props = [version: version]
-        inputs.properties props
-        filteringCharset 'UTF-8'
-        filesMatching('plugin.yml') {
-            expand props
-        }
-    }
 
     repositories {
         mavenLocal()
@@ -37,8 +30,10 @@ allprojects {
             }
         }
         maven { url = 'https://repo.dmulloy2.net/repository/public/' }
+        maven { url = 'https://repo.papermc.io/repository/maven-public/' }
         maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
         maven { url = 'https://oss.sonatype.org/content/repositories/central' }
+
         // Spigot API * end
 
         // more & more
@@ -60,21 +55,20 @@ allprojects {
 }
 
 dependencies {
-    implementation(project(path: ":engine"))
-    implementation(project(path: ":folia"))
+    compileOnly 'org.jooq:jooq:3.19.11'
+    compileOnly 'org.jooq:jooq-meta:3.19.11'
+    compileOnly 'org.jooq:jooq-codegen:3.19.11'
+    compileOnly 'mysql:mysql-connector-java:8.0.33'
+    compileOnly 'com.zaxxer:HikariCP:5.0.1'
+
+    shadow project(path: ':engine', configuration: 'default')
+    shadow project(path: ':folia', configuration: 'default')
 }
 
-tasks {
-
-    shadowJar {
-        archivesBaseName = "PLAZMER-ENGINE"
-        archiveClassifier.set("")
-        destinationDirectory.set(rootProject.buildDir)
-    }
-
-    build {
-        dependsOn(shadowJar)
-    }
+shadowJar {
+    archiveClassifier.set(null)
+    configurations = [project.configurations.runtimeClasspath, project.configurations.shadow]
+    archiveFileName.set(rootProject.description + '-' + rootProject.version + '.jar')
 }
 
 publishing {

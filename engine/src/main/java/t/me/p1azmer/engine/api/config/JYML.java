@@ -17,8 +17,6 @@ import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.Version;
-import t.me.p1azmer.engine.api.recipe.AbstractCookingRecipe;
-import t.me.p1azmer.engine.api.recipe.IRecipe;
 import t.me.p1azmer.engine.utils.*;
 
 import java.io.File;
@@ -338,7 +336,8 @@ public class JYML extends YamlConfiguration {
 
         String headTexture = this.getString(path + "Head_Texture", "");
         if (!headTexture.isEmpty()) {
-            ItemUtil.setSkullTexture(item, headTexture);
+            if (Version.isAtLeast(Version.MC_1_21_3)) ItemUtil.setHeadSkin(item, headTexture);
+            else ItemUtil.setSkullTexture(item, headTexture);
         }
 
         ItemMeta meta = item.getItemMeta();
@@ -541,7 +540,7 @@ public class JYML extends YamlConfiguration {
         }
     }
 
-    public enum MetaDataType{
+    public enum MetaDataType {
         BYTE,
         SHORT,
         INTEGER,

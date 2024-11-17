@@ -1,25 +1,26 @@
 package t.me.p1azmer.engine.utils.wrapper;
 
-
+import lombok.AccessLevel;
+import lombok.RequiredArgsConstructor;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.*;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.api.config.JYML;
-import t.me.p1azmer.engine.utils.NumberUtil;
 import t.me.p1azmer.engine.utils.StringUtil;
 
+import java.util.Optional;
+
+@RequiredArgsConstructor
+@FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public class UniParticle {
 
-    private final Particle particle;
-    private final Object   data;
-
-    public UniParticle(@Nullable Particle particle, @Nullable Object data) {
-        this.particle = particle;
-        this.data = data;
-    }
+    Particle particle;
+    Object data;
 
     @NotNull
     public static UniParticle of(@Nullable Particle particle) {
@@ -33,22 +34,34 @@ public class UniParticle {
 
     @NotNull
     public static UniParticle itemCrack(@NotNull ItemStack item) {
-        return new UniParticle(Particle.ITEM_CRACK, new ItemStack(item));
+        Particle particle = Optional.of(Particle.valueOf("ITEM_CRACK")).orElse(Particle.ITEM);
+        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.ITEM;
+
+        return new UniParticle(particle, new ItemStack(item));
     }
 
     @NotNull
     public static UniParticle itemCrack(@NotNull Material material) {
-        return new UniParticle(Particle.ITEM_CRACK, new ItemStack(material));
+        Particle particle = Optional.of(Particle.valueOf("ITEM_CRACK")).orElse(Particle.ITEM);
+        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.ITEM;
+
+        return new UniParticle(particle, new ItemStack(material));
     }
 
     @NotNull
     public static UniParticle blockCrack(@NotNull Material material) {
-        return new UniParticle(Particle.BLOCK_CRACK, material.createBlockData());
+        Particle particle = Optional.of(Particle.valueOf("BLOCK_CRACK")).orElse(Particle.BLOCK);
+        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.BLOCK;
+
+        return new UniParticle(particle, material.createBlockData());
     }
 
     @NotNull
     public static UniParticle blockDust(@NotNull Material material) {
-        return new UniParticle(Particle.BLOCK_DUST, material.createBlockData());
+        Particle particle = Optional.of(Particle.valueOf("BLOCK_DUST")).orElse(Particle.DUST);
+        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.DUST;
+
+        return new UniParticle(particle, material.createBlockData());
     }
 
     @NotNull
@@ -63,7 +76,10 @@ public class UniParticle {
 
     @NotNull
     public static UniParticle redstone(@NotNull Color color, float size) {
-        return new UniParticle(Particle.REDSTONE, new Particle.DustOptions(color, size));
+        Particle particle = Optional.of(Particle.valueOf("REDSTONE")).orElse(Particle.DUST_COLOR_TRANSITION);
+        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.DUST_COLOR_TRANSITION;
+
+        return new UniParticle(particle, new Particle.DustOptions(color, size));
     }
 
     @NotNull
@@ -77,29 +93,29 @@ public class UniParticle {
         if (dataType == BlockData.class) {
             Material material = Material.getMaterial(cfg.getString(path + ".Material", ""));
             data = material != null ? material.createBlockData() : Material.STONE.createBlockData();
-        }
-        else if (dataType == Particle.DustOptions.class) {
+        } else if (dataType == Particle.DustOptions.class) {
             Color color = StringUtil.getColor(cfg.getString(path + ".Color", ""));
             double size = cfg.getDouble(path + ".Size", 1D);
             data = new Particle.DustOptions(color, (float) size);
-        }
-        else if (dataType == Particle.DustTransition.class) {
+        } else if (dataType == Particle.DustTransition.class) {
             Color colorStart = StringUtil.getColor(cfg.getString(path + ".Color_From", ""));
             Color colorEnd = StringUtil.getColor(cfg.getString(path + ".Color_To", ""));
             double size = cfg.getDouble(path + ".Size", 1D);
             data = new Particle.DustTransition(colorStart, colorEnd, (float) size);
-        }
-        else if (dataType == ItemStack.class) {
+        } else if (dataType == ItemStack.class) {
             ItemStack item = cfg.getItem(path + ".Item");
             data = item.getType().isAir() ? new ItemStack(Material.STONE) : item;
-        }
-        else if (dataType == Float.class) {
+        } else if (dataType == Float.class) {
             data = (float) cfg.getDouble(path + ".floatValue", 1F);
-        }
-        else if (dataType == Integer.class) {
+        } else if (dataType == Integer.class) {
             data = cfg.getInt(path + ".intValue", 1);
+        } else if (dataType != Void.class) {
+            Particle redstoneParticle = Optional.of(Particle.valueOf("REDSTONE"))
+                    .orElse(Particle.DUST_COLOR_TRANSITION);
+            if (Version.isAtLeast(Version.MC_1_21)) redstoneParticle = Particle.DUST_COLOR_TRANSITION;
+
+            return UniParticle.of(redstoneParticle);
         }
-        else if (dataType != Void.class) return UniParticle.of(Particle.REDSTONE);
 
         return UniParticle.of(particle, data);
     }
@@ -110,26 +126,21 @@ public class UniParticle {
         Object data = this.getData();
         if (data instanceof BlockData blockData) {
             cfg.set(path + ".Material", blockData.getMaterial().name());
-        }
-        else if (data instanceof Particle.DustTransition dustTransition) {
+        } else if (data instanceof Particle.DustTransition dustTransition) {
             Color colorStart = dustTransition.getColor();
             Color colorEnd = dustTransition.getToColor();
             cfg.set(path + ".Color_From", colorStart.getRed() + "," + colorStart.getGreen() + "," + colorStart.getBlue());
             cfg.set(path + ".Color_To", colorEnd.getRed() + "," + colorEnd.getGreen() + "," + colorEnd.getBlue());
             cfg.set(path + ".Size", dustTransition.getSize());
-        }
-        else if (data instanceof Particle.DustOptions dustOptions) {
+        } else if (data instanceof Particle.DustOptions dustOptions) {
             Color color = dustOptions.getColor();
             cfg.set(path + ".Color", color.getRed() + "," + color.getGreen() + "," + color.getBlue());
             cfg.set(path + ".Size", dustOptions.getSize());
-        }
-        else if (data instanceof ItemStack item) {
+        } else if (data instanceof ItemStack item) {
             cfg.setItem(path + ".Item", item);
-        }
-        else if (data instanceof Float f) {
+        } else if (data instanceof Float f) {
             cfg.set(path + ".floatValue", f);
-        }
-        else if (data instanceof Integer i) {
+        } else if (data instanceof Integer i) {
             cfg.set(path + ".intValue", i);
         }
     }
@@ -177,8 +188,7 @@ public class UniParticle {
 
             world.spawnParticle(this.getParticle(), location, amount, xOffset, yOffset, zOffset, speed, this.getData());
             //EffectUtil.playParticle(location, this.getParticle(), this.getData(), xOffset, yOffset, zOffset, speed, amount);
-        }
-        else {
+        } else {
             player.spawnParticle(this.getParticle(), location, amount, xOffset, yOffset, zOffset, speed, this.getData());
             //EffectUtil.playParticle(player, location, this.getParticle(), this.getData(), xOffset, yOffset, zOffset, speed, amount);
         }

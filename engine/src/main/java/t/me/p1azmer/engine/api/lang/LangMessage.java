@@ -8,16 +8,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.permissions.Permission;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.utils.*;
 import t.me.p1azmer.engine.utils.message.NexParser;
 import t.me.p1azmer.engine.utils.placeholder.PlaceholderMap;
 import t.me.p1azmer.engine.utils.regex.RegexUtil;
 import t.me.p1azmer.engine.utils.wrapper.UniSound;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 import java.util.function.BiConsumer;
 import java.util.function.Predicate;
 import java.util.function.UnaryOperator;
@@ -113,7 +111,7 @@ public class LangMessage {
           }
         }
         case PREFIX -> this.hasPrefix = Boolean.parseBoolean(optionValue);
-        case SOUND -> this.sound = StringUtil.getEnum(optionValue, Sound.class).orElse(null);
+        case SOUND -> this.sound = Optional.of(Sound.valueOf(optionValue)).orElse(null);
         case PAPI -> this.papi = Boolean.parseBoolean(optionValue) && EngineUtils.hasPlaceholderAPI();
       }
     }

@@ -5,6 +5,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.LivingEntity;
 import org.jetbrains.annotations.NotNull;
 import t.me.p1azmer.engine.NexPlugin;
+import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.actions.actions.AbstractActionExecutor;
 import t.me.p1azmer.engine.actions.actions.ActionType;
 import t.me.p1azmer.engine.actions.params.IParamResult;
@@ -42,11 +43,14 @@ public class Action_Health extends AbstractActionExecutor {
         boolean percent = value.getBoolean();
 
         targets.forEach(target -> {
-            if (!(target instanceof LivingEntity)) return;
+            if (!(target instanceof LivingEntity livingEntity)) return;
 
-            LivingEntity livingEntity = (LivingEntity) target;
-            double       hp2          = hp;
-            double       maxHp        = EntityUtil.getAttribute(livingEntity, Attribute.GENERIC_MAX_HEALTH);
+            Attribute healthAttribute = Attribute.valueOf("GENERIC_MAX_HEALTH");
+            if (Version.isAtLeast(Version.MC_1_21_3)) {
+                healthAttribute = Attribute.MAX_HEALTH;
+            }
+            double hp2 = hp;
+            double maxHp = EntityUtil.getAttribute(livingEntity, healthAttribute);
             if (percent) {
                 hp2 = maxHp * (hp / 100D);
             }
