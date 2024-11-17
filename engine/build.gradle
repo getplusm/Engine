@@ -47,7 +47,7 @@ dependencies {
 }
 
 processResources {
-    def props = [version: version]
+    def props = [version: rootProject.version]
     inputs.properties props
     filteringCharset 'UTF-8'
     filesMatching('plugin.yml') {
