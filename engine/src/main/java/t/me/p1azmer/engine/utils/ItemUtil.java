@@ -1,5 +1,6 @@
 package t.me.p1azmer.engine.utils;
 
+import com.destroystokyo.paper.profile.ProfileProperty;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.Property;
 import org.bukkit.Bukkit;
@@ -16,7 +17,6 @@ import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.Version;
 import t.me.p1azmer.engine.lang.LangManager;
 
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.*;
 import java.util.function.Consumer;
@@ -105,17 +105,11 @@ public class ItemUtil {
         if (item.getType() != Material.PLAYER_HEAD) return;
         if (!(item.getItemMeta() instanceof SkullMeta meta)) return;
 
-        UUID uuid = UUID.nameUUIDFromBytes(value.getBytes());
-        GameProfile profile = new GameProfile(uuid, "null");
-        profile.getProperties().put("textures", new Property("textures", value));
+        UUID uuid = UUID.randomUUID();
+        com.destroystokyo.paper.profile.PlayerProfile playerProfile = Bukkit.createProfile(uuid, uuid.toString().substring(0, 16));
+        playerProfile.setProperty(new ProfileProperty("textures", value));
 
-        Method method = Reflex.getMethod(meta.getClass(), "setProfile", GameProfile.class);
-        if (method != null) {
-            Reflex.invokeMethod(method, meta, profile);
-        } else {
-            Reflex.setFieldValue(meta, "profile", profile);
-        }
-
+        meta.setPlayerProfile(playerProfile);
         item.setItemMeta(meta);
     }
 

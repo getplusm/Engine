@@ -1,17 +1,11 @@
 dependencies {
-    compileOnly 'org.spigotmc:spigot-api:1.21.3-R0.1-SNAPSHOT'
+    compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
 
-    compileOnly 'com.google.guava:guava:31.1-jre'
-
-    compileOnly 'org.slf4j:slf4j-api:1.7.32'
-    compileOnly 'org.slf4j:slf4j-simple:1.7.32'
+    // https://mvnrepository.com/artifact/com.google.guava/guava
+    compileOnly group: 'com.google.guava', name: 'guava', version: '33.4.0-jre'
 
     // Adventure
     compileOnly 'net.kyori:adventure-api:4.13.0'
-    compileOnly('net.kyori:adventure-text-serializer-gson:4.13.0') {
-        exclude(group: 'com.google.code.gson', module: 'gson') // Prevent shading into the jar
-    }
-
     compileOnly 'net.kyori:adventure-text-serializer-legacy:4.13.0'
 
     compileOnly 'com.mojang:authlib:5.0.47'
@@ -25,13 +19,10 @@ dependencies {
     // LP
     compileOnly 'net.luckperms:api:5.4'
     // Vault
-    compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
+    compileOnly 'com.github.MilkBowl:VaultAPI:1.7.1'
 
     // floadgate api
-    compileOnly 'org.geysermc.floodgate:api:2.2.0-SNAPSHOT'
-
-    // PlasmoVoice
-    compileOnly 'su.plo.voice:spigot:1.0.11'
+    compileOnly 'org.geysermc.floodgate:api:2.2.3-SNAPSHOT'
 
     // WorldGuard
     compileOnly group: 'com.sk89q.worldguard', name: 'worldguard-bukkit', version: '7.0.7'
@@ -40,10 +31,10 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.5'
 
     // Lombok
-    compileOnly 'org.projectlombok:lombok:1.18.26'
-    annotationProcessor 'org.projectlombok:lombok:1.18.26'
+    compileOnly 'org.projectlombok:lombok:1.18.36'
+    annotationProcessor 'org.projectlombok:lombok:1.18.36'
 
-    shadow project(path: ':folia', configuration: 'default')
+    compileOnly 'com.cjcrafter:foliascheduler:0.6.3'
 }
 
 processResources {

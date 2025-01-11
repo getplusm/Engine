@@ -1,8 +1,10 @@
 package t.me.p1azmer.engine.api.server;
 
+import com.cjcrafter.foliascheduler.ServerImplementation;
+import com.cjcrafter.foliascheduler.TaskImplementation;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
-import t.me.p1azmer.folia.Folia;
 
 public abstract class AbstractTask<P extends NexPlugin<P>> {
 
@@ -10,6 +12,7 @@ public abstract class AbstractTask<P extends NexPlugin<P>> {
     protected final P plugin;
 
     protected int taskId;
+    @Nullable TaskImplementation<?> foliaTask;
 
     protected long interval;
     protected boolean async;
@@ -36,15 +39,17 @@ public abstract class AbstractTask<P extends NexPlugin<P>> {
         if (this.taskId >= 0) return false;
         if (this.interval <= 0L) return false;
 
+        ServerImplementation foliaScheduler = plugin.getFoliaScheduler();
+
         if (this.async) {
-            if (NexPlugin.isFolia) {
-                this.taskId = Folia.executeTimer(this::action, 1L, interval).taskId();
+            if (NexPlugin.isFolia && foliaScheduler != null) {
+                foliaTask = foliaScheduler.async().runAtFixedRate(this::action, 1L, interval);
             } else {
                 this.taskId = plugin.getServer().getScheduler().runTaskTimerAsynchronously(plugin, this::action, 1L, interval).getTaskId();
             }
         } else {
-            if (NexPlugin.isFolia) {
-                this.taskId = Folia.executeTimer(this::action, 1L, interval).taskId();
+            if (NexPlugin.isFolia && foliaScheduler != null) {
+                foliaTask = foliaScheduler.global().runAtFixedRate(this::action, 1L, interval);
             } else {
                 this.taskId = plugin.getServer().getScheduler().runTaskTimer(this.plugin, this::action, 1L, interval).getTaskId();
             }
@@ -55,9 +60,8 @@ public abstract class AbstractTask<P extends NexPlugin<P>> {
     public boolean stop() {
         if (this.taskId < 0) return false;
 
-        if (NexPlugin.isFolia) {
-            if (Folia.getMorePaperLib() != null)
-                Folia.getMorePaperLib().scheduling().cancelTask(this.taskId);
+        if (NexPlugin.isFolia && foliaTask != null) {
+            foliaTask.cancel();
         } else {
             this.plugin.getServer().getScheduler().cancelTask(this.taskId);
         }

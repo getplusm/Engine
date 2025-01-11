@@ -50,9 +50,11 @@ public class Condition_EntityHealth extends IConditionValidator {
         return target -> {
             if (!(target instanceof LivingEntity livingEntity)) return false;
 
-            Attribute healthAttribute = Attribute.valueOf("GENERIC_MAX_HEALTH");
-            if (Version.isAtLeast(Version.MC_1_21_3)) {
-                healthAttribute = Attribute.MAX_HEALTH;
+            Attribute healthAttribute;
+            if (Version.isBehind(Version.MC_1_21_3)) {
+                healthAttribute = Attribute.GENERIC_MAX_HEALTH;
+            } else {
+                healthAttribute = Attribute.valueOf("MAX_HEALTH");
             }
             double hpTarget = livingEntity.getHealth();
             double hpTargetMax = EntityUtil.getAttribute(livingEntity, healthAttribute);

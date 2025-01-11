@@ -1,6 +1,6 @@
 package t.me.p1azmer.engine.api.menu.impl;
 
-import org.apache.commons.lang.ArrayUtils;
+import org.apache.commons.lang3.ArrayUtils;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
@@ -214,27 +214,27 @@ public abstract class Menu<P extends NexPlugin<P>> {
     @NotNull
     public List<MenuItem> getItems(@NotNull MenuViewer viewer) {
         return this.getItems().stream()
-                   .filter(menuItem -> {
-                       if (menuItem.getType() == MenuItemType.PAGE_NEXT && viewer.getPage() >= viewer.getPages())
-                           return false;
-                       if (menuItem.getType() == MenuItemType.PAGE_PREVIOUS && viewer.getPage() == 1) return false;
-                       return menuItem.getOptions().canSee(viewer);
-                   })
-                   .sorted(Comparator.comparingInt(MenuItem::getPriority)).toList();
+                .filter(menuItem -> {
+                    if (menuItem.getType() == MenuItemType.PAGE_NEXT && viewer.getPage() >= viewer.getPages())
+                        return false;
+                    if (menuItem.getType() == MenuItemType.PAGE_PREVIOUS && viewer.getPage() == 1) return false;
+                    return menuItem.getOptions().canSee(viewer);
+                })
+                .sorted(Comparator.comparingInt(MenuItem::getPriority)).toList();
     }
 
     @Nullable
     public MenuItem getItem(int slot) {
         return this.getItems().stream()
-                   .filter(item -> ArrayUtils.contains(item.getSlots(), slot))
-                   .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
+                .filter(item -> ArrayUtils.contains(item.getSlots(), slot))
+                .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
     }
 
     @Nullable
     public MenuItem getItem(@NotNull MenuViewer viewer, int slot) {
         return this.getItems(viewer).stream()
-                   .filter(menuItem -> ArrayUtils.contains(menuItem.getSlots(), slot))
-                   .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
+                .filter(menuItem -> ArrayUtils.contains(menuItem.getSlots(), slot))
+                .max(Comparator.comparingInt(MenuItem::getPriority)).orElse(null);
     }
 
     @NotNull

@@ -11,3 +11,4 @@ folia-supported: true
 libraries:
   - it.unimi.dsi:fastutil:8.5.11
   - com.zaxxer:HikariCP:5.0.1
+  - com.cjcrafter:foliascheduler:0.6.3

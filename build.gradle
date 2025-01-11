@@ -3,54 +3,33 @@ plugins {
     id 'maven-publish'
     id 'com.github.johnrengelman.shadow' version '7.1.2'
 }
-group = 'com.github.getplusm'
-version = '2.4.8'
-description = 'PLAZMER-ENGINE'
 
-java.sourceCompatibility = JavaVersion.VERSION_17
-compileJava.options.encoding = "UTF-8"
-compileTestJava.options.encoding = "UTF-8"
+group = 'com.github.getplusm'
+version = '2.4.9'
+description = 'PLAZMER-ENGINE'
 
 allprojects {
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
 
+    java.sourceCompatibility = JavaVersion.VERSION_17
+    compileJava.options.encoding = "UTF-8"
+    compileTestJava.options.encoding = "UTF-8"
+
     repositories {
         mavenLocal()
         mavenCentral()
-        // Spigot API * start
-        maven {
-            url = 'https://hub.spigotmc.org/nexus/content/repositories/snapshots/'
 
-            // As of Gradle 5.1, you can limit this to only those
-            // dependencies you expect from it
-            content {
-                includeGroup 'org.bukkit'
-                includeGroup 'org.spigotmc'
-            }
-        }
-        maven { url = 'https://repo.dmulloy2.net/repository/public/' }
-        maven { url = 'https://repo.papermc.io/repository/maven-public/' }
-        maven { url = 'https://oss.sonatype.org/content/repositories/snapshots' }
-        maven { url = 'https://oss.sonatype.org/content/repositories/central' }
-
-        // Spigot API * end
-
-        // more & more
+        maven { url = "https://repo.papermc.io/repository/maven-public/" }
+        maven { url = "https://oss.sonatype.org/content/groups/public/" }
         maven { url = 'https://jitpack.io' }
 
         // floadgate api
-        maven { url = 'https://repo.opencollab.dev/maven-snapshots/' }
-
-        // PlasmoVoice
-        maven { url = 'https://repo.plo.su/' }
-
+        maven { url = 'https://repo.opencollab.dev/main/' }
         // WorldGuard
         maven { url = 'https://maven.enginehub.org/repo/' }
         // PAPI
-        maven {
-            url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/'
-        }
+        maven { url = 'https://repo.extendedclip.com/content/repositories/placeholderapi/' }
     }
 }
 
@@ -58,7 +37,6 @@ dependencies {
     compileOnly 'com.zaxxer:HikariCP:5.0.1'
 
     shadow project(path: ':engine', configuration: 'default')
-    shadow project(path: ':folia', configuration: 'default')
 }
 
 shadowJar {
@@ -73,12 +51,12 @@ publishing {
             artifact(tasks.shadowJar) {
                 classifier = null
             }
-            groupId = "com.github.getplusm"
-            artifactId = "PLAZMER-ENGINE"
+            groupId = group
+            artifactId = description
             version = project.version
 
             pom {
-                name.set("PLAZMER-ENGINE")
+                name.set(description)
                 description.set("Plugin Engine")
                 url.set("https://github.com/getplusm/Engine")
             }

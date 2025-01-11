@@ -7,7 +7,6 @@ import t.me.p1azmer.engine.actions.ActionManipulator;
 import t.me.p1azmer.engine.actions.Parametized;
 import t.me.p1azmer.engine.actions.params.IParamResult;
 import t.me.p1azmer.engine.actions.params.IParamType;
-import t.me.p1azmer.folia.Folia;
 
 import java.util.HashSet;
 import java.util.Map;
@@ -22,14 +21,10 @@ public abstract class AbstractActionExecutor extends Parametized {
 
     public abstract boolean mustHaveTarget();
 
-    protected abstract void execute(
-            @NotNull Entity exe, @NotNull Set<Entity> targets, @NotNull IParamResult result);
+    protected abstract void execute(@NotNull Entity exe, @NotNull Set<Entity> targets, @NotNull IParamResult result);
 
-    public final void process(
-            @NotNull Entity exe,
-            @NotNull Map<String, Set<Entity>> targetMap,
-            @NotNull String fullStr,
-            @NotNull ActionManipulator manipulator) {
+    public final void process(@NotNull Entity exe, @NotNull Map<String, Set<Entity>> targetMap,
+                              @NotNull String fullStr, @NotNull ActionManipulator manipulator) {
 
         IParamResult result = this.getParamResult(fullStr);
 
@@ -40,8 +35,10 @@ public abstract class AbstractActionExecutor extends Parametized {
             final String fullStr2 = fullStr;
 
             if (delay > 0) {
-                if (NexPlugin.isFolia) {
-                    Folia.executeLater(() -> this.process(exe, targetMap, fullStr2 + FLAG_NO_DELAY, manipulator), delay);
+                if (NexPlugin.isFolia && plugin.getFoliaScheduler() != null) {
+                    plugin.getFoliaScheduler().global().runDelayed(() -> {
+                        this.process(exe, targetMap, fullStr2 + FLAG_NO_DELAY, manipulator);
+                    }, delay);
                     return;
                 }
                 plugin.getServer().getScheduler().runTaskLater(plugin, () -> this.process(exe, targetMap, fullStr2 + FLAG_NO_DELAY, manipulator), delay);

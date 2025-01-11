@@ -1,5 +1,8 @@
 package t.me.p1azmer.engine;
 
+import com.cjcrafter.foliascheduler.FoliaCompatibility;
+import com.cjcrafter.foliascheduler.ServerImplementation;
+import com.cjcrafter.foliascheduler.util.ServerVersions;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.experimental.FieldDefaults;
@@ -11,6 +14,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 import org.bukkit.scheduler.BukkitTask;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.actions.ActionManager;
 import t.me.p1azmer.engine.api.command.GeneralCommand;
 import t.me.p1azmer.engine.api.config.JYML;
@@ -25,7 +29,6 @@ import t.me.p1azmer.engine.lang.LangManager;
 import t.me.p1azmer.engine.utils.EngineUtils;
 import t.me.p1azmer.engine.utils.FileUtil;
 import t.me.p1azmer.engine.utils.Reflex;
-import t.me.p1azmer.folia.Folia;
 
 import java.io.File;
 import java.lang.reflect.Field;
@@ -41,6 +44,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     LangManager<P> langManager;
     CommandManager<P> commandManager;
     ActionManager<P> actionManager;
+    @Getter @Nullable ServerImplementation foliaScheduler;
 
     final boolean isEngine = this instanceof NexEngine;
 
@@ -64,13 +68,12 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         }
 
         if (isEngine()) {
-            if (!getServer().getVersion().contains("Spigot")) {
+            if (ServerVersions.isPaper()) {
                 isPaper = true;
-                info("Seems like we have Paper based fork here...");
             }
-            if (Folia.isFolia()) {
+            if (ServerVersions.isFolia()) {
                 isFolia = true;
-                Folia.setup(this);
+                foliaScheduler = new FoliaCompatibility(this).getServerImplementation();
                 error("""
                         ==================================
                         Attention! When using Folia, many functions of the plugin may not work.
@@ -236,11 +239,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         getConfigManager().shutdown();
         getLangManager().shutdown();
 
-        if (isFolia) {
-            Folia.shutdown();
-        } else {
-            getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
-        }
+        if (isFolia && foliaScheduler != null) foliaScheduler.cancelTasks();
+        if (isPaper) getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
     }
 
     @NotNull
@@ -296,8 +296,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public void runTask(@NotNull Consumer<BukkitTask> consumer) {
         Runnable runnable = () -> consumer.accept(null);
-        if (isFolia) {
-            Folia.execute(runnable);
+        if (isFolia && foliaScheduler != null) {
+            foliaScheduler.global().run(runnable);
             return;
         }
         getScheduler().runTask(this, consumer);
@@ -305,8 +305,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public void runTaskAsync(@NotNull Consumer<BukkitTask> consumer) {
         Runnable runnable = () -> consumer.accept(null);
-        if (isFolia) {
-            Folia.executeAsync(runnable);
+        if (isFolia && foliaScheduler != null) {
+            foliaScheduler.async().runNow(runnable);
             return;
         }
         getScheduler().runTaskAsynchronously(this, consumer);
@@ -314,8 +314,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public void runTaskLater(@NotNull Consumer<BukkitTask> consumer, long delay) {
         Runnable runnable = () -> consumer.accept(null);
-        if (isFolia) {
-            Folia.executeLater(runnable, delay);
+        if (isFolia && foliaScheduler != null) {
+            foliaScheduler.global().runDelayed(runnable, delay);
             return;
         }
         getScheduler().runTaskLater(this, consumer, delay);
@@ -323,8 +323,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public void runTaskLaterAsync(@NotNull Consumer<BukkitTask> consumer, long delay) {
         Runnable runnable = () -> consumer.accept(null);
-        if (isFolia) {
-            Folia.executeLaterAsync(runnable, delay);
+        if (isFolia && foliaScheduler != null) {
+            foliaScheduler.async().runDelayed(runnable, delay);
             return;
         }
         getScheduler().runTaskLaterAsynchronously(this, consumer, delay);
@@ -332,8 +332,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public void runTaskTimer(@NotNull Consumer<BukkitTask> consumer, long delay, long interval) {
         Runnable runnable = () -> consumer.accept(null);
-        if (isFolia) {
-            Folia.executeTimer(runnable, delay);
+        if (isFolia && foliaScheduler != null) {
+            foliaScheduler.global().runAtFixedRate(runnable, delay, interval);
             return;
         }
         getScheduler().runTaskTimer(this, consumer, delay, interval);
@@ -341,8 +341,8 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     public void runTaskTimerAsync(@NotNull Consumer<BukkitTask> consumer, long delay, long interval) {
         Runnable runnable = () -> consumer.accept(null);
-        if (isFolia) {
-            Folia.executeTimerAsync(runnable, delay);
+        if (isFolia && foliaScheduler != null) {
+            foliaScheduler.async().runAtFixedRate(runnable, delay, interval);
             return;
         }
         getScheduler().runTaskTimerAsynchronously(this, consumer, delay, interval);

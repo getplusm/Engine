@@ -45,9 +45,11 @@ public class Action_Health extends AbstractActionExecutor {
         targets.forEach(target -> {
             if (!(target instanceof LivingEntity livingEntity)) return;
 
-            Attribute healthAttribute = Attribute.valueOf("GENERIC_MAX_HEALTH");
-            if (Version.isAtLeast(Version.MC_1_21_3)) {
-                healthAttribute = Attribute.MAX_HEALTH;
+            Attribute healthAttribute;
+            if (Version.isBehind(Version.MC_1_21_3)) {
+                healthAttribute = Attribute.GENERIC_MAX_HEALTH;
+            } else {
+                healthAttribute = Attribute.valueOf("MAX_HEALTH");
             }
             double hp2 = hp;
             double maxHp = EntityUtil.getAttribute(livingEntity, healthAttribute);

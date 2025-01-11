@@ -34,32 +34,36 @@ public class UniParticle {
 
     @NotNull
     public static UniParticle itemCrack(@NotNull ItemStack item) {
-        Particle particle = Optional.of(Particle.valueOf("ITEM_CRACK")).orElse(Particle.ITEM);
-        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.ITEM;
+        Particle particle;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.ITEM_CRACK;
+        else particle = Particle.valueOf("ITEM");
 
         return new UniParticle(particle, new ItemStack(item));
     }
 
     @NotNull
     public static UniParticle itemCrack(@NotNull Material material) {
-        Particle particle = Optional.of(Particle.valueOf("ITEM_CRACK")).orElse(Particle.ITEM);
-        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.ITEM;
+        Particle particle;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.ITEM_CRACK;
+        else particle = Particle.valueOf("ITEM");
 
         return new UniParticle(particle, new ItemStack(material));
     }
 
     @NotNull
     public static UniParticle blockCrack(@NotNull Material material) {
-        Particle particle = Optional.of(Particle.valueOf("BLOCK_CRACK")).orElse(Particle.BLOCK);
-        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.BLOCK;
+        Particle particle;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.BLOCK_CRACK;
+        else particle = Particle.valueOf("BLOCK");
 
         return new UniParticle(particle, material.createBlockData());
     }
 
     @NotNull
     public static UniParticle blockDust(@NotNull Material material) {
-        Particle particle = Optional.of(Particle.valueOf("BLOCK_DUST")).orElse(Particle.DUST);
-        if (Version.isAtLeast(Version.MC_1_21)) particle = Particle.DUST;
+        Particle particle;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.BLOCK_DUST;
+        else particle = Particle.valueOf("DUST");
 
         return new UniParticle(particle, material.createBlockData());
     }

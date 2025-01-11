@@ -336,7 +336,7 @@ public class JYML extends YamlConfiguration {
 
         String headTexture = this.getString(path + "Head_Texture", "");
         if (!headTexture.isEmpty()) {
-            if (Version.isAtLeast(Version.MC_1_21_3)) ItemUtil.setHeadSkin(item, headTexture);
+            if (Version.isAtLeast(Version.MC_1_21_0)) ItemUtil.setHeadSkin(item, headTexture);
             else ItemUtil.setSkullTexture(item, headTexture);
         }
 
