@@ -31,7 +31,7 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
     protected static JYML assetsConfig;
 
     protected final Map<String, LangMessage> messages;
-    @Deprecated protected final Map<String, String> placeholders;
+    protected final Map<String, String> placeholders;
     protected JYML config;
 
     public LangManager(@NotNull P plugin) {
@@ -51,18 +51,26 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
         this.plugin.getConfigManager().extractResources(DIR_LANG);
         this.config = JYML.loadOrExtract(plugin, DIR_LANG, "messages_" + langCode + ".yml");
-        this.placeholders.putAll(JOption.forMap("Placeholders",
-                (cfg, path, key) -> cfg.getString(path + "." + key, key),
-                Map.of(
-                        "%red%", Colors.RED,
-                        "%green%", Colors.GREEN,
-                        "%gray%", Colors.GRAY
+        this.placeholders.putAll(JOption.create("Placeholders",
+                (cfg, path, def) -> {
+                    Map<String, String> map = new HashMap<>();
+                    for (String key : cfg.getSection(path)) {
+                        String value = cfg.getString(path + "." + key);
+
+                        map.put(key, value);
+                    }
+                    return map;
+                },
+                (cfg, path, map) -> map.forEach((place, value) -> cfg.set(path + "." + place, value)),
+                () -> Map.of(
+                        "%red%", Colors2.RED,
+                        "%green%", Colors2.GREEN,
+                        "%gray%", Colors2.GRAY
                 ),
                 "Here you can create your own custom placeholders to use it in language config.",
                 "Key = Placeholder, Value = Replacer."
-        ).setWriter((cfg, path, map) -> map.forEach((place, value) -> cfg.set(path + "." + place, value))).read(this.config));
+        ).read(this.config));
 
-        // Inherit Engine messages
         if (!this.plugin.isEngine()) {
             EngineUtils.ENGINE.getLangManager().getMessages().forEach((key, message) -> {
                 this.getMessages().put(key, new LangMessage(this.plugin, message.getRaw()));
@@ -86,10 +94,8 @@ public class LangManager<P extends NexPlugin<P>> extends AbstractManager<P> {
             while ((bytesRead = in.read(dataBuffer, 0, 1024)) != -1) {
                 fileOutputStream.write(dataBuffer, 0, bytesRead);
             }
-        }
-        catch (IOException exception) {
-            //exception.printStackTrace();
-            this.plugin.error("Could not download language assets for '" + langCode + "' (no such asset?).");
+        } catch (IOException exception) {
+            this.plugin.error("Could not download language assets for '" + langCode + "' (no such asset?).", exception);
         }
     }
 

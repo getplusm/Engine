@@ -33,6 +33,7 @@ import t.me.p1azmer.engine.utils.Reflex;
 import java.io.File;
 import java.lang.reflect.Field;
 import java.util.function.Consumer;
+import java.util.logging.Level;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PROTECTED)
@@ -169,6 +170,10 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         getLogger().severe(msg);
     }
 
+    public void error(@NotNull String message, @NotNull Object... params) {
+        getLogger().log(Level.SEVERE, message, params);
+    }
+
     public void debug(@NotNull String msg) {
         info("[DEBUG] " + msg);
     }
@@ -240,7 +245,7 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         getLangManager().shutdown();
 
         if (isFolia && foliaScheduler != null) foliaScheduler.cancelTasks();
-        if (isPaper) getServer().getScheduler().cancelTasks(this); // First stop all plugin tasks
+        if (isPaper) getServer().getScheduler().cancelTasks(this);
     }
 
     @NotNull

@@ -37,8 +37,7 @@ public class Condition_EntityHealth extends IConditionValidator {
 
     @Override
     @Nullable
-    protected Predicate<Entity> validate(
-            @NotNull Entity exe, @NotNull Set<Entity> targets, @NotNull IParamResult result) {
+    protected Predicate<Entity> validate(@NotNull Entity exe, @NotNull Set<Entity> targets, @NotNull IParamResult result) {
 
         IParamValue valHp = result.getParamValue(IParamType.AMOUNT);
         if (!valHp.hasDouble()) return null;
@@ -52,7 +51,7 @@ public class Condition_EntityHealth extends IConditionValidator {
 
             Attribute healthAttribute;
             if (Version.isBehind(Version.MC_1_21_3)) {
-                healthAttribute = Attribute.GENERIC_MAX_HEALTH;
+                healthAttribute = Attribute.valueOf("GENERIC_MAX_HEALTH");
             } else {
                 healthAttribute = Attribute.valueOf("MAX_HEALTH");
             }

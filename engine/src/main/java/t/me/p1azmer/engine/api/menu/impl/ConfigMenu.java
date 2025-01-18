@@ -18,7 +18,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
 
-    protected final JYML                                           cfg;
+    protected final JYML cfg;
     protected final Map<Class<? extends Enum<?>>, ClickHandler<?>> handlers;
     protected String itemSection = "Content";
 
@@ -61,14 +61,13 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
 
         if (isCodeCreation) {
             options = this.createDefaultOptions();
-        }
-        else {
+        } else {
             options = new MenuOptions(oldTitle != null ? oldTitle : "", oldSize != 0 ? oldSize : 27, oldType != null ? oldType : InventoryType.CHEST);
         }
 
         String title = JOption.create("Settings.Title", options.getTitle(),
                 "Sets the GUI title."
-        ).mapReader(Colorizer::apply).read(cfg);
+        ).read(cfg);
 
         int size = JOption.create("Settings.Size", options.getSize(),
                 "Sets the GUI size. Must be multiply of 9.",
@@ -84,7 +83,7 @@ public abstract class ConfigMenu<P extends NexPlugin<P>> extends Menu<P> {
                 "Sets the GUI auto-refresh interval (in seconds). Set this to 0 to disable."
         ).read(cfg);
 
-        this.getOptions().setTitle(title);
+        this.getOptions().setTitle(Colorizer.apply(title));
         this.getOptions().setSize(size);
         this.getOptions().setType(type);
         this.getOptions().setAutoRefresh(autoRefresh);

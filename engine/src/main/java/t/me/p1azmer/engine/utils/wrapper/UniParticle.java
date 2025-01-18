@@ -35,7 +35,7 @@ public class UniParticle {
     @NotNull
     public static UniParticle itemCrack(@NotNull ItemStack item) {
         Particle particle;
-        if (Version.isBehind(Version.MC_1_21)) particle = Particle.ITEM_CRACK;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.valueOf("ITEM_CRACK");
         else particle = Particle.valueOf("ITEM");
 
         return new UniParticle(particle, new ItemStack(item));
@@ -44,7 +44,7 @@ public class UniParticle {
     @NotNull
     public static UniParticle itemCrack(@NotNull Material material) {
         Particle particle;
-        if (Version.isBehind(Version.MC_1_21)) particle = Particle.ITEM_CRACK;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.valueOf("ITEM_CRACK");
         else particle = Particle.valueOf("ITEM");
 
         return new UniParticle(particle, new ItemStack(material));
@@ -53,7 +53,7 @@ public class UniParticle {
     @NotNull
     public static UniParticle blockCrack(@NotNull Material material) {
         Particle particle;
-        if (Version.isBehind(Version.MC_1_21)) particle = Particle.BLOCK_CRACK;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.valueOf("BLOCK_CRACK");
         else particle = Particle.valueOf("BLOCK");
 
         return new UniParticle(particle, material.createBlockData());
@@ -62,7 +62,7 @@ public class UniParticle {
     @NotNull
     public static UniParticle blockDust(@NotNull Material material) {
         Particle particle;
-        if (Version.isBehind(Version.MC_1_21)) particle = Particle.BLOCK_DUST;
+        if (Version.isBehind(Version.MC_1_21)) particle = Particle.valueOf("BLOCK_DUST");
         else particle = Particle.valueOf("DUST");
 
         return new UniParticle(particle, material.createBlockData());

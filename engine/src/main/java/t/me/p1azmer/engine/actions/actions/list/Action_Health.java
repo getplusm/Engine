@@ -47,7 +47,7 @@ public class Action_Health extends AbstractActionExecutor {
 
             Attribute healthAttribute;
             if (Version.isBehind(Version.MC_1_21_3)) {
-                healthAttribute = Attribute.GENERIC_MAX_HEALTH;
+                healthAttribute = Attribute.valueOf("GENERIC_MAX_HEALTH");
             } else {
                 healthAttribute = Attribute.valueOf("MAX_HEALTH");
             }

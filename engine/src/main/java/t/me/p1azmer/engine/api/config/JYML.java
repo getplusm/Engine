@@ -1,5 +1,9 @@
 package t.me.p1azmer.engine.api.config;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import lombok.AccessLevel;
+import lombok.experimental.FieldDefaults;
 import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -22,29 +26,44 @@ import t.me.p1azmer.engine.utils.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.lang.reflect.Field;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.UnaryOperator;
 import java.util.stream.IntStream;
 
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class JYML extends YamlConfiguration {
-
-    private final File file;
-    private boolean isChanged = false;
+    static final String EXTENSION = ".yml";
+    final File file;
+    boolean changed;
 
     public JYML(@NotNull String path, @NotNull String file) {
         this(new File(path, file));
     }
 
     public JYML(@NotNull File file) {
-        if (Version.isAbove(Version.V1_17_R1)) {
-            this.options().width(1000);
-        }
+        this.changed = false;
+        this.options().width(512);
 
         FileUtil.create(file);
         this.file = file;
         this.reload();
     }
+
+    public static boolean isConfig(@NotNull File file) {
+        return file.getName().endsWith(EXTENSION);
+    }
+
+    @NotNull
+    public static String getName(@NotNull File file) {
+        String name = file.getName();
+
+        if (isConfig(file)) {
+            return name.substring(0, name.length() - EXTENSION.length());
+        }
+        return name;
+    }
+
 
     @NotNull
     public static JYML loadOrExtract(@NotNull NexPlugin<?> plugin, @NotNull String path, @NotNull String file) {
@@ -62,8 +81,7 @@ public class JYML extends YamlConfiguration {
 
         File file = new File(plugin.getDataFolder() + filePath);
         if (FileUtil.create(file)) {
-            try {
-                InputStream input = plugin.getClass().getResourceAsStream(filePath);
+            try (InputStream input = plugin.getClass().getResourceAsStream(filePath)) {
                 if (input != null) FileUtil.copy(input, file);
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -79,29 +97,17 @@ public class JYML extends YamlConfiguration {
 
     @NotNull
     public static List<JYML> loadAll(@NotNull String path, boolean deep) {
-        return FileUtil.getFiles(path, deep).stream().filter(file -> file.getName().endsWith(".yml")).map(JYML::new).toList();
+        return FileUtil.getConfigFiles(path, deep).stream().map(JYML::new).toList();
     }
 
-    public void initializeOptions(@NotNull Object from) {
-        initializeOptions(from, this);
+    public void initializeOptions(@NotNull Class<?> clazz) {
+        initializeOptions(clazz, this);
     }
 
-    public static void initializeOptions(@NotNull Object from, @NotNull JYML cfg) {
-        boolean isStatic = from instanceof Class;
-        Class<?> clazz = isStatic ? (Class<?>) from : from.getClass();
-
-        for (Field field : Reflex.getFields(clazz)) {
-            if (!JOption.class.isAssignableFrom(field.getType())) continue;
-            if (!field.trySetAccessible()) continue;
-
-            try {
-                JOption<?> option = (JOption<?>) field.get(from);
-                option.read(cfg);
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML config) {
+        for (JOption<?> value : Reflex.getFields(clazz, JOption.class)) {
+            value.read(config);
         }
-        cfg.saveChanges();
     }
 
     @NotNull
@@ -118,9 +124,9 @@ public class JYML extends YamlConfiguration {
     }
 
     public boolean saveChanges() {
-        if (this.isChanged) {
+        if (this.changed) {
             this.save();
-            this.isChanged = false;
+            this.changed = false;
             return true;
         }
         return false;
@@ -129,7 +135,7 @@ public class JYML extends YamlConfiguration {
     public boolean reload() {
         try {
             this.load(this.file);
-            this.isChanged = false;
+            this.changed = false;
             return true;
         } catch (IOException | InvalidConfigurationException exception) {
             exception.printStackTrace();
@@ -145,7 +151,11 @@ public class JYML extends YamlConfiguration {
 
     @Override
     public void set(@NotNull String path, @Nullable Object value) {
-        if (value instanceof String str) {
+        if (value instanceof Writeable writeable) {
+            writeable.write(this, path);
+            this.changed = true;
+            return;
+        } else if (value instanceof String str) {
             value = Colorizer.plain(str);
         } else if (value instanceof Collection<?> collection) {
             List<Object> list = new ArrayList<>(collection);
@@ -157,7 +167,7 @@ public class JYML extends YamlConfiguration {
             value = en.name();
         }
         super.set(path, value);
-        this.isChanged = true;
+        this.changed = true;
     }
 
     public void setComments(@NotNull String path, @Nullable String... comments) {
@@ -174,7 +184,7 @@ public class JYML extends YamlConfiguration {
         if (this.getComments(path).equals(comments)) return;
 
         super.setComments(path, comments);
-        this.isChanged = true;
+        this.changed = true;
     }
 
     @Override
@@ -215,8 +225,7 @@ public class JYML extends YamlConfiguration {
     }
 
     @Override
-    @Nullable
-    public Location getLocation(@NotNull String path) {
+    public @Nullable Location getLocation(@NotNull String path) {
         String raw = this.getString(path);
         return raw == null ? null : LocationUtil.deserialize(raw);
     }
@@ -225,7 +234,7 @@ public class JYML extends YamlConfiguration {
         return getIntArray(path, new int[0]);
     }
 
-    public int @NotNull [] getIntArray(@NotNull String path, int[] def) {
+    public int[] getIntArray(@NotNull String path, int[] def) {
         String str = this.getString(path);
         return str == null ? def : NumberUtil.getIntArray(str);
     }
@@ -236,6 +245,19 @@ public class JYML extends YamlConfiguration {
             return;
         }
         this.set(path, String.join(",", IntStream.of(arr).boxed().map(String::valueOf).toList()));
+    }
+
+    public @NotNull String[] getStringArray(@NotNull String path, @NotNull String[] def) {
+        String str = this.getString(path);
+        return str == null ? def : str.split(",");
+    }
+
+    public void setStringArray(@NotNull String path, String[] arr) {
+        if (arr == null) {
+            this.set(path, null);
+            return;
+        }
+        this.set(path, String.join(",", arr));
     }
 
     public int[] getMenuSlots(@NotNull String path) {
@@ -273,71 +295,56 @@ public class JYML extends YamlConfiguration {
         return getIntArray(path);
     }
 
-    @Nullable
-    public <T extends Enum<T>> T getEnum(@NotNull String path, @NotNull Class<T> clazz) {
-        return StringUtil.getEnum(this.getString(path, ""), clazz).orElse(null);
+    public @Nullable <T extends Enum<T>> T getEnum(@NotNull String path, @NotNull Class<T> clazz) {
+        return StringUtil.getEnum(this.getString(path), clazz).orElse(null);
     }
 
-    @NotNull
-    public <T extends Enum<T>> T getEnum(@NotNull String path, @NotNull Class<T> clazz, @NotNull T def) {
-        return StringUtil.getEnum(this.getString(path, ""), clazz).orElse(def);
+    public @NotNull <T extends Enum<T>> T getEnum(@NotNull String path, @NotNull Class<T> clazz, @NotNull T def) {
+        return StringUtil.getEnum(this.getString(path), clazz).orElse(def);
     }
 
-    @NotNull
-    public <T extends Enum<T>> List<T> getEnumList(@NotNull String path, @NotNull Class<T> clazz) {
+    public @NotNull <T extends Enum<T>> List<T> getEnumList(@NotNull String path, @NotNull Class<T> clazz) {
         return this.getStringSet(path).stream().map(str -> StringUtil.getEnum(str, clazz).orElse(null))
                 .filter(Objects::nonNull).toList();
     }
 
-    /*@NotNull
-    public Set<FireworkEffect> getFireworkEffects(@NotNull String path) {
-        Set<FireworkEffect> effects = new HashSet<>();
-        for (String sId : this.getSection(path)) {
-            String path2 = path + "." + sId + ".";
-            FireworkEffect.Type type = this.getEnum(path2 + "Type", FireworkEffect.Type.class);
-            if (type == null) continue;
-
-            boolean flicker = this.getBoolean(path2 + "Flicker");
-            boolean trail = this.getBoolean(path2 + "Trail");
-
-            Set<Color> colors = new HashSet<>();
-            for (String colorRaw : this.getStringList(path2 + "Colors")) {
-                colors.add(StringUtil.parseColor(colorRaw));
-            }
-
-            Set<Color> fadeColors = new HashSet<>();
-            for (String colorRaw : this.getStringList(path2 + "Fade_Colors")) {
-                fadeColors.add(StringUtil.parseColor(colorRaw));
-            }
-
-            FireworkEffect.Builder builder = FireworkEffect.builder()
-                .with(type).flicker(flicker).trail(trail).withColor(colors).withFade(fadeColors);
-            effects.add(builder.build());
-        }
-
-        return effects;
-    }*/
-
-    @NotNull
-    public ItemStack getItem(@NotNull String path, @Nullable ItemStack def) {
+    public @NotNull ItemStack getItem(@NotNull String path, @Nullable ItemStack def) {
         ItemStack item = this.getItem(path);
         return item.getType().isAir() && def != null ? def : item;
     }
 
-    @NotNull
-    public ItemStack getItem(@NotNull String path) {
+    public @NotNull ItemStack getItem(@NotNull String path) {
         if (!path.isEmpty() && !path.endsWith(".")) path = path + ".";
 
-        Material material = Material.getMaterial(this.getString(path + "Material", "").toUpperCase());
-        if (material == null || material == Material.AIR) return new ItemStack(Material.AIR);
+        Material material = BukkitThing.getMaterial(this.getString(path + "Material", BukkitThing.toString(Material.AIR)));
+        if (material == null || material.isAir()) return new ItemStack(Material.AIR);
 
         ItemStack item = new ItemStack(material);
         item.setAmount(this.getInt(path + "Amount", 1));
 
-        String headTexture = this.getString(path + "Head_Texture", "");
-        if (!headTexture.isEmpty()) {
-            if (Version.isAtLeast(Version.MC_1_21_0)) ItemUtil.setHeadSkin(item, headTexture);
-            else ItemUtil.setSkullTexture(item, headTexture);
+        // -------- UPDATE OLD TEXTURE FIELD - START --------
+        String headTexture = this.getString(path + "Head_Texture");
+        if (headTexture != null && !headTexture.isEmpty()) {
+
+            try {
+                byte[] decoded = Base64.getDecoder().decode(headTexture);
+                String decodedStr = new String(decoded, StandardCharsets.UTF_8);
+                JsonElement element = JsonParser.parseString(decodedStr);
+
+                String url = element.getAsJsonObject().getAsJsonObject("textures").getAsJsonObject("SKIN").get("url").getAsString();
+                url = url.substring(ItemUtil.TEXTURES_HOST.length());
+
+                this.set(path + "SkinURL", url);
+                this.remove(path + "Head_Texture");
+            } catch (Exception exception) {
+                exception.printStackTrace();
+            }
+        }
+        // -------- UPDATE OLD TEXTURE FIELD - END --------
+
+        String headSkin = this.getString(path + "SkinURL");
+        if (headSkin != null) {
+            ItemUtil.setHeadSkin(item, headSkin);
         }
 
         ItemMeta meta = item.getItemMeta();
@@ -349,17 +356,17 @@ public class JYML extends YamlConfiguration {
         }
 
         String name = this.getString(path + "Name");
-        meta.setDisplayName(name != null ? Colorizer.apply(name) : null);
-        meta.setLore(Colorizer.apply(this.getStringList(path + "Lore")));
+        meta.setDisplayName(Optional.ofNullable(name).map(Colorizer::apply).orElse(null));
+        meta.setLore(Optional.of(this.getStringList(path + "Lore")).map(Colorizer::apply).orElse(null));
 
         for (String sKey : this.getSection(path + "Enchants")) {
-            Enchantment enchantment = Enchantment.getByKey(NamespacedKey.minecraft(sKey.toLowerCase()));
+            Enchantment enchantment = BukkitThing.getEnchantment(sKey);
             if (enchantment == null) continue;
 
-            int eLvl = this.getInt(path + "Enchants." + sKey);
-            if (eLvl <= 0) continue;
+            int level = this.getInt(path + "Enchants." + sKey);
+            if (level <= 0) continue;
 
-            meta.addEnchant(enchantment, eLvl, true);
+            meta.addEnchant(enchantment, level, true);
         }
 
         int model = this.getInt(path + "Custom_Model_Data");
@@ -400,7 +407,7 @@ public class JYML extends YamlConfiguration {
         Material material = item.getType();
         this.set(path + "Material", material.name());
         this.set(path + "Amount", item.getAmount() <= 1 ? null : item.getAmount());
-        this.set(path + "Head_Texture", ItemUtil.getSkullTexture(item));
+        this.set(path + "SkinURL", ItemUtil.getHeadSkin(item));
 
         ItemMeta meta = item.getItemMeta();
         if (meta == null) return;
@@ -425,7 +432,7 @@ public class JYML extends YamlConfiguration {
             color = armorMeta.getColor();
         }
         if (color != null) {
-            colorRaw = color.getRed() + "," + color.getGreen() + "," + color.getBlue() + ",";
+            colorRaw = color.getRed() + "," + color.getGreen() + "," + color.getBlue();
         }
         this.set(path + "Color", colorRaw);
 
@@ -439,20 +446,20 @@ public class JYML extends YamlConfiguration {
         String compressed = this.getString(path);
         if (compressed == null) return null;
 
-        return ItemUtil.decompress(compressed);
+        return ItemNbt.decompress(compressed);
     }
 
     public void setItemEncoded(@NotNull String path, @Nullable ItemStack item) {
-        this.set(path, item == null ? null : ItemUtil.compress(item));
+        this.set(path, item == null ? null : ItemNbt.compress(item));
     }
 
     @NotNull
     public ItemStack[] getItemsEncoded(@NotNull String path) {
-        return ItemUtil.decompress(this.getStringList(path));
+        return ItemNbt.decompress(this.getStringList(path));
     }
 
     public void setItemsEncoded(@NotNull String path, @NotNull List<ItemStack> item) {
-        this.set(path, ItemUtil.compress(item));
+        this.set(path, ItemNbt.compress(item));
     }
 
     @Nullable
