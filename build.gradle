@@ -5,14 +5,14 @@ plugins {
 }
 
 group = 'com.github.getplusm'
-version = '2.4.10'
+version = '2.4.11'
 description = 'PLAZMER-ENGINE'
 
 allprojects {
     apply plugin: 'java'
     apply plugin: 'com.github.johnrengelman.shadow'
 
-    java.sourceCompatibility = JavaVersion.VERSION_21
+    java.sourceCompatibility = JavaVersion.VERSION_17
     compileJava.options.encoding = "UTF-8"
     compileTestJava.options.encoding = "UTF-8"
 
