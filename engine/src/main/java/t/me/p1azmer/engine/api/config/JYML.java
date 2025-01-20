@@ -108,6 +108,7 @@ public class JYML extends YamlConfiguration {
         for (JOption<?> value : Reflex.getFields(clazz, JOption.class)) {
             value.read(config);
         }
+        config.save();
     }
 
     @NotNull

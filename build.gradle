@@ -5,7 +5,7 @@ plugins {
 }
 
 group = 'com.github.getplusm'
-version = '2.4.11'
+version = '2.4.12'
 description = 'PLAZMER-ENGINE'
 
 allprojects {
