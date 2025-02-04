@@ -8,6 +8,7 @@ import lombok.experimental.NonFinal;
 import org.bukkit.inventory.ItemStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+import t.me.p1azmer.engine.NexPlugin;
 import t.me.p1azmer.engine.utils.StringUtil;
 import t.me.p1azmer.engine.utils.TriFunction;
 import t.me.p1azmer.engine.utils.wrapper.UniFormatter;
@@ -16,6 +17,7 @@ import t.me.p1azmer.engine.utils.wrapper.UniSound;
 
 import java.util.*;
 import java.util.function.*;
+import java.util.logging.Level;
 import java.util.stream.Collectors;
 
 @Setter
@@ -325,16 +327,21 @@ public class JOption<T> {
 
     @NotNull
     public T read(@NotNull JYML config) {
-        if (!config.contains(this.getPath())) {
-            this.write(config);
-        }
-        if (this.getDescription().length > 0 && !this.getDescription()[0].isEmpty()) {
-            config.setComments(this.getPath(), this.getDescription());
-        }
+        try {
+            if (!config.contains(this.getPath())) {
+                this.write(config);
+            }
+            if (this.getDescription().length > 0 && !this.getDescription()[0].isEmpty()) {
+                config.setComments(this.getPath(), this.getDescription());
+            }
 
-        UnaryOperator<T> operator = this.onRead == null ? value -> value : this.onRead;
+            UnaryOperator<T> operator = this.onRead == null ? value -> value : this.onRead;
 
-        return (this.value = operator.apply(this.reader.read(config, this.getPath(), this.getDefaultValue())));
+            return (this.value = operator.apply(this.reader.read(config, this.getPath(), this.getDefaultValue())));
+        } catch (RuntimeException exception) {
+            NexPlugin.getGlobalLogger().log(Level.SEVERE, "Got exception while reading " + this.getPath(), exception);
+            throw exception;
+        }
     }
 
     public void write(@NotNull JYML config) {

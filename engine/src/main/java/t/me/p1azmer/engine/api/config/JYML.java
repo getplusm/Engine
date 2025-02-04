@@ -26,9 +26,11 @@ import t.me.p1azmer.engine.utils.*;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.lang.reflect.Field;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.function.UnaryOperator;
+import java.util.logging.Level;
 import java.util.stream.IntStream;
 
 @FieldDefaults(level = AccessLevel.PRIVATE)
@@ -104,11 +106,23 @@ public class JYML extends YamlConfiguration {
         initializeOptions(clazz, this);
     }
 
-    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML config) {
-        for (JOption<?> value : Reflex.getFields(clazz, JOption.class)) {
-            value.read(config);
+    public static void initializeOptions(@NotNull Class<?> clazz, @NotNull JYML cfg) {
+        try {
+            for (Field field : Reflex.getFields(clazz)) {
+                if (!JOption.class.isAssignableFrom(field.getType())) continue;
+                if (!field.trySetAccessible()) continue;
+
+                try {
+                    JOption<?> option = (JOption<?>) field.get(clazz);
+                    option.read(cfg);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+            }
+            cfg.saveChanges();
+        } catch (RuntimeException exception) {
+            NexPlugin.getGlobalLogger().log(Level.SEVERE, "Failed to initialize options for " + clazz.getSimpleName(), exception);
         }
-        config.save();
     }
 
     @NotNull

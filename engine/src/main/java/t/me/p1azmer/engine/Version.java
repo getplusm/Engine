@@ -21,6 +21,7 @@ import java.util.stream.Stream;
 @FieldDefaults(level = AccessLevel.PRIVATE, makeFinal = true)
 public enum Version {
     V1_17_R1("1.17.1", Status.OUTDATED),
+    V1_18_R1("1.18.1", Status.OUTDATED),
     V1_18_R2("1.18.2", Status.OUTDATED),
     V1_19_R1("1.19.2", Status.OUTDATED),
     V1_19_R2("1.19.3", Status.OUTDATED),

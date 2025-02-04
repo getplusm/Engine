@@ -34,6 +34,7 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.util.function.Consumer;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @Getter
 @FieldDefaults(level = AccessLevel.PROTECTED)
@@ -41,11 +42,14 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
     public static boolean isPaper = false;
     public static boolean isFolia = false;
 
+    @Getter
+    static Logger globalLogger;
     ConfigManager<P> configManager;
     LangManager<P> langManager;
     CommandManager<P> commandManager;
     ActionManager<P> actionManager;
-    @Getter @Nullable ServerImplementation foliaScheduler;
+    @Getter
+    @Nullable ServerImplementation foliaScheduler;
 
     final boolean isEngine = this instanceof NexEngine;
 
@@ -60,40 +64,47 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
 
     @Override
     public void onEnable() {
-        long loadTook = System.currentTimeMillis();
-        Version.printCaution(getSelf());
+        globalLogger = getLogger();
+        try {
+            long loadTook = System.currentTimeMillis();
+            Version.printCaution(getSelf());
 
-        if (Version.getCurrent().isDropped()) {
-            getPluginManager().disablePlugin(this);
-            return;
-        }
-
-        if (isEngine()) {
-            if (ServerVersions.isPaper()) {
-                isPaper = true;
+            if (Version.getCurrent().isDropped()) {
+                getPluginManager().disablePlugin(this);
+                return;
             }
-            if (ServerVersions.isFolia()) {
-                isFolia = true;
-                foliaScheduler = new FoliaCompatibility(this).getServerImplementation();
-                error("""
-                        ==================================
-                        Attention! When using Folia, many functions of the plugin may not work.
-                        You can report all errors here:
-                        https://github.com/getplusm/Engine/issues
-                        ==================================
-                        """);
-            }
-        } else {
-            EngineUtils.ENGINE.addChildren(this);
-        }
 
-        loadManagers();
-        info("Plugin loaded in " + (System.currentTimeMillis() - loadTook) + " ms!");
+            if (isEngine()) {
+                if (ServerVersions.isPaper()) {
+                    isPaper = true;
+                }
+                if (ServerVersions.isFolia()) {
+                    isFolia = true;
+                    foliaScheduler = new FoliaCompatibility(this).getServerImplementation();
+                    error("""
+                            ==================================
+                            Attention! When using Folia, many functions of the plugin may not work.
+                            You can report all errors here:
+                            https://github.com/getplusm/Engine/issues
+                            ==================================
+                            """);
+                }
+            } else {
+                EngineUtils.ENGINE.addChildren(this);
+            }
+
+            loadManagers();
+            setupDatabase();
+            info("Plugin loaded in " + (System.currentTimeMillis() - loadTook) + " ms!");
+        } catch (RuntimeException exception) {
+            globalLogger.log(Level.SEVERE, "Got exception while loading plugin!", exception);
+        }
     }
 
     @Override
     public void onDisable() {
         unloadManagers();
+        databaseShutdown();
     }
 
     public abstract void enable();
@@ -206,6 +217,10 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
         commandManager.setup();
         actionManager.setup();
 
+        enable();
+    }
+
+    protected void setupDatabase() {
         UserDataHolder<?, ?> dataHolder = null;
         if (this instanceof UserDataHolder) {
             dataHolder = (UserDataHolder<?, ?>) this;
@@ -215,37 +230,40 @@ public abstract class NexPlugin<P extends NexPlugin<P>> extends JavaPlugin {
                 return;
             }
         }
-
-        enable();
         if (dataHolder != null) {
             dataHolder.getUserManager().loadOnlineUsers();
         }
     }
 
     private void unloadManagers() {
-        disable();
-        if (commandManager != null) {
-            commandManager.shutdown();
+        try {
+            disable();
+            if (commandManager != null) {
+                commandManager.shutdown();
+            }
+
+            if (actionManager != null) {
+                actionManager.shutdown();
+            }
+
+            // Unregister ALL plugin listeners.
+            unregisterListeners();
+
+            getConfigManager().shutdown();
+            getLangManager().shutdown();
+
+            if (isFolia && foliaScheduler != null) foliaScheduler.cancelTasks();
+            if (isPaper) getServer().getScheduler().cancelTasks(this);
+        } catch (RuntimeException exception) {
+            globalLogger.log(Level.SEVERE, "Got exception while disable plugin", exception);
         }
+    }
 
-        if (actionManager != null) {
-            actionManager.shutdown();
-        }
-
-        // Unregister ALL plugin listeners.
-        unregisterListeners();
-
-        // Save user data and disconnect from the database.
+    private void databaseShutdown() {
         if (this instanceof UserDataHolder<?, ?> dataHolder) {
             dataHolder.getUserManager().shutdown();
             dataHolder.getData().shutdown();
         }
-
-        getConfigManager().shutdown();
-        getLangManager().shutdown();
-
-        if (isFolia && foliaScheduler != null) foliaScheduler.cancelTasks();
-        if (isPaper) getServer().getScheduler().cancelTasks(this);
     }
 
     @NotNull

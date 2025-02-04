@@ -66,7 +66,6 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
             if (this.getConfig().syncInterval > 0) {
                 if (this.getDataType() != StorageType.SQLITE) {
                     this.synchronizationTask = new DataSynchronizationTask<>(this);
-                    this.synchronizationTask.start();
                     this.plugin.info("Enabled data synchronization with " + config.syncInterval + " seconds interval.");
                 }
             }
@@ -80,7 +79,7 @@ public abstract class AbstractDataHandler<P extends NexPlugin<P>> extends Abstra
     @Override
     protected void onShutdown() {
         if (this.synchronizationTask != null) {
-            this.synchronizationTask.stop();
+            this.synchronizationTask.shutdown();
             this.synchronizationTask = null;
         }
         if (this.saveTask != null) {
