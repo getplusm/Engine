@@ -27,7 +27,7 @@ public enum Version {
     V1_19_R2("1.19.3", Status.OUTDATED),
     V1_19_R3("1.19.4", Status.OUTDATED),
     V1_20_R1("1.20.1", Status.OUTDATED),
-    V1_20_R2("1.20.2", Status.OUTDATED),
+    V1_20_R2("1.20.2"),
     V1_20_R3("1.20.4"),
     MC_1_20_6("1.20.6"),
     MC_1_21_0("1.21"),
@@ -35,6 +35,7 @@ public enum Version {
     MC_1_21_2("1.21.2"),
     MC_1_21_3("1.21.3"),
     MC_1_21_4("1.21.4"),
+    MC_1_21_5("1.21.5"),
 
     UNKNOWN("Unknown");
 

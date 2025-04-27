@@ -3,9 +3,11 @@ version: ${version}
 main: t.me.p1azmer.engine.NexEngine
 author: "plazmer"
 website: "t.me/p1azmer"
-description: "Plugin Engine"
+description: "The root plugin for all the other plugins from plazmer"
 api-version: 1.17
-softdepend: [ Vault ]
+softdepend:
+  - Vault
+  - PlaceholderAPI
 load: STARTUP
 folia-supported: true
 libraries:

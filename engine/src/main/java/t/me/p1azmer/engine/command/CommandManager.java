@@ -1,5 +1,8 @@
 package t.me.p1azmer.engine.command;
 
+import lombok.AccessLevel;
+import lombok.Getter;
+import lombok.experimental.FieldDefaults;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import t.me.p1azmer.engine.NexPlugin;
@@ -12,10 +15,12 @@ import t.me.p1azmer.engine.utils.ArrayUtil;
 import java.util.HashSet;
 import java.util.Set;
 
+@Getter
+@FieldDefaults(level = AccessLevel.PRIVATE)
 public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
-    private Set<GeneralCommand<P>> commands;
-    private PluginMainCommand<P>   mainCommand;
+    final Set<GeneralCommand<P>> commands = new HashSet<>();
+    PluginMainCommand<P> mainCommand;
 
     public CommandManager(@NotNull P plugin) {
         super(plugin);
@@ -23,69 +28,58 @@ public class CommandManager<P extends NexPlugin<P>> extends AbstractManager<P> {
 
     @Override
     public void onLoad() {
-        this.commands = new HashSet<>();
-        if (this.plugin.getConfigManager().commandAliases == null || this.plugin.getConfigManager().commandAliases.length == 0) {
-            this.plugin.error("Could not register plugin commands!");
+        if (plugin.getConfigManager().commandAliases == null || plugin.getConfigManager().commandAliases.length == 0) {
+            plugin.error("Could not register plugin commands!");
             return;
         }
 
         // Create main plugin command and attach help sub-command as a default executor.
-        this.mainCommand = new PluginMainCommand<>(this.plugin);
-        this.mainCommand.addDefaultCommand(new HelpSubCommand<>(this.plugin));
+        mainCommand = new PluginMainCommand<>(plugin);
+        mainCommand.addDefaultCommand(new HelpSubCommand<>(plugin));
 
         // Register child plugin sub-commands to the main plugin command.
-        this.plugin.registerCommands(this.mainCommand);
+        plugin.registerCommands(mainCommand);
 
-        if (!this.plugin.isEngine()) {
-            this.mainCommand.addChildren(new AboutSubCommand<>(this.plugin));
+        if (!plugin.isEngine()) {
+            mainCommand.addChildren(new AboutSubCommand<>(plugin));
         }
 
         // Register main command as a bukkit command.
-        this.registerCommand(this.mainCommand);
+        registerCommand(mainCommand);
     }
 
     @Override
     public void onShutdown() {
-        for (GeneralCommand<P> command : new HashSet<>(this.commands)) {
-            this.unregisterCommand(command);
+        for (GeneralCommand<P> command : new HashSet<>(commands)) {
+            unregisterCommand(command);
             command.getChildrens().clear();
         }
-        this.commands.clear();
-    }
-
-    @NotNull
-    public Set<GeneralCommand<P>> getCommands() {
-        return this.commands;
-    }
-
-    @NotNull
-    public PluginMainCommand<P> getMainCommand() {
-        return this.mainCommand;
+        commands.clear();
     }
 
     @Nullable
     public GeneralCommand<P> getCommand(@NotNull String alias) {
-        return this.getCommands().stream()
+        return getCommands().stream()
                 .filter(command -> ArrayUtil.contains(command.getAliases(), alias))
                 .findFirst().orElse(null);
     }
 
     public void registerCommand(@NotNull GeneralCommand<P> command) {
-        if (this.commands.add(command)) {
-            CommandRegister.register(this.plugin, command);
+        if (commands.add(command)) {
+            CommandRegister.register(plugin, command);
         }
     }
 
     public boolean unregisterCommand(@NotNull String alias) {
-        GeneralCommand<P> command = this.getCommand(alias);
+        GeneralCommand<P> command = getCommand(alias);
         if (command != null) {
-            return this.unregisterCommand(command);
+            return unregisterCommand(command);
         }
         return false;
     }
 
     public boolean unregisterCommand(@NotNull GeneralCommand<P> command) {
-        if (this.commands.remove(command)) {
+        if (commands.remove(command)) {
             return CommandRegister.unregister(command.getAliases()[0]);
         }
         return false;

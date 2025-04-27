@@ -28,7 +28,7 @@ dependencies {
     compileOnly group: 'com.sk89q.worldguard', name: 'worldguard-bukkit', version: '7.0.7'
 
     // PAPI
-    compileOnly 'me.clip:placeholderapi:2.11.5'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
 
     // Lombok
     compileOnly 'org.projectlombok:lombok:1.18.36'
